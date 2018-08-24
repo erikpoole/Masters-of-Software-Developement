@@ -25,17 +25,19 @@ int main(int argc, const char * argv[]) {
     const int IV = 4;
     const int I = 1;
     
-    std::cout << "Hello and welcome to the Roman Numeral Calculator!" << std::endl << "Please enter a number: " << std::endl;
-    int input;
-    std::cin >> input;
+    std::cout << "Hello and welcome to the Roman Numeral Calculator!" << std::endl << "Please enter a positive integer: " << std::endl;
+    double rawInput;
+    std::cin >> rawInput;
+    int input = rawInput;
     
-    if (input < 0) {
-        std::cout << "Sorry, please try again and enter a positive number!" <<std::endl;
+    //comparing rawInput with input makes sure integer rounding did not occur
+    if (input <= 0 || !(rawInput == input)) {
+        std::cout << "Sorry, please try again and enter a positive integer!" <<std::endl;
         return 1;
     }
     
     std::string finalString;
-    while (input > 0) {
+    while (input >= 1) {
         if (input >= M) {
             input -= M;
             finalString += "M";
