@@ -64,27 +64,51 @@ int numSentences(std::string inputString) {
     }
     return sentenceCount;
 }
-    
-void testFunction(char input) {
-    std::cout << isTerminator(input) << std::endl;
-    std::cout << isPunctuation(input) << std::endl;
-    std::cout << isVowel(input) << std::endl;
-    std::cout << isConsonant(input) << std::endl;
-    std::cout << isLetter(input) << std::endl;
 
+int numVowels(std::string inputString) {
+    int vowelCount = 0;
+    for (int i = 0; i <= inputString.size()-1; i++) {
+        if (isVowel(inputString[i])) {
+            vowelCount++;
+        }
+    }
+    return vowelCount;
 }
 
+int numConsonants(std::string inputString) {
+    int consonantCount = 0;
+    for (int i = 0; i <= inputString.size()-1; i++) {
+        if (isConsonant(inputString[i])) {
+            consonantCount++;
+        }
+    }
+    return consonantCount;
+}
+
+double averageWordLength(std::string inputString) {
+    return double (numVowels(inputString) + numConsonants(inputString)) / numWords(inputString);
+}
+
+double averageVowelsPerWord(std::string inputString) {
+    return double (numVowels(inputString))/numWords(inputString);
+}
 
 int main(int argc, const char * argv[]) {
 
-    std::cout << "Hello and welcome to the String Analzyer!" << std::endl << "Please enter a couple of sentences: " << std::endl;
-    std::string userString;
-    getline(std::cin, userString);
-    std::cout << std::endl;
+    std::cout << "Hello and welcome to the String Analzyer!" << std::endl;
     
-    std::cout << userString << std::endl;
-    std::cout << "Number of words: " << numWords(userString) << std::endl;
-    std::cout << "Number of sentences: " << numSentences(userString) << std::endl;
+    for (int i = 0; i < 1; i = i) {
+        std::cout << "Please enter a couple of sentences: " << std::endl;
+        std::string userString;
+        getline(std::cin, userString);
+        std::cout << std::endl;
     
-    testFunction('Y');
+        std::cout << "Number of words: " << numWords(userString) << std::endl;
+        std::cout << "Number of sentences: " << numSentences(userString) << std::endl;
+        std::cout << "Number of vowels: " << numVowels(userString) << std::endl;
+        std::cout << "Number of consonants: " << numConsonants(userString) << std::endl;
+        std::cout << "Average word length: " << averageWordLength(userString) << std::endl;
+        std::cout << "Average vowels per word: " << averageVowelsPerWord(userString) << std::endl;
+        std::cout << std::endl;
+    }
 }
