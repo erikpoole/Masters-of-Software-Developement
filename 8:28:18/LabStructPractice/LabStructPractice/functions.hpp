@@ -33,4 +33,5 @@ std::vector<Politician> fedRepublicanFinder(std::vector<Politician> input);
 //output: integer between -1 & 1
 //returns -1 for Republican Victory, 0 for Tie, 1 for Democrat Victory
 int whipVotes(std::vector<Politician> inputList, bool isFederalBill);
+
 #endif /* functions_hpp */

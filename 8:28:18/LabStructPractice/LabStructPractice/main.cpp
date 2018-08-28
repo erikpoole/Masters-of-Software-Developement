@@ -19,7 +19,6 @@ int main(int argc, const char * argv[]) {
     fedRepublicanFinder(listOfPoliticians);
     
     int billVote = whipVotes(listOfPoliticians, false);
-    
     if (billVote == -1) {
         std::cout << "The Republicans win!" << std::endl;
     } else if (billVote == 0) {
