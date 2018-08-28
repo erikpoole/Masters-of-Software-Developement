@@ -99,21 +99,27 @@ int main()
         ErrorExit("Contains test 7");
     }
     
+    //custom array should return true
+    std::vector<int> customArray2 = {-1, -1, -1};
+    if (Average(customArray2) != -1) {
+        ErrorExit("Contains test 8");
+    }
+    
     //v2 is sorted so should return true
     if (IsSorted(v2) == false) {
-        ErrorExit("contains test 8");
+        ErrorExit("contains test 9");
     }
     
     //custom array is sorted so should return true
-    std::vector<int> customArray2 = {-5,-5,-5,10};
-    if (IsSorted(customArray2) == false) {
-        ErrorExit("contains test 9");
+    std::vector<int> customArray3 = {-5,-5,-5,10};
+    if (IsSorted(customArray3) == false) {
+        ErrorExit("contains test 10");
     }
     
     //custom array is blank so should return true
-    std::vector<int> customArray3 = {};
-    if (IsSorted(customArray3) == false) {
-        ErrorExit("contains test 9");
+    std::vector<int> customArray4 = {};
+    if (IsSorted(customArray4) == false) {
+        ErrorExit("contains test 11");
     }
     
     

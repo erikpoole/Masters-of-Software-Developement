@@ -105,7 +105,8 @@ int Average(vector<int> input)
     for (int vectorValueInt : input) {
         averageVectorValue += vectorValueInt;
     }
-    return (averageVectorValue/input.size());
+    int denominator = input.size();
+    return (averageVectorValue/denominator);
 }
 
 
