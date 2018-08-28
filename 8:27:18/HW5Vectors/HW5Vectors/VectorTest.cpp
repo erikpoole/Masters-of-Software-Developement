@@ -104,8 +104,15 @@ int main()
         ErrorExit("contains test 8");
     }
     
+    //custom array is sorted so should return true
     std::vector<int> customArray2 = {-5,-5,-5,10};
     if (IsSorted(customArray2) == false) {
+        ErrorExit("contains test 9");
+    }
+    
+    //custom array is blank so should return true
+    std::vector<int> customArray3 = {};
+    if (IsSorted(customArray3) == false) {
         ErrorExit("contains test 9");
     }
     
