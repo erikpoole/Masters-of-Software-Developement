@@ -43,7 +43,7 @@ int numSentences(std::string inputString) {
 
 int numVowels(std::string inputString) {
     int vowelCount = 0;
-    for (int i = 0; i <= inputString.size()-1; i++) {
+    for (int i = 0; i < inputString.size(); i++) {
         if (isVowel(inputString[i])) {
             vowelCount++;
         }
@@ -53,7 +53,7 @@ int numVowels(std::string inputString) {
 
 int numConsonants(std::string inputString) {
     int consonantCount = 0;
-    for (int i = 0; i <= inputString.size()-1; i++) {
+    for (int i = 0; i < inputString.size(); i++) {
         if (isConsonant(inputString[i])) {
             consonantCount++;
         }
