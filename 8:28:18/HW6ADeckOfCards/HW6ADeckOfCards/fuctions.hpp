@@ -20,7 +20,13 @@ struct card {
     int rank;
 };
 
+
+//input: none
+//output: vector of 52 "card" structs with "card"s defined in 4 suits of 13 cards
 std::vector<card> deck();
+
+//input: vector of cards (designed for a deck)
+//output: prints each card's characteristics to the console, exchanging appropriate ranks for face card names
 void printdeck(std::vector<card> inputDeck);
 
 #endif /* fuctions_hpp */

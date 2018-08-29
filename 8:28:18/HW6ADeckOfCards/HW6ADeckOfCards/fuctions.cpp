@@ -55,7 +55,3 @@ void printdeck(std::vector<card> inputDeck) {
         }
     }
 }
-
-//std::vector<card> decklist = deck();
-//for(int i = 0; i < decklist.size(); i++) {
-//    std::cout << decklist[i].suit << " " << decklist[i].rank << std::endl;
