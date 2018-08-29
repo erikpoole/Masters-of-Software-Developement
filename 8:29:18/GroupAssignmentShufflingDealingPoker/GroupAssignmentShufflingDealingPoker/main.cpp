@@ -32,12 +32,17 @@ int main(int argc, const char * argv[]) {
 //    shuffleDeck(currentDeck);
 //    printDeck(currentDeck);
     
-//    std::cout << isFlush(flush) << std::endl;
-//    std::cout << isFlush(straight) << std::endl;
+    std::cout << isFlush(flush) << std::endl;
+    std::cout << isFlush(straight) << std::endl;
     
     std::cout << isStraight(flush) << std::endl;
     std::cout << isStraight(straight) << std::endl;
     
+    std::cout << isStraightFlush(straight) << std::endl;
+    std::cout << isStraightFlush(straightFlush) << std::endl;
+   
+    std::cout << isRoyalFlush(straightFlush) << std::endl;
+    std::cout << isRoyalFlush(royalFlush) << std::endl;
     
 }
 

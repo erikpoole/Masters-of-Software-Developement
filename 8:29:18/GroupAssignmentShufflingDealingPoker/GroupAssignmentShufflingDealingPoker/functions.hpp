@@ -40,4 +40,11 @@ bool isFlush(const std::vector<card>& inputDeck);
 
 bool isStraight(const std::vector<card>& inputDeck);
 
+
+bool isStraightFlush(const std::vector<card>& inputDeck);
+
+
+bool isRoyalFlush(const std::vector<card>& inputDeck);
+
+
 #endif /* fuctions_hpp */

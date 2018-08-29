@@ -15,6 +15,7 @@
 
 #include "functions.hpp"
 
+
 std::vector<card> deck() {
     card currentCard = {};
     std::vector<card> listOfCards;
@@ -35,6 +36,7 @@ std::vector<card> deck() {
     }
     return listOfCards;
 }
+
 
 void printDeck(const std::vector<card>& inputDeck) {
     for(int i = 0; i < inputDeck.size(); i++) {
@@ -58,6 +60,7 @@ void printDeck(const std::vector<card>& inputDeck) {
         }
     }
 }
+
 
 void shuffleDeck(std::vector<card>& inputDeck) {
     int currentLocation = 0;
@@ -89,67 +92,49 @@ bool isFlush(const std::vector<card>& inputDeck) {
     return flush;
 }
 
-/*
+
 bool isStraight(const std::vector<card>& inputDeck) {
-    std::vector<int> sortedHand;
-    int highestSortedHand = 0;
-    int lowValue = inputDeck[0].rank;
-    for(int i = 0; i<5; i++) {
-        if (inputDeck[i].rank < lowValue) {
-            lowValue = inputDeck[i].rank;
-        }
-        sortedHand.push_back(lowValue);
-        highestSortedHand = sortedHand.back();
-        std::cout << sortedHand.back() << std::endl;
+    //creates "unsortedHand" vector based off of input rank values of inputDeck
+    std::vector<int> unsortedHand;
+    for(int i = 0; i < 5; i++) {
+        unsortedHand.push_back(inputDeck[i].rank);
     }
 
+    //nested loop to compare each value in "unsortedHand" against all others, then take the lowest value and place it into a new vector "sortedHand", then replace lowest value with '9999', an arbitrarily high value.  this sorts the vector from lowest value to highest
+    std::vector<int> sortedHand;
+    int smallestValue = unsortedHand[0];
+    int smallestLocation = 0;
+    for (int i = 0; i < unsortedHand.size(); i++) {
+        for (int j = 0; j < unsortedHand.size(); j++) {
+            if (unsortedHand[j] < smallestValue) {
+                smallestValue = unsortedHand[j];
+                smallestLocation = j;
+            }
+        }
+        sortedHand.push_back(smallestValue);
+        unsortedHand[smallestLocation] = 9999;
+        smallestValue = 9999;
+    }
     
-    for(int i = 0; i<5; i++) {
+    //checks each value in "sortedHand" against the next in order and will return true if every value is exactly one higher than the next
+    for (int i = 0; i < sortedHand.size() - 1; i++) {
         if (sortedHand[i] + 1 != sortedHand[i+1]) {
             return false;
         }
     }
     return true;
 }
-*/
 
-/*
-bool isStraight(const std::vector<card>& inputDeck) {
-    bool tester1 = false;
-    bool tester2 = false;
-    
-    int lowValue
-    
-    for(int i = 0; i<5; i++) {
-        for(int j = 0; j<5; j++) {
-            if (inputDeck[i].rank + 1 == inputDeck[j].rank) {
-                tester2 = true;
-            }
-        }
-    }
+
+bool isStraightFlush(const std::vector<card>& inputDeck) {
+    return (isFlush(inputDeck) && isStraight(inputDeck));
 }
-*/
 
-bool isStraight(const std::vector<card>& inputDeck) {
-    std::vector<int> unsortedHand;
-    for(int i = 0; i < 5; i++) {
-        unsortedHand.push_back(inputDeck[i].rank);
-    }
-    std::vector<int> sortedHand;
-    int smallestValue = 15;
-    int smallestLocation;
-    for (int i = 0; i < unsortedHand.size(); i++) {
-        for (int i = 0; i < unsortedHand.size(); i++) {
-            if (unsortedHand[i] < smallestValue) {
-                smallestValue = unsortedHand[i];
-                smallestLocation = i;
-            }
+bool isRoyalFlush(const std::vector<card>& inputDeck) {
+    for (card individualCard : inputDeck) {
+        if (individualCard.rank < 10) {
+            return false;
         }
-        unsortedHand[smallestLocation] = 99;
-        sortedHand.push_back(smallestValue);
     }
-    for (int i = 0; i < sortedHand.size(); i++) {
-            std::cout << sortedHand[i] << std::endl;
-    }
-    return true;
+    return (isStraightFlush(inputDeck));
 }
