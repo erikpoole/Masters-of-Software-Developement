@@ -31,20 +31,25 @@ std::vector<card> deck();
 //output: prints each card's characteristics to the console, exchanging appropriate ranks for face card names
 void printDeck(const std::vector<card>& inputDeck);
 
-
+//input: vector of cards (designed for a deck)
+//output: none
+//shuffles the location of each card const in the vector
 void shuffleDeck(std::vector<card>& inputdeck);
 
-
+//check to see if the first five cards of an input are all the same suit
 bool isFlush(const std::vector<card>& inputDeck);
 
-
+//check to see if the first five cards can be arranged in ascending order
 bool isStraight(const std::vector<card>& inputDeck);
 
-
+//check to see if the first five cards are the same suit and in ascending order
 bool isStraightFlush(const std::vector<card>& inputDeck);
 
-
+//check to see if the first five cards are the same suit, ascending order, and all greater than 9
 bool isRoyalFlush(const std::vector<card>& inputDeck);
+
+//check to see if exactly three of five cards are the same rank and two of the three cards are a different rank
+bool isFullHouse(const std::vector<card>& inputDeck);
 
 
 #endif /* fuctions_hpp */

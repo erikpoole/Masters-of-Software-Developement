@@ -24,14 +24,46 @@ int main(int argc, const char * argv[]) {
     
     std::vector<card> royalFlush = {{"Diamonds", 10},{"Diamonds", 11}, {"Diamonds", 12}, {"Diamonds", 13}, {"Diamonds", 14}};
     
-    std::vector<card> FullHouse = {{"Diamonds", 5},{"Diamonds", 5}, {"Diamonds", 5}, {"Spades", 13}, {"Spades", 13}};
+    std::vector<card> FullHouse = {{"Diamonds", 5},{"Clubs", 13}, {"Clubs", 5}, {"Spades", 13}, {"Hearts", 13}};
     
-//    printDeck(deck());
+    //printDeck(deck());
     
-//    std::vector<card> currentDeck = deck();
-//    shuffleDeck(currentDeck);
-//    printDeck(currentDeck);
+    std::vector<card> currentDeck = deck();
+    double shuffleCount = 1000000;
+    int flushCount = 0;
+    int straightCount = 0;
+    int straightFlushCount = 0;
+    int royalFlushCount = 0;
+    int fullHouseCount = 0;
+    for (int i = 1; i < shuffleCount; i++) {
+        shuffleDeck(currentDeck);
+        
+        if (isFlush(currentDeck)) {
+            flushCount++;
+        }
+        if (isStraight(currentDeck)) {
+            straightCount++;
+        }
+        if (isStraightFlush(currentDeck)) {
+            straightFlushCount++;
+        }
+        if (isRoyalFlush(currentDeck)) {
+            royalFlushCount++;
+        }
+        if (isFullHouse(currentDeck)) {
+            fullHouseCount++;
+        }
+    }
     
+    std::cout << "Proportion of Flushes: " << flushCount/shuffleCount << std::endl;
+    std::cout << "Proportion of Straights: " << straightCount/shuffleCount << std::endl;
+    std::cout << "Proportion of Straight Flushes: " << straightFlushCount/shuffleCount << std::endl;
+    std::cout << "Proportion of Royal Flushes: " << royalFlushCount/shuffleCount << std::endl;
+    std::cout << "Proportion of Full Houses: " << fullHouseCount/shuffleCount << std::endl;
+    
+
+    
+/*
     std::cout << isFlush(flush) << std::endl;
     std::cout << isFlush(straight) << std::endl;
     
@@ -43,6 +75,9 @@ int main(int argc, const char * argv[]) {
    
     std::cout << isRoyalFlush(straightFlush) << std::endl;
     std::cout << isRoyalFlush(royalFlush) << std::endl;
-    
+ 
+    std::cout << isFullHouse(royalFlush) << std::endl;
+    std::cout << isFullHouse(FullHouse) << std::endl;
+*/
 }
 

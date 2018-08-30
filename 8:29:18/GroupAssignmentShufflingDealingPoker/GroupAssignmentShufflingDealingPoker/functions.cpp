@@ -67,16 +67,14 @@ void shuffleDeck(std::vector<card>& inputDeck) {
     for(int i = 0; i < inputDeck.size(); i++) {
         int numberVerifier = -1;
         while (numberVerifier == -1) {
-            int randomNumber = rand();
-            if (randomNumber <= 51) {
-                numberVerifier++;
-                card oldCard = inputDeck[currentLocation];
-                card nextCard = inputDeck[randomNumber];
-                inputDeck[currentLocation] = nextCard;
-                inputDeck[randomNumber] = oldCard;
-                currentLocation = randomNumber;
-                std::cout << currentLocation << std::endl;
-            }
+            int randomNumber = rand() % 52;
+            numberVerifier++;
+            card oldCard = inputDeck[currentLocation];
+            card nextCard = inputDeck[randomNumber];
+            inputDeck[currentLocation] = nextCard;
+            inputDeck[randomNumber] = oldCard;
+            currentLocation = randomNumber;
+            //std::cout << currentLocation << std::endl;
         }
     }
 }
@@ -130,11 +128,38 @@ bool isStraightFlush(const std::vector<card>& inputDeck) {
     return (isFlush(inputDeck) && isStraight(inputDeck));
 }
 
+
 bool isRoyalFlush(const std::vector<card>& inputDeck) {
-    for (card individualCard : inputDeck) {
-        if (individualCard.rank < 10) {
+    for (int i = 0; i < 5; i++) {
+        if (inputDeck[i].rank < 10) {
             return false;
         }
     }
     return (isStraightFlush(inputDeck));
+}
+
+
+bool isFullHouse(const std::vector<card>& inputDeck) {
+    int firstCardRank = inputDeck[0].rank;
+    int firstCardCount = 0;
+    for (int i = 0; i < 5; i++) {
+        if (inputDeck[i].rank == firstCardRank) {
+            firstCardCount++;
+        }
+    }
+    
+    int secondCardRank;
+    for (int i = 0; i < 5; i++) {
+        if (inputDeck[i].rank != firstCardRank) {
+            secondCardRank = inputDeck[i].rank;
+            break;
+        }
+    }
+    int secondCardCount = 0;
+    for (int i = 0; i < 5; i++) {
+        if (inputDeck[i].rank == secondCardRank) {
+            secondCardCount++;
+        }
+    }
+    return (firstCardCount + secondCardCount == 5);
 }
