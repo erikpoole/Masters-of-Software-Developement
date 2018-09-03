@@ -24,6 +24,7 @@ dataPointsAndTitle fileReader() {
     std::vector<dataPoint> allDataPoints;
 
     inputDocument >> title;
+    std::cout << title;
     while (!inputDocument.eof()) {
         inputDocument >> transferDataPoint.month;
         inputDocument >> transferDataPoint.year;
@@ -106,6 +107,14 @@ std::vector<dataPoint> findMedian(const std::vector<dataPoint>& inputDataPoints)
     }
     return medianOutput;
 }
+
+
+
+
+
+
+
+
 
 
 
