@@ -5,6 +5,7 @@
 //  Created by Erik Poole on 9/4/18.
 //  Copyright © 2018 ErikPoole. All rights reserved.
 //
+// Worked with Quincy Coopland
 
 #ifndef Functions_hpp
 #define Functions_hpp

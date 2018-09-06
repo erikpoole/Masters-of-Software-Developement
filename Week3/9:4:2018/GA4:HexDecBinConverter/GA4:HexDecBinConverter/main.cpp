@@ -5,6 +5,8 @@
 //  Created by Erik Poole on 9/4/18.
 //  Copyright © 2018 ErikPoole. All rights reserved.
 //
+// Worked with Quincy Coopland
+
 
 #include <iostream>
 #include <string>

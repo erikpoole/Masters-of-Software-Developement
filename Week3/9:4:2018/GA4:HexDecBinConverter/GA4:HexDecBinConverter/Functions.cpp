@@ -5,6 +5,7 @@
 //  Created by Erik Poole on 9/4/18.
 //  Copyright © 2018 ErikPoole. All rights reserved.
 //
+// Worked with Quincy Coopland
 
 #include <iostream>
 #include <string>
@@ -172,7 +173,7 @@ std::string intToHexString(int input) {
         } else {
             charValue = intValue + '0';
         }
-        negFixInput -= (intValue * pow(16,i));
+        negFixInput -= (intValue * pow(16, i));
         outputString.push_back(charValue);
     }
     
