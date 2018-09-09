@@ -68,7 +68,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "gcd.s"
+            argument = "factorial.s"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

@@ -25,8 +25,10 @@ int main(int argc, const char * argv[]) {
 
     vector<argument> allArguments = getArguments(argv[1]);
 
-    string outputaddon = "Test";
-    ofstream outputFile(argv[1] + outputaddon);
+    string fileName = argv[1];
+    fileName = fileName.substr(0, fileName.rfind('.'));
+    fileName = fileName + "_test.bin";
+    ofstream outputFile(fileName);
     for (argument oneArgument : allArguments) {
         uint16_t twoByteOutput = 0;
         

@@ -74,14 +74,25 @@ void opcodeTranslator(const argument& inputArgument, uint16_t& twoByte){
 //pass by reference, twoByteValue changed in main stack
 //magic number 10 is positioning the opcode at correct location
 void lineTranslator(const argument& inputArgument, uint16_t& twoByte){
+    bool isNegative = false;
     for (int i = 0; i < inputArgument.remainingLine.size(); i++) {
         if (inputArgument.remainingLine[i] == '$') {
-            int mask = inputArgument.remainingLine[i+1] - '0';
+            uint16_t mask = inputArgument.remainingLine[i+1] - '0';
             mask <<= (10 - i);
             twoByte |= mask;
             i++;
+        } else if (inputArgument.remainingLine[i] == '-') {
+            isNegative = true;
         } else {
-            int mask = inputArgument.remainingLine[i] - '0';
+            string stringImmediate = inputArgument.remainingLine.substr(i);
+            int intImmediate = 0;
+            for (int i = 0; i < stringImmediate.size(); i++) {
+                intImmediate += stringImmediate[i] - '0' * pow(10, (stringImmediate.size() -i -1));
+            }
+            uint8_t mask = intImmediate;
+            if (isNegative) {
+                mask = ~mask+1;
+            }
             twoByte |= mask;
         }
     }
