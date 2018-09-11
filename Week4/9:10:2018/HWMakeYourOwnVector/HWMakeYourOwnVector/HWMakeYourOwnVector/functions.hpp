@@ -27,4 +27,6 @@ void popBack(homemadeVector& inputVector);
 int get(const homemadeVector& inputVector, int index);
 void set(homemadeVector& inputVector, const int& index, const int& newValue);
 
+homemadeVector growVector(homemadeVector& inputVector);
+
 #endif /* functions_hpp */
