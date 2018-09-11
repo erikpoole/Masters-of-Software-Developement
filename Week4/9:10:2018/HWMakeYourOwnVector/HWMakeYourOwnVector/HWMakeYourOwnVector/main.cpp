@@ -51,4 +51,7 @@ int main(int argc, const char * argv[]) {
     set(testVector, 2, 100);
     cout << endl;
     
+    delete testVector.vectorPointer;
+    testVector.vectorPointer = nullptr;
+    
 }
