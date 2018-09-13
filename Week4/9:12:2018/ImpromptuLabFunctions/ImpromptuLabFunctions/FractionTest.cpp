@@ -199,16 +199,14 @@ void TestPlus()
     
     fraction f4(-1, 5);
     fraction f5(1, 5);
-    
-    fraction f6 = f4.plus(f5);
+    fraction f6 = f4 + f5;
     result = f6.toString();
     Test("Addition of negative", "0/1", result);
     
     fraction f7(-1, 5);
     fraction f8(-1, 4);
-    
-    fraction f9 = f7.plus(f8);
-    result = f9.toString();
+    f7 += f8;
+    result = f7.toString();
     Test("Addition of double negative", "-9/20", result);
 }
 
@@ -216,13 +214,13 @@ void TestMinus() {
     std::string result = "";
     fraction f1(4, 6);
     fraction f2(3, 4);
-    fraction f3 = f1.minus(f2);
-    result = f3.toString();
+    f1 -= f2;
+    result = f1.toString();
     Test("Subtraction of reduced", "-1/12", result);
     
     fraction f4(-1, 5);
     fraction f5(1, 5);
-    fraction f6 = f4.minus(f5);
+    fraction f6 = f4 - f5;
     result = f6.toString();
     Test("Subtraction of negative", "-2/5", result);
     
@@ -237,13 +235,13 @@ void TestTimes() {
     std::string result = "";
     fraction f1(4, 6);
     fraction f2(3, 4);
-    fraction f3 = f1.times(f2);
-    result = f3.toString();
+    f1 *= f2;
+    result = f1.toString();
     Test("Muliplication of reduced", "1/2", result);
     
     fraction f4(-1, 5);
     fraction f5(1, 5);
-    fraction f6 = f4.times(f5);
+    fraction f6 = f4 * f5;
     result = f6.toString();
     Test("Muliplication of negative", "-1/25", result);
     
@@ -258,13 +256,13 @@ void TestDividedBy() {
     std::string result = "";
     fraction f1(4, 6);
     fraction f2(3, 4);
-    fraction f3 = f1.dividedBy(f2);
-    result = f3.toString();
+    f1 /= f2;
+    result = f1.toString();
     Test("Division of reduced", "8/9", result);
     
     fraction f4(-1, 5);
     fraction f5(1, 5);
-    fraction f6 = f4.dividedBy(f5);
+    fraction f6 = f4 / f5;
     result = f6.toString();
     Test("Division of negative", "-1/1", result);
 
@@ -274,6 +272,108 @@ void TestDividedBy() {
     result = f9.toString();
     Test("Division of double negative", "4/5", result);
 }
+
+void TestEquivalency() {
+    std::string result = "";
+    fraction f1(-4, 6);
+    fraction f2(4, -6);
+    bool boolResult = (f1 == f2);
+    if (boolResult == true) {
+        result = "True";
+    } else {
+        result = "False";
+    }
+    Test("Equivalent Fractions", "True", result);
+
+    fraction f3(-4, 6);
+    fraction f4(4, 6);
+    boolResult = (f3 == f4);
+    if (boolResult == true) {
+        result = "True";
+    } else {
+        result = "False";
+    }
+    Test("Non-Equivalent Fractions", "False", result);
+}
+
+void TestNonEquivalency() {
+    std::string result = "";
+    fraction f1(-4, 6);
+    fraction f2(4, -6);
+    bool boolResult = (f1 != f2);
+    if (boolResult == true) {
+        result = "True";
+    } else {
+        result = "False";
+    }
+    Test("Equivalent Fractions", "False", result);
+    
+    fraction f3(-4, 6);
+    fraction f4(4, 6);
+    boolResult = (f3 != f4);
+    if (boolResult == true) {
+        result = "True";
+    } else {
+        result = "False";
+    }
+    Test("Non-Equivalent Fractions", "True", result);
+}
+
+void TestGreaterLessThan() {
+    std::string result = "";
+    
+    fraction f1(-4, 6);
+    fraction f2(4, -6);
+    bool boolResult = (f1 < f2);
+    if (boolResult == true) {
+        result = "True";
+    } else {
+        result = "False";
+    }
+    Test("< on Equal", "False", result);
+    
+    fraction f3(-4, 6);
+    fraction f4(4, -6);
+     boolResult = (f3 >= f4);
+    if (boolResult == true) {
+        result = "True";
+    } else {
+        result = "False";
+    }
+    Test(">= on Equal", "True", result);
+    
+    fraction f5(4, 6);
+    fraction f6(2, 6);
+    boolResult = (f5 > f6);
+    if (boolResult == true) {
+        result = "True";
+    } else {
+        result = "False";
+    }
+    Test("> on Inequal", "True", result);
+    
+    fraction f7(4, 6);
+    fraction f8(2, 6);
+    boolResult = (f7 <= f8);
+    if (boolResult == true) {
+        result = "True";
+    } else {
+        result = "False";
+    }
+    Test(">= on Equal", "False", result);
+
+}
+
+void UnaryMinus() {
+    std::string result = "";
+    
+    fraction f1(-4, 6);
+    f1 = -f1;
+    result = f1.toString();
+    Test("Unary Minus", "2/3", result);
+}
+    
+    
 
 void TestToDouble()
 {
@@ -335,6 +435,12 @@ int main()
     TestMinus();
     TestTimes();
     TestDividedBy();
+    TestEquivalency();
+    TestNonEquivalency();
+    TestGreaterLessThan();
+    UnaryMinus();
     
 }
 
+
+//Rule of Three Explanation:  We don't need rule of three here because fractions aren't dealing with arrays.  Because of that we didn't need to overload operator "=" or create a copy constructor or destructor.
