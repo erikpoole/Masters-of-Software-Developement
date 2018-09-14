@@ -155,7 +155,11 @@ int main(int argc, const char * argv[]) {
     
     cout << "All assert tests passed" << endl;
     
-    
+    homemadeVector<std::string> sortTestString(2);
+    sortTestString.pushBack("Hello My Darling");
+    sortTestString.pushBack("Hello My Baby");
+    sortTestString.sortVector();
+    cout << sortTestString[1] << endl;
     
     
     
