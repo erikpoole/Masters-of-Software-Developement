@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		62639236215149A000C3DF2D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62639235215149A000C3DF2D /* main.cpp */; };
+		6263923F21514A1100C3DF2D /* functions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6263923C21514A1000C3DF2D /* functions.cpp */; };
+		6263924021514A1100C3DF2D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6263923E21514A1100C3DF2D /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +25,9 @@
 
 /* Begin PBXFileReference section */
 		62639232215149A000C3DF2D /* STL-ify your vector */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "STL-ify your vector"; sourceTree = BUILT_PRODUCTS_DIR; };
-		62639235215149A000C3DF2D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		6263923C21514A1000C3DF2D /* functions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = functions.cpp; sourceTree = "<group>"; };
+		6263923D21514A1000C3DF2D /* functions.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = functions.hpp; sourceTree = "<group>"; };
+		6263923E21514A1100C3DF2D /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +60,9 @@
 		62639234215149A000C3DF2D /* STL-ify your vector */ = {
 			isa = PBXGroup;
 			children = (
-				62639235215149A000C3DF2D /* main.cpp */,
+				6263923C21514A1000C3DF2D /* functions.cpp */,
+				6263923D21514A1000C3DF2D /* functions.hpp */,
+				6263923E21514A1100C3DF2D /* main.cpp */,
 			);
 			path = "STL-ify your vector";
 			sourceTree = "<group>";
@@ -118,7 +123,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				62639236215149A000C3DF2D /* main.cpp in Sources */,
+				6263924021514A1100C3DF2D /* main.cpp in Sources */,
+				6263923F21514A1100C3DF2D /* functions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

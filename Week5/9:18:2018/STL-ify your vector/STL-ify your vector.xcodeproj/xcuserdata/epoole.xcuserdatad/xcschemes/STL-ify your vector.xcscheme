@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "62977A6D214C2B1D009F4A78"
-               BuildableName = "HWProfilingAndOptimizingCode"
-               BlueprintName = "HWProfilingAndOptimizingCode"
-               ReferencedContainer = "container:HWProfilingAndOptimizingCode.xcodeproj">
+               BlueprintIdentifier = "62639231215149A000C3DF2D"
+               BuildableName = "STL-ify your vector"
+               BlueprintName = "STL-ify your vector"
+               ReferencedContainer = "container:STL-ify your vector.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,25 +32,24 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "62977A6D214C2B1D009F4A78"
-            BuildableName = "HWProfilingAndOptimizingCode"
-            BlueprintName = "HWProfilingAndOptimizingCode"
-            ReferencedContainer = "container:HWProfilingAndOptimizingCode.xcodeproj">
+            BlueprintIdentifier = "62639231215149A000C3DF2D"
+            BuildableName = "STL-ify your vector"
+            BlueprintName = "STL-ify your vector"
+            ReferencedContainer = "container:STL-ify your vector.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       enableAddressSanitizer = "YES"
       enableASanStackUseAfterReturn = "YES"
       enableUBSanitizer = "YES"
       launchStyle = "0"
-      useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "/Users/epoole/Box Sync/erikpoole/Week4/9:14:2018/HWProfilingAndOptimizingCode/HWProfilingAndOptimizingCode"
+      useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       stopOnEveryUBSanitizerIssue = "YES"
@@ -60,10 +59,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "62977A6D214C2B1D009F4A78"
-            BuildableName = "HWProfilingAndOptimizingCode"
-            BlueprintName = "HWProfilingAndOptimizingCode"
-            ReferencedContainer = "container:HWProfilingAndOptimizingCode.xcodeproj">
+            BlueprintIdentifier = "62639231215149A000C3DF2D"
+            BuildableName = "STL-ify your vector"
+            BlueprintName = "STL-ify your vector"
+            ReferencedContainer = "container:STL-ify your vector.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -79,10 +78,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "62977A6D214C2B1D009F4A78"
-            BuildableName = "HWProfilingAndOptimizingCode"
-            BlueprintName = "HWProfilingAndOptimizingCode"
-            ReferencedContainer = "container:HWProfilingAndOptimizingCode.xcodeproj">
+            BlueprintIdentifier = "62639231215149A000C3DF2D"
+            BuildableName = "STL-ify your vector"
+            BlueprintName = "STL-ify your vector"
+            ReferencedContainer = "container:STL-ify your vector.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
