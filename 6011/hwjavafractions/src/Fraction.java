@@ -33,7 +33,7 @@ public class Fraction {
 	}
 	
 	//Constructor
-	public Fraction(long n, long d) {
+	public Fraction(long n, long d) throws Exception {
 		numerator = n;
 		denominator = d;
 		
@@ -43,11 +43,16 @@ public class Fraction {
 			numerator *= -1;
 			denominator *= -1;
 		}
+		
+		if (denominator == 0) {
+			throw new Exception("Denominator is Zero");
+		}
+		
 	}
 	
 	
 	
-	public Fraction plus(Fraction rhs) {
+	public Fraction plus(Fraction rhs) throws Exception {
 		long newNumer = (numerator * rhs.denominator) + (rhs.numerator * denominator);
 		long newDenom = (denominator * rhs.denominator);
 		Fraction newFraction = new Fraction (newNumer, newDenom);
@@ -55,7 +60,7 @@ public class Fraction {
 		return newFraction;
 	}
 	
-	public Fraction minus(Fraction rhs) {
+	public Fraction minus(Fraction rhs) throws Exception {
 		long newNumer = (numerator * rhs.denominator) - (rhs.numerator * denominator);
 		long newDenom = (denominator * rhs.denominator);
 		Fraction newFraction = new Fraction (newNumer, newDenom);
@@ -63,7 +68,7 @@ public class Fraction {
 		return newFraction;
 	}
 	
-	public Fraction times(Fraction rhs) {
+	public Fraction times(Fraction rhs) throws Exception {
 		long newNumer = (numerator * rhs.numerator);
 		long newDenom = (denominator * rhs.denominator);
 		Fraction newFraction = new Fraction (newNumer, newDenom);
@@ -71,7 +76,7 @@ public class Fraction {
 		return newFraction;
 	}
 	
-	public Fraction dividedBy(Fraction rhs) {
+	public Fraction dividedBy(Fraction rhs) throws Exception {
 		Fraction reciprocalFraction = rhs.reciprocal();
 		long newNumer = (numerator * reciprocalFraction.numerator);
 		long newDenom = (denominator * reciprocalFraction.denominator);
@@ -82,7 +87,7 @@ public class Fraction {
 	
 	
 	
-	public Fraction reciprocal() {
+	public Fraction reciprocal() throws Exception {
 		long newNumer = denominator;
 		long newDenom = numerator;
 		Fraction newFraction = new Fraction(newNumer, newDenom);
