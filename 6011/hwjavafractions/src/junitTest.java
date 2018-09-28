@@ -8,7 +8,7 @@ class junitTest {
 	public void test() throws Exception {
 		
 			Fraction test0 = new Fraction();
-			Fraction testHalf = new Fraction(1,2);
+			Fraction testHalf = new Fraction(1,0);
 			Fraction test4 = new Fraction(40, 10);
 			Fraction testNeg = new Fraction(9, -10);
 		
