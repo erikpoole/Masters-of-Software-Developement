@@ -22,6 +22,7 @@ public class Main {
 				System.out.println("Bad Request Received");
 				myserver.socket.close();
 			}
+			System.out.println();
 		}
 
 	}
