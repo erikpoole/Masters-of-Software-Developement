@@ -1,22 +1,27 @@
 package hwBasicHTTPServer;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class Main {
 
 	public static void main(String[] args) throws Exception {
 
-		try {
-			Server server = new Server();
-			server.openServer(8080);
+		Server myserver = new Server(8080);
+		while (true) {
+			myserver.socket = myserver.listen();
+			try {
+				File file = myserver.httpRequest();
+				myserver.httpResponse(file);
+				myserver.socket.close();
 
-		} catch (FileNotFoundException e) {
-//			outputHeader.println("HTTP/1.1 404 FILE NOT FOUND");
-//			outputHeader.println("Content-Length: 0");
-//			outputHeader.println();
-//			outputHeader.flush();
-//			input.close();
-
+			} catch (FileNotFoundException e) {
+				myserver.respond404();
+			} catch (IllegalArgumentException | IOException e) {
+				System.out.println("Bad Request Received");
+				myserver.socket.close();
+			}
 		}
 
 	}
