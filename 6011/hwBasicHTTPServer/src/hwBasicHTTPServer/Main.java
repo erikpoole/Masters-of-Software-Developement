@@ -3,6 +3,7 @@ package hwBasicHTTPServer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 public class Main {
 
@@ -18,9 +19,8 @@ public class Main {
 
 			} catch (FileNotFoundException e) {
 				myserver.respond404();
-			} catch (IllegalArgumentException | IOException e) {
-				System.out.println("Bad Request Received");
-				myserver.socket.close();
+			} catch (BadRequestException | IOException | NoSuchElementException e) {
+				myserver.respond400();
 			}
 			System.out.println();
 		}
