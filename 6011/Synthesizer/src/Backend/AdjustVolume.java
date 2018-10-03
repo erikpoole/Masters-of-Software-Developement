@@ -1,3 +1,4 @@
+package Backend;
 
 import javax.sound.sampled.LineUnavailableException;
 
@@ -5,9 +6,7 @@ public class AdjustVolume implements Filter {
 
 	private double scale;
 
-	// store source
-	// instead/////////////////////////////////////////////////////////////////////
-	private AudioClip audioClip;
+	private Source source;
 
 	public AdjustVolume(double inputScale) {
 		scale = inputScale;
@@ -15,15 +14,19 @@ public class AdjustVolume implements Filter {
 
 	@Override
 	public void connectInput(Source input) throws LineUnavailableException {
-		audioClip = input.getAudioClip();
-		for (int i = 0; i < audioClip.getByteArray().length; i++) {
-			audioClip.getByteArray()[i] *= scale;
-		}
+		source = input;
 	}
 
 	@Override
 	public AudioClip getAudioClip() {
-		return audioClip;
+		for (int i = 0; i < source.getAudioClip().getByteArray().length; i++) {
+			source.getAudioClip().getByteArray()[i] *= scale;
+		}
+		return source.getAudioClip();
+	}
+
+	public void setScale(int input) {
+		scale = input;
 	}
 
 }

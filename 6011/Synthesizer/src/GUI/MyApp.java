@@ -1,16 +1,20 @@
+package GUI;
 
+import Backend.AudioClip;
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class GUIMain extends Application {
+public class MyApp extends Application {
 
 	//make generic eventually
-	private GUISineWave finalSineWave;
+	private SineWaveWidget finalSineWave;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -20,21 +24,26 @@ public class GUIMain extends Application {
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Synthesizer");
 
-		PlayButton playButton = new PlayButton(this);
+		GUIPlayButton playButton = new GUIPlayButton(this);
 		HBox bottom = new HBox();
 		bottom.getChildren().add(playButton.playButton);
 
-		GUISineWave guiSineWave = new GUISineWave();
+		Pane pane = new Pane();
+		SineWaveWidget sineWaveWidget = new SineWaveWidget();
+		AdjustVolumeWidget  adjustVolumeWidget = new AdjustVolumeWidget();
+		pane.getChildren().add(sineWaveWidget.widget);
+		pane.getChildren().add(adjustVolumeWidget.widget);
 
+		
 		BorderPane borderPane = new BorderPane();
-		borderPane.setCenter(guiSineWave.sineElement);
+		borderPane.setCenter(pane);
 		borderPane.setBottom(bottom);
 		borderPane.setPadding(new Insets(10));
 
-		Scene scene = new Scene(borderPane, 500, 500, Color.PURPLE);
+		Scene scene = new Scene(borderPane, 500, 500);
 
 		//make generic evenutally
-		finalSineWave = guiSineWave;
+		finalSineWave = sineWaveWidget;
 		stage.setScene(scene);
 		stage.show();
 	}

@@ -1,15 +1,15 @@
+package Backend;
 
 public class SineWave implements Source {
 
 	private AudioClip audioClip;
-	public int frequency;
+	private int frequency;
 
-	SineWave(int input) {
+	public SineWave(int input) {
 		frequency = input;
 		audioClip = new AudioClip();
 
 	}
-
 
 	public AudioClip getAudioClip() {
 		for (int i = 0; i < audioClip.getSampleRate(); i++) {
@@ -18,7 +18,7 @@ public class SineWave implements Source {
 		}
 		return audioClip;
 	}
-	
+
 	public void setFrequency(int input) {
 		frequency = input;
 	}
