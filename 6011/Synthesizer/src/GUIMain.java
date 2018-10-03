@@ -9,16 +9,18 @@ import javafx.stage.Stage;
 
 public class GUIMain extends Application {
 
+	//make generic eventually
+	private GUISineWave finalSineWave;
+	
 	public static void main(String[] args) {
 		launch(args);
-
 	}
 
 	@Override
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Synthesizer");
 
-		PlayButton playButton = new PlayButton();
+		PlayButton playButton = new PlayButton(this);
 		HBox bottom = new HBox();
 		bottom.getChildren().add(playButton.playButton);
 
@@ -31,8 +33,13 @@ public class GUIMain extends Application {
 
 		Scene scene = new Scene(borderPane, 500, 500, Color.PURPLE);
 
+		//make generic evenutally
+		finalSineWave = guiSineWave;
 		stage.setScene(scene);
 		stage.show();
 	}
-
+	
+	public AudioClip getFinalAudioClip() {
+		return finalSineWave.getAudioClip();
+	}
 }
