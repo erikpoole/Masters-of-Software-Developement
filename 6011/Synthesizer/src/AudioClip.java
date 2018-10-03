@@ -1,3 +1,5 @@
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 public class AudioClip {
@@ -51,14 +53,19 @@ public class AudioClip {
 		return byteArray;
 	}
 	
-	public static void playSound(Clip inputClip) {
+	public static void playSound(AudioClip inputClip) throws Exception {
+		
+		Clip clip = AudioSystem.getClip();
+		AudioFormat format16 = new AudioFormat((float) inputClip.getSampleRate(), 16, 1, true, false);
+		clip.open(format16, inputClip.getByteArray(), 0, inputClip.getByteArray().length);
+
 		System.out.println("About to Play");
-		inputClip.start();
+		clip.start();
 		// hangs for required amount of time for audio to play
-		while (inputClip.getFramePosition() < inputClip.getFrameLength() || inputClip.isActive() || inputClip.isRunning()) {
+		while (clip.getFramePosition() < clip.getFrameLength() || clip.isActive() || clip.isRunning()) {
 		}
 		System.out.println("Finished");
-		inputClip.close();
+		clip.close();
 	}
 
 }

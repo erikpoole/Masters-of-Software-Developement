@@ -1,9 +1,6 @@
 
 import java.util.ArrayList;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 
 public class Adder implements Mixer {
@@ -25,15 +22,6 @@ public class Adder implements Mixer {
 				audioClip.getByteArray()[i] += (singleClip.getByteArray()[i] / divisor);
 			}
 		}
-	}
-
-	@Override
-	public Clip getSound() throws LineUnavailableException {
-		Clip clip = AudioSystem.getClip();
-		AudioFormat format16 = new AudioFormat((float) audioClip.getSampleRate(), 16, 1, true, false);
-		clip.open(format16, audioClip.getByteArray(), 0, audioClip.getByteArray().length);
-
-		return clip;
 	}
 
 	@Override

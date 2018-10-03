@@ -1,18 +1,10 @@
-import javax.sound.sampled.Clip;
 
-import javafx.beans.value.ChangeListener;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
 import javafx.scene.control.Slider;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderStroke;
 
 public class GUISineWave {
 
@@ -24,6 +16,7 @@ public class GUISineWave {
 		sineElement.setStyle("-fx-border-color: black");
 
 		Label label = new Label("Sinewave Frequency");
+		//warning - should be accessed in static way?
 		sineElement.setAlignment(label, Pos.CENTER);
 
 		Slider slider = new Slider(200, 2000, 500);

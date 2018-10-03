@@ -1,7 +1,4 @@
 
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -19,19 +16,18 @@ public class PlayButton {
 			@Override
 			public void handle(ActionEvent event) {
 				SineWave sineWave = new SineWave(inputFrequency);
-				Clip clip;
 
-				// Ask Ben: any way to get rid of try/catch block here?
+				// Ask Ben: Way to avoid try catch here?
 				try {
-					clip = sineWave.getSound();
-					AudioClip.playSound(clip);
-				} catch (LineUnavailableException e) {
+					AudioClip.playSound(sineWave.getAudioClip());
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+
 			}
 		});
-		
+
 	}
-	
+
 }
