@@ -30,7 +30,7 @@ public class SineWaveWidget extends AbSourceWidget {
 			}
 		});
 
-		widget.setBottom(slider);
+		widget.setCenter(slider);
 
 	}
 

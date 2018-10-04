@@ -20,7 +20,6 @@ public class GUIPlayButton {
 				try {
 					AudioClip.playSound(guiMain.getFinalAudioClip());
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 

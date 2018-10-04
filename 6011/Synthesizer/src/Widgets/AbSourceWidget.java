@@ -1,7 +1,12 @@
 package Widgets;
 
+import Backend.AudioClip;
+import Backend.Source;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -11,6 +16,7 @@ public abstract class AbSourceWidget {
 
 	public BorderPane widget;
 	public Line cord;
+	public Button playButton;
 
 	public Circle outputJack;
 
@@ -19,7 +25,7 @@ public abstract class AbSourceWidget {
 
 	protected AbSourceWidget() {
 		widget = new BorderPane();
-		widget.setPrefSize(200, 100);
+		widget.setPrefSize(200, 120);
 		widget.setStyle("-fx-border-color: black");
 		widget.setPadding(new Insets(10));
 
@@ -28,46 +34,18 @@ public abstract class AbSourceWidget {
 		widget.setRight(outputJack);
 		BorderPane.setAlignment(outputJack, Pos.CENTER);
 
-		cord = new Line(outputJack.getCenterX() + 170, outputJack.getCenterY() + 50, outputJack.getCenterX() + 170,
-				outputJack.getCenterY() + 50);
-		// System.out.println(outputJack.parentToLocal(outputJack.getCenterX(),
-		// outputJack.getCenterY()));
-		// System.out.println(outputJack.getTranslateX());
-		// System.out.println(outputJack.getCenterX() + " " + outputJack.getCenterY());
+		cord = new Line();
 
-//		// made smoother with code from
-//		// java-buddy.blogspot/2013/07/javafx-drag-and-move-something.html
-//		widget.setOnMousePressed(new EventHandler<MouseEvent>() {
-//
-//			public void handle(MouseEvent event) {
-//				if (outputJack.isPressed()) {
-//					cord = new Line(event.getX(),event.getY(),event.getX(),event.getY());
-//					
-//				} else {
-//					originalX = event.getSceneX();
-//					originalY = event.getSceneY();
-//					translateX = widget.getTranslateX();
-//					translateY = widget.getTranslateY();
-//				}
-//			}
-//
-//		});
-//
-//		widget.setOnMouseDragged(new EventHandler<MouseEvent>() {
-//
-//			public void handle(MouseEvent event) {
-//				if (outputJack.isPressed()) {
-//					cord.setEndX(event.getX());
-//					cord.setEndY(event.getY());
-//				} else {
-//					widget.setTranslateX(event.getSceneX() - originalX + translateX);
-//					widget.setTranslateY(event.getSceneY() - originalY + translateY);
-//				}
-//
-//			}
-//
-//		});
+		playButton = new Button("Play");
+		widget.setBottom(playButton);
+		BorderPane.setAlignment(playButton, Pos.CENTER);
 
+		playButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				System.out.println("Button Pushed");
+			}
+		});
 	}
-
 }

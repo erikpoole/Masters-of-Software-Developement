@@ -8,6 +8,7 @@ import Widgets.SineWaveWidget;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -65,8 +66,12 @@ public class MyApp extends Application {
 
 						public void handle(MouseEvent event) {
 							if (specificWidget.outputJack.isPressed()) {
-								//specificWidget.cord = new Line(event.getX(), event.getY(), event.getX(), event.getY());
-
+								Point2D jackPosition = specificWidget.outputJack.localToParent(specificWidget.outputJack.getTranslateX(), specificWidget.outputJack.getTranslateY());
+								specificWidget.cord.setStartX(jackPosition.getX());
+								specificWidget.cord.setStartY(jackPosition.getY());
+								specificWidget.cord.setEndX(jackPosition.getX());
+								specificWidget.cord.setEndY(jackPosition.getY());
+								
 							} else {
 								originalX = event.getSceneX();
 								originalY = event.getSceneY();

@@ -30,7 +30,7 @@ public class AdjustVolumeWidget extends AbFilterWidget {
 			}
 		});
 
-		widget.setBottom(slider);
+		widget.setCenter(slider);
 
 	}
 
