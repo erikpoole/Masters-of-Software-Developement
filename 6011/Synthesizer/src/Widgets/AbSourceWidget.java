@@ -1,4 +1,4 @@
-package GUI;
+package Widgets;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -9,7 +9,7 @@ import javafx.scene.shape.Circle;
 
 public abstract class AbSourceWidget {
 
-	protected BorderPane widget;
+	public BorderPane widget;
 
 	protected AbSourceWidget() {
 		widget = new BorderPane();

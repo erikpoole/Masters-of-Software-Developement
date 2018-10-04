@@ -1,4 +1,4 @@
-package GUI;
+package Background;
 
 import Backend.AudioClip;
 import javafx.event.ActionEvent;
@@ -10,7 +10,7 @@ public class GUIPlayButton {
 	public Button playButton;
 
 	public GUIPlayButton(MyApp guiMain) {
-		playButton = new Button ();
+		playButton = new Button();
 		playButton.setText("Play");
 		playButton.setOnAction(new EventHandler<ActionEvent>() {
 

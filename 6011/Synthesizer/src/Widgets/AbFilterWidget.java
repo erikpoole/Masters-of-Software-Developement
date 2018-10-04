@@ -1,4 +1,4 @@
-package GUI;
+package Widgets;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;

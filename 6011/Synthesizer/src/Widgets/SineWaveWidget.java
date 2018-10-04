@@ -1,7 +1,7 @@
-package GUI;
+package Widgets;
 
-import Backend.AdjustVolume;
 import Backend.AudioClip;
+import Backend.SineWave;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -9,24 +9,24 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.BorderPane;
 
-public class AdjustVolumeWidget extends AbFilterWidget {
+public class SineWaveWidget extends AbSourceWidget {
 
-	public AdjustVolume adjustVolume;
+	public SineWave sineWave;
 
-	public AdjustVolumeWidget() {
+	public SineWaveWidget() {
 		super();
 		
-		Label label = new Label("AdjustVolumeFilter");
+		Label label = new Label("Sine Wave");
 		widget.setTop(label);
 		BorderPane.setAlignment(label, Pos.CENTER);
 
-		adjustVolume = new AdjustVolume(500);
-		Slider slider = new Slider(0, 1, .5);
+		sineWave = new SineWave(500);
+		Slider slider = new Slider(200, 2000, 500);
 		slider.setOnMouseReleased(new EventHandler<Event>() {
 
 			@Override
 			public void handle(Event event) {
-				adjustVolume.setScale((int) slider.getValue());
+				sineWave.setFrequency((int) slider.getValue());
 			}
 		});
 
@@ -35,7 +35,7 @@ public class AdjustVolumeWidget extends AbFilterWidget {
 	}
 
 	public AudioClip getAudioClip() {
-		return adjustVolume.getAudioClip();
+		return sineWave.getAudioClip();
 	}
 
 }
