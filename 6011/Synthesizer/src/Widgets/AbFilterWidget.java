@@ -7,10 +7,12 @@ import javafx.scene.shape.Circle;
 
 public abstract class AbFilterWidget extends AbSourceWidget {
 
+	public Circle inputJack;
+	
 	protected AbFilterWidget() {
 		super();
 		
-		Circle inputJack = new Circle(20);
+		inputJack = new Circle(20);
 		inputJack.setFill(Color.RED);
 		widget.setLeft(inputJack);
 		BorderPane.setAlignment(inputJack, Pos.CENTER);

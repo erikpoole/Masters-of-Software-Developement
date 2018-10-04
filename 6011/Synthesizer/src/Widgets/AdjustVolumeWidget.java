@@ -21,7 +21,7 @@ public class AdjustVolumeWidget extends AbFilterWidget {
 		BorderPane.setAlignment(label, Pos.CENTER);
 
 		adjustVolume = new AdjustVolume(500);
-		Slider slider = new Slider(0, 1, .5);
+		Slider slider = new Slider(0, 1, 1);
 		slider.setOnMouseReleased(new EventHandler<Event>() {
 
 			@Override
