@@ -3,6 +3,8 @@ package Background;
 import java.util.ArrayList;
 
 import Backend.AudioClip;
+import Backend.Source;
+import Widgets.AbFilterWidget;
 import Widgets.AbSourceWidget;
 import Widgets.SineWaveWidget;
 import javafx.application.Application;
@@ -15,13 +17,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import junit.framework.Test;
 
 public class MyApp extends Application {
 
 	// make generic eventually
 	private SineWaveWidget finalSineWave;
 
-	public ArrayList<AbSourceWidget> widgetlist = new ArrayList<AbSourceWidget>();
+	public ArrayList<AbSourceWidget> sourceList = new ArrayList<AbSourceWidget>();
+	public ArrayList<AbFilterWidget> targestList = new ArrayList<AbFilterWidget>();
 
 	private double originalX, originalY;
 	private double translateX, translateY;
@@ -61,41 +65,56 @@ public class MyApp extends Application {
 
 			@Override
 			public void handle(MouseEvent event) {
-				for (AbSourceWidget specificWidget : widgetlist) {
-					specificWidget.widget.setOnMousePressed(new EventHandler<MouseEvent>() {
+				for (AbSourceWidget sourceWidget : sourceList) {
+					sourceWidget.widget.setOnMousePressed(new EventHandler<MouseEvent>() {
 
 						public void handle(MouseEvent event) {
-							if (specificWidget.outputJack.isPressed()) {
-								Point2D jackPosition = specificWidget.outputJack.localToParent(specificWidget.outputJack.getTranslateX(), specificWidget.outputJack.getTranslateY());
-								specificWidget.cord.setStartX(jackPosition.getX());
-								specificWidget.cord.setStartY(jackPosition.getY());
-								specificWidget.cord.setEndX(jackPosition.getX());
-								specificWidget.cord.setEndY(jackPosition.getY());
-								
+							if (sourceWidget.outputJack.isPressed()) {
+								Point2D jackPosition = sourceWidget.outputJack.localToParent(
+										sourceWidget.outputJack.getTranslateX(),
+										sourceWidget.outputJack.getTranslateY());
+								sourceWidget.cord.setStartX(jackPosition.getX());
+								sourceWidget.cord.setStartY(jackPosition.getY());
+								sourceWidget.cord.setEndX(jackPosition.getX());
+								sourceWidget.cord.setEndY(jackPosition.getY());
+
 							} else {
 								originalX = event.getSceneX();
 								originalY = event.getSceneY();
-								translateX = specificWidget.widget.getTranslateX();
-								translateY = specificWidget.widget.getTranslateY();
+								translateX = sourceWidget.widget.getTranslateX();
+								translateY = sourceWidget.widget.getTranslateY();
 							}
 						}
 					});
 
-					specificWidget.widget.setOnMouseDragged(new EventHandler<MouseEvent>() {
+					sourceWidget.widget.setOnMouseDragged(new EventHandler<MouseEvent>() {
 
 						public void handle(MouseEvent event) {
-							if (specificWidget.outputJack.isPressed()) {
-								specificWidget.cord.setEndX(event.getX());
-								specificWidget.cord.setEndY(event.getY());
+							if (sourceWidget.outputJack.isPressed()) {
+								sourceWidget.cord.setEndX(event.getX());
+								sourceWidget.cord.setEndY(event.getY());
 							} else {
-								specificWidget.widget.setTranslateX(event.getSceneX() - originalX + translateX);
-								specificWidget.widget.setTranslateY(event.getSceneY() - originalY + translateY);
-								specificWidget.cord.setTranslateX(event.getSceneX() - originalX + translateX);
-								specificWidget.cord.setTranslateY(event.getSceneY() - originalY + translateY);
+								sourceWidget.widget.setTranslateX(event.getSceneX() - originalX + translateX);
+								sourceWidget.widget.setTranslateY(event.getSceneY() - originalY + translateY);
+								sourceWidget.cord.setTranslateX(event.getSceneX() - originalX + translateX);
+								sourceWidget.cord.setTranslateY(event.getSceneY() - originalY + translateY);
 							}
 						}
 					});
 
+					for (AbFilterWidget targetWidget : targestList) {
+						sourceWidget.widget.setOnMouseReleased((e) -> {
+							Point2D cordPosition = sourceWidget.cord.localToScene(sourceWidget.cord.getEndX(),
+									sourceWidget.cord.getEndY());
+							Point2D cordPositionLocal = targetWidget.inputJack.sceneToLocal(cordPosition);
+
+							if (targetWidget.inputJack.contains(cordPositionLocal)) {
+								// System.out.println("Connected!");
+								
+							}
+
+						});
+					}
 				}
 
 			}

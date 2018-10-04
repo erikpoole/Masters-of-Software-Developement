@@ -2,8 +2,8 @@ package Widgets;
 
 import Backend.AdjustVolume;
 import Backend.AudioClip;
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -22,15 +22,15 @@ public class AdjustVolumeWidget extends AbFilterWidget {
 
 		adjustVolume = new AdjustVolume(500);
 		Slider slider = new Slider(0, 1, 1);
-		slider.setOnMouseReleased(new EventHandler<Event>() {
+		widget.setCenter(slider);
+		
+		slider.valueProperty().addListener(new ChangeListener<Number>() {
 
 			@Override
-			public void handle(Event event) {
-				adjustVolume.setScale((int) slider.getValue());
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				adjustVolume.setScale(newValue.doubleValue());
 			}
 		});
-
-		widget.setCenter(slider);
 
 	}
 

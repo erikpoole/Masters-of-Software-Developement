@@ -17,6 +17,8 @@ public abstract class AbSourceWidget {
 	public BorderPane widget;
 	public Line cord;
 	public Button playButton;
+	
+	protected Source source;
 
 	public Circle outputJack;
 
@@ -44,7 +46,11 @@ public abstract class AbSourceWidget {
 
 			@Override
 			public void handle(ActionEvent event) {
-				System.out.println("Button Pushed");
+				try {
+					AudioClip.playSound(source.getAudioClip());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 	}

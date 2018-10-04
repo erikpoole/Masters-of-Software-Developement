@@ -26,7 +26,7 @@ public class GUIButtonLibrary {
 			@Override
 			public void handle(ActionEvent event) {
 				SineWaveWidget sineWaveWidget = new SineWaveWidget();
-				guiMain.widgetlist.add(sineWaveWidget);
+				guiMain.sourceList.add(sineWaveWidget);
 				guiMain.backgroundPane.getChildren().add(sineWaveWidget.widget);
 				guiMain.backgroundPane.getChildren().add(sineWaveWidget.cord);
 				
@@ -38,7 +38,8 @@ public class GUIButtonLibrary {
 			@Override
 			public void handle(ActionEvent event) {
 				AdjustVolumeWidget adjustVolumeWidget = new AdjustVolumeWidget();
-				guiMain.widgetlist.add(adjustVolumeWidget);
+				guiMain.sourceList.add(adjustVolumeWidget);
+				guiMain.targestList.add(adjustVolumeWidget);
 				guiMain.backgroundPane.getChildren().add(adjustVolumeWidget.widget);
 				guiMain.backgroundPane.getChildren().add(adjustVolumeWidget.cord);
 				

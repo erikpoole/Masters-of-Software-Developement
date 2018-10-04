@@ -4,7 +4,7 @@ import javax.sound.sampled.LineUnavailableException;
 
 public class AdjustVolume implements Filter {
 
-	private double scale;
+	public double scale;
 
 	private Source source;
 
@@ -25,7 +25,7 @@ public class AdjustVolume implements Filter {
 		return source.getAudioClip();
 	}
 
-	public void setScale(int input) {
+	public void setScale(double input) {
 		scale = input;
 	}
 
