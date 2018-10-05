@@ -1,68 +1,73 @@
 package Background;
 
+import Widgets.AbSourceWidget;
 import Widgets.AdjustVolumeWidget;
 import Widgets.CombineClipWidget;
 import Widgets.SineWaveWidget;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import Widgets.SquareWaveWidget;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 
 public class GUIButtonLibrary {
 
-	public VBox buttonLibrary;
+	public VBox buttonLibrary = new VBox();
 
 	public GUIButtonLibrary(MyApp guiMain) {
-		buttonLibrary = new VBox();
-		Button sineWaveButton = new Button("Sine Wave");
-		Button adjustVolButton = new Button("Adjust Volume");
-		Button combineClipsButton = new Button("Combine Clips");
 
-		sineWaveButton.setPrefSize(150, 8);
-		adjustVolButton.setPrefSize(150, 8);
-		combineClipsButton.setPrefSize(150, 8);
-		buttonLibrary.getChildren().add(sineWaveButton);
-		buttonLibrary.getChildren().add(adjustVolButton);
-		buttonLibrary.getChildren().add(combineClipsButton);
+		Button sineWaveButton = CreateButton("Sine Wave");
+		Button squareWaveButton = CreateButton("Square Wave");
+		Button adjustVolumeButton = CreateButton("Adjust Volume");
+		Button combineClipsButton = CreateButton("Combine Clips");
 
-		sineWaveButton.setOnAction(new EventHandler<ActionEvent>() {
+		sineWaveButton.setOnAction((e) -> {
 
-			@Override
-			public void handle(ActionEvent event) {
-				SineWaveWidget sineWaveWidget = new SineWaveWidget();
-				guiMain.sourceList.add(sineWaveWidget);
-				guiMain.backgroundPane.getChildren().add(sineWaveWidget.widget);
-				guiMain.backgroundPane.getChildren().add(sineWaveWidget.cord);
-
-			}
+			AbSourceWidget sineWaveWidget = new SineWaveWidget();
+			guiMain.sourceList.add(sineWaveWidget);
+			guiMain.backgroundPane.getChildren().add(sineWaveWidget.widget);
+			guiMain.backgroundPane.getChildren().add(sineWaveWidget.cord);
 		});
 
-		adjustVolButton.setOnAction(new EventHandler<ActionEvent>() {
+		squareWaveButton.setOnAction((e) -> {
 
-			@Override
-			public void handle(ActionEvent event) {
-				AdjustVolumeWidget adjustVolumeWidget = new AdjustVolumeWidget();
-				guiMain.sourceList.add(adjustVolumeWidget);
-				guiMain.targestList.add(adjustVolumeWidget);
-				guiMain.backgroundPane.getChildren().add(adjustVolumeWidget.widget);
-				guiMain.backgroundPane.getChildren().add(adjustVolumeWidget.cord);
-
-			}
-		});
-		
-		combineClipsButton.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				CombineClipWidget combineClipWidget = new CombineClipWidget();
-				guiMain.sourceList.add(combineClipWidget);
-				guiMain.targestList.add(combineClipWidget);
-				guiMain.backgroundPane.getChildren().add(combineClipWidget.widget);
-				guiMain.backgroundPane.getChildren().add(combineClipWidget.cord);
-
-			}
+			SquareWaveWidget squareWaveWidget = new SquareWaveWidget();
+			guiMain.sourceList.add(squareWaveWidget);
+			guiMain.backgroundPane.getChildren().add(squareWaveWidget.widget);
+			guiMain.backgroundPane.getChildren().add(squareWaveWidget.cord);
 		});
 
+		adjustVolumeButton.setOnAction((e) -> {
+
+			AdjustVolumeWidget adjustVolumeWidget = new AdjustVolumeWidget();
+			guiMain.sourceList.add(adjustVolumeWidget);
+			guiMain.targestList.add(adjustVolumeWidget);
+			guiMain.backgroundPane.getChildren().add(adjustVolumeWidget.widget);
+			guiMain.backgroundPane.getChildren().add(adjustVolumeWidget.cord);
+		});
+
+		combineClipsButton.setOnAction((e) -> {
+
+			CombineClipWidget combineClipWidget = new CombineClipWidget();
+			guiMain.sourceList.add(combineClipWidget);
+			guiMain.targestList.add(combineClipWidget);
+			guiMain.backgroundPane.getChildren().add(combineClipWidget.widget);
+			guiMain.backgroundPane.getChildren().add(combineClipWidget.cord);
+		});
+
+		squareWaveButton.setOnAction((e) -> {
+			SquareWaveWidget squareWaveWidget = new SquareWaveWidget();
+			guiMain.sourceList.add(squareWaveWidget);
+			guiMain.backgroundPane.getChildren().add(squareWaveWidget.widget);
+			guiMain.backgroundPane.getChildren().add(squareWaveWidget.cord);
+		});
+
+	}
+
+	private Button CreateButton(String name) {
+		Button newButton = new Button(name);
+		newButton.setPrefSize(150, 8);
+		buttonLibrary.getChildren().add(newButton);
+
+		return newButton;
 	}
 
 }

@@ -104,12 +104,14 @@ public class MyApp extends Application {
 					});
 
 					sourceWidget.widget.setOnMouseReleased((e) -> {
+						boolean isConnected = false;
 						for (AbFilterWidget targetWidget : targestList) {
 							Point2D cordPosition = sourceWidget.cord.localToScene(sourceWidget.cord.getEndX(),
 									sourceWidget.cord.getEndY());
 							Point2D cordPositionLocal = targetWidget.inputJack.sceneToLocal(cordPosition);
 
 							if (targetWidget.inputJack.contains(cordPositionLocal)) {
+								isConnected = true;
 								System.out.println("Connected!");
 								try {
 									targetWidget.getFilter().connectInput(sourceWidget.getSource());
@@ -124,8 +126,13 @@ public class MyApp extends Application {
 						Point2D cordPositionLocal = guiSpeaker.speaker.sceneToLocal(cordPosition);
 
 						if (guiSpeaker.speaker.contains(cordPositionLocal)) {
+							isConnected = true;
 							System.out.println("Speaker");
 							GUISpeaker.source = sourceWidget.getSource();
+						}
+						if (!isConnected) {
+							sourceWidget.cord.setEndX(sourceWidget.cord.getStartX());
+							sourceWidget.cord.setEndY(sourceWidget.cord.getStartY());
 						}
 					});
 				}

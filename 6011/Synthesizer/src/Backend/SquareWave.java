@@ -15,9 +15,9 @@ public class SquareWave implements Source {
 		for (int i = 0; i < audioClip.getSampleRate(); i++) {
 			int value;
 			if (i % 1 == 0) {
-				value = (int) (32767 * frequency / audioClip.getSampleRate());
+				value = (int) (32767 * frequency * i / audioClip.getSampleRate());
 			} else {
-				value = (int) (-32767 * frequency / audioClip.getSampleRate());
+				value = (int) (-32767 * frequency * i / audioClip.getSampleRate());
 			}
 			audioClip.setSample(i, value);
 		}
