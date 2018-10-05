@@ -1,18 +1,19 @@
 package Background;
 
-import Widgets.AdjustVolumeWidget;
-import Widgets.SineWaveWidget;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
+
+
+import Backend.Source;
 import javafx.scene.shape.Circle;
 
 public class GUISpeaker {
 	
 	public Circle speaker = new Circle(40);
+	public static Source source;
 
 	public GUISpeaker(MyApp guiMain) {
+		speaker.setFill(javafx.scene.paint.Color.MEDIUMPURPLE);
+		
+		
 		
 //		Button sineWaveButton = new Button("Sine Wave");
 //		Button adjustVolButton = new Button("Adjust Volume");

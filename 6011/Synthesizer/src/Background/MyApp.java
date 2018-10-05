@@ -16,6 +16,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -43,15 +45,16 @@ public class MyApp extends Application {
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Synthesizer");
 
-		GUIPlayButton playButton = new GUIPlayButton(this);
 		HBox bottom = new HBox();
+		GUIPlayButton playButton = new GUIPlayButton(this);
 		bottom.getChildren().add(playButton.playButton);
 
-		VBox right = new VBox();
+		GridPane right = new GridPane();
+		right.setVgap(300);
 		GUIButtonLibrary buttonLibrary = new GUIButtonLibrary(this);
 		GUISpeaker guiSpeaker = new GUISpeaker(this);
-		right.getChildren().add(buttonLibrary.buttonLibrary);
-		right.getChildren().add(guiSpeaker.speaker);
+		right.add(buttonLibrary.buttonLibrary, 0, 0);
+		right.add(guiSpeaker.speaker, 0, 1);
 
 		BorderPane borderPane = new BorderPane();
 		borderPane.setCenter(backgroundPane);
@@ -108,8 +111,8 @@ public class MyApp extends Application {
 						}
 					});
 
-					for (AbFilterWidget targetWidget : targestList) {
-						sourceWidget.widget.setOnMouseReleased((e) -> {
+					sourceWidget.widget.setOnMouseReleased((e) -> {
+						for (AbFilterWidget targetWidget : targestList) {
 							Point2D cordPosition = sourceWidget.cord.localToScene(sourceWidget.cord.getEndX(),
 									sourceWidget.cord.getEndY());
 							Point2D cordPositionLocal = targetWidget.inputJack.sceneToLocal(cordPosition);
@@ -121,11 +124,18 @@ public class MyApp extends Application {
 								} catch (LineUnavailableException e1) {
 									e1.printStackTrace();
 								}
-								
 							}
+						}
 
-						});
-					}
+						Point2D cordPosition = sourceWidget.cord.localToScene(sourceWidget.cord.getEndX(),
+								sourceWidget.cord.getEndY());
+						Point2D cordPositionLocal = guiSpeaker.speaker.sceneToLocal(cordPosition);
+
+						if (guiSpeaker.speaker.contains(cordPositionLocal)) {
+							System.out.println("Speaker");
+							GUISpeaker.source = sourceWidget.getSource();
+						}
+					});
 				}
 
 			}

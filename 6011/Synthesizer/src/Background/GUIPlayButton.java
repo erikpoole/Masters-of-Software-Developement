@@ -18,7 +18,7 @@ public class GUIPlayButton {
 			public void handle(ActionEvent event) {
 
 				try {
-					AudioClip.playSound(guiMain.getFinalAudioClip());
+					AudioClip.playSound(GUISpeaker.source.getAudioClip());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
