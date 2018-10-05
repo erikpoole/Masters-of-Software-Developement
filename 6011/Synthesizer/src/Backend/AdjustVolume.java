@@ -7,6 +7,7 @@ public class AdjustVolume implements Filter {
 	public double scale;
 
 	private Source source;
+	private AudioClip outputClip;
 
 	public AdjustVolume(double inputScale) {
 		scale = inputScale;
@@ -19,10 +20,12 @@ public class AdjustVolume implements Filter {
 
 	@Override
 	public AudioClip getAudioClip() {
-		for (int i = 0; i < source.getAudioClip().getByteArray().length; i++) {
-			source.getAudioClip().getByteArray()[i] *= scale;
+
+		outputClip = source.getAudioClip();
+		for (int i = 0; i < outputClip.getByteArray().length; i++) {
+			outputClip.getByteArray()[i] *= scale;
 		}
-		return source.getAudioClip();
+		return outputClip;
 	}
 
 	public void setScale(double input) {

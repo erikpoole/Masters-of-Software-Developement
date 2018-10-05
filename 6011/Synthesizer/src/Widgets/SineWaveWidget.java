@@ -1,12 +1,11 @@
 package Widgets;
 
 import Backend.AudioClip;
+import Backend.Filter;
 import Backend.SineWave;
+import Backend.Source;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -18,10 +17,10 @@ public class SineWaveWidget extends AbSourceWidget {
 
 	public SineWaveWidget() {
 		super();
-		
+
 		source = new SineWave(500);
 		sineWave = (SineWave) source;
-		
+
 		Label label = new Label("Sine Wave");
 		widget.setTop(label);
 		BorderPane.setAlignment(label, Pos.CENTER);
@@ -35,11 +34,12 @@ public class SineWaveWidget extends AbSourceWidget {
 				sineWave.setFrequency(newValue.doubleValue());
 			}
 		});
-		
+
 	}
 
-	public AudioClip getAudioClip() {
-		return sineWave.getAudioClip();
+	@Override
+	public Source getSource() {
+		return source;
 	}
 
 }

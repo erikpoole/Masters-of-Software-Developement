@@ -12,7 +12,6 @@ public class SineWave implements Source {
 	}
 
 	public AudioClip getAudioClip() {
-		System.out.println("frequency " + frequency);
 		for (int i = 0; i < audioClip.getSampleRate(); i++) {
 			int Value = (int) (32767 * Math.sin(2 * Math.PI * frequency * i / audioClip.getSampleRate()));
 			audioClip.setSample(i, Value);
@@ -21,7 +20,6 @@ public class SineWave implements Source {
 	}
 
 	public void setFrequency(double input) {
-		System.out.println("new frequency" + input);
 		frequency = input;
 	}
 

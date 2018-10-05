@@ -16,11 +16,11 @@ public class Main {
 		adjustVolume.connectInput(sineWave2);
 		AudioClip.playSound(adjustVolume.getAudioClip());
 
-		Adder adder = new Adder();
-		adder.connectInput(sineWave1);
-		adder.connectInput(sineWave2);
-		adder.addInput();
-		AudioClip.playSound(adder.getAudioClip());
+		CombineClips combiner = new CombineClips();
+		combiner.connectInput(sineWave1);
+		combiner.connectInput(sineWave2);
+		combiner.addInput();
+		AudioClip.playSound(combiner.getAudioClip());
 	}
 
 }

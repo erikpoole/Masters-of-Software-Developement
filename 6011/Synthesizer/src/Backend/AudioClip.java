@@ -37,9 +37,7 @@ public class AudioClip {
 		byte secondByte = (byte) (input >> 8);
 		byteArray[index * 2] = firstByte;
 		byteArray[index * 2 + 1] = secondByte;
-//		System.out.println(firstByte);
-//		System.out.println(secondByte);
-//		System.out.println();
+
 	}
 
 	public double getDuration() {

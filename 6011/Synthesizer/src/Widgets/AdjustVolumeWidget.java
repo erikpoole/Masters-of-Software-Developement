@@ -2,6 +2,8 @@ package Widgets;
 
 import Backend.AdjustVolume;
 import Backend.AudioClip;
+import Backend.Filter;
+import Backend.Source;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
@@ -15,15 +17,17 @@ public class AdjustVolumeWidget extends AbFilterWidget {
 
 	public AdjustVolumeWidget() {
 		super();
-		
+
+		filter = new AdjustVolume(.5);
+		adjustVolume = (AdjustVolume) filter;
+		source = filter;
+
 		Label label = new Label("AdjustVolumeFilter");
 		widget.setTop(label);
 		BorderPane.setAlignment(label, Pos.CENTER);
 
-		adjustVolume = new AdjustVolume(500);
 		Slider slider = new Slider(0, 1, 1);
 		widget.setCenter(slider);
-		
 		slider.valueProperty().addListener(new ChangeListener<Number>() {
 
 			@Override
@@ -34,8 +38,14 @@ public class AdjustVolumeWidget extends AbFilterWidget {
 
 	}
 
-	public AudioClip getAudioClip() {
-		return adjustVolume.getAudioClip();
+	@Override
+	public Source getSource() {
+		return source;
+	}
+
+	@Override
+	public Filter getFilter() {
+		return filter;
 	}
 
 }

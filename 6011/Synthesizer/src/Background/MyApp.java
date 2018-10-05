@@ -2,8 +2,10 @@ package Background;
 
 import java.util.ArrayList;
 
+import javax.sound.sampled.LineUnavailableException;
+
 import Backend.AudioClip;
-import Backend.Source;
+import Backend.Filter;
 import Widgets.AbFilterWidget;
 import Widgets.AbSourceWidget;
 import Widgets.SineWaveWidget;
@@ -16,8 +18,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import junit.framework.Test;
 
 public class MyApp extends Application {
 
@@ -45,12 +47,16 @@ public class MyApp extends Application {
 		HBox bottom = new HBox();
 		bottom.getChildren().add(playButton.playButton);
 
+		VBox right = new VBox();
 		GUIButtonLibrary buttonLibrary = new GUIButtonLibrary(this);
+		GUISpeaker guiSpeaker = new GUISpeaker(this);
+		right.getChildren().add(buttonLibrary.buttonLibrary);
+		right.getChildren().add(guiSpeaker.speaker);
 
 		BorderPane borderPane = new BorderPane();
 		borderPane.setCenter(backgroundPane);
 		borderPane.setBottom(bottom);
-		borderPane.setRight(buttonLibrary.buttonLibrary);
+		borderPane.setRight(right);
 		borderPane.setPadding(new Insets(10));
 
 		scene = new Scene(borderPane, 1000, 1000);
@@ -109,7 +115,12 @@ public class MyApp extends Application {
 							Point2D cordPositionLocal = targetWidget.inputJack.sceneToLocal(cordPosition);
 
 							if (targetWidget.inputJack.contains(cordPositionLocal)) {
-								// System.out.println("Connected!");
+								System.out.println("Connected!");
+								try {
+									targetWidget.getFilter().connectInput(sourceWidget.getSource());
+								} catch (LineUnavailableException e1) {
+									e1.printStackTrace();
+								}
 								
 							}
 
@@ -127,6 +138,6 @@ public class MyApp extends Application {
 	public AudioClip getFinalAudioClip() {
 		SineWaveWidget sineWaveWidget = new SineWaveWidget();
 		finalSineWave = sineWaveWidget;
-		return finalSineWave.getAudioClip();
+		return finalSineWave.sineWave.getAudioClip();
 	}
 }

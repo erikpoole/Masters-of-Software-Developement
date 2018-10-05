@@ -1,6 +1,7 @@
 package Widgets;
 
 import Backend.AudioClip;
+import Backend.Filter;
 import Backend.Source;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -21,9 +22,6 @@ public abstract class AbSourceWidget {
 	protected Source source;
 
 	public Circle outputJack;
-
-//	private double originalX, originalY;
-//	private double translateX, translateY;
 
 	protected AbSourceWidget() {
 		widget = new BorderPane();
@@ -54,4 +52,7 @@ public abstract class AbSourceWidget {
 			}
 		});
 	}
+	
+	public abstract Source getSource();
+	
 }

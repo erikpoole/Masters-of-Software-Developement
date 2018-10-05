@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import javax.sound.sampled.LineUnavailableException;
 
-public class Adder implements Mixer {
+public class CombineClips implements Mixer {
 
 	//store source instead of audioclip
 	private AudioClip audioClip;
