@@ -6,7 +6,7 @@ import javax.sound.sampled.LineUnavailableException;
 
 public class CombineClips implements Mixer {
 
-	//store source instead of audioclip
+	// store source instead of audioclip
 	private AudioClip audioClip;
 	private ArrayList<AudioClip> audioClipArray = new ArrayList<AudioClip>();
 

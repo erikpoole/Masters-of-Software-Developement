@@ -1,4 +1,5 @@
 package Backend;
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -51,9 +52,9 @@ public class AudioClip {
 	public byte[] getByteArray() {
 		return byteArray;
 	}
-	
+
 	public static void playSound(AudioClip inputClip) throws Exception {
-		
+
 		Clip clip = AudioSystem.getClip();
 		AudioFormat format16 = new AudioFormat((float) inputClip.getSampleRate(), 16, 1, true, false);
 		clip.open(format16, inputClip.getByteArray(), 0, inputClip.getByteArray().length);

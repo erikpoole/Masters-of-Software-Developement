@@ -1,7 +1,6 @@
 package Widgets;
 
 import Backend.AdjustVolume;
-import Backend.AudioClip;
 import Backend.Filter;
 import Backend.Source;
 import javafx.beans.value.ChangeListener;

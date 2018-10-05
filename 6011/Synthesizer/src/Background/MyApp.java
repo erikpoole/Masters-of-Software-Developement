@@ -4,11 +4,8 @@ import java.util.ArrayList;
 
 import javax.sound.sampled.LineUnavailableException;
 
-import Backend.AudioClip;
-import Backend.Filter;
 import Widgets.AbFilterWidget;
 import Widgets.AbSourceWidget;
-import Widgets.SineWaveWidget;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -16,17 +13,12 @@ import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class MyApp extends Application {
-
-	// make generic eventually
-	private SineWaveWidget finalSineWave;
 
 	public ArrayList<AbSourceWidget> sourceList = new ArrayList<AbSourceWidget>();
 	public ArrayList<AbFilterWidget> targestList = new ArrayList<AbFilterWidget>();
@@ -144,10 +136,4 @@ public class MyApp extends Application {
 
 	}
 
-	// make generic evenutally
-	public AudioClip getFinalAudioClip() {
-		SineWaveWidget sineWaveWidget = new SineWaveWidget();
-		finalSineWave = sineWaveWidget;
-		return finalSineWave.sineWave.getAudioClip();
-	}
 }

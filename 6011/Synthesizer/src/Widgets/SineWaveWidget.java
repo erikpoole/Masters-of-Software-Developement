@@ -1,7 +1,5 @@
 package Widgets;
 
-import Backend.AudioClip;
-import Backend.Filter;
 import Backend.SineWave;
 import Backend.Source;
 import javafx.beans.value.ChangeListener;

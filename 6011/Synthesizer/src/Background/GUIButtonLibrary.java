@@ -20,21 +20,21 @@ public class GUIButtonLibrary {
 		adjustVolButton.setPrefSize(150, 8);
 		buttonLibrary.getChildren().add(sineWaveButton);
 		buttonLibrary.getChildren().add(adjustVolButton);
-		
+
 		sineWaveButton.setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
 				SineWaveWidget sineWaveWidget = new SineWaveWidget();
 				guiMain.sourceList.add(sineWaveWidget);
 				guiMain.backgroundPane.getChildren().add(sineWaveWidget.widget);
 				guiMain.backgroundPane.getChildren().add(sineWaveWidget.cord);
-				
+
 			}
 		});
-		
+
 		adjustVolButton.setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
 				AdjustVolumeWidget adjustVolumeWidget = new AdjustVolumeWidget();
@@ -42,11 +42,9 @@ public class GUIButtonLibrary {
 				guiMain.targestList.add(adjustVolumeWidget);
 				guiMain.backgroundPane.getChildren().add(adjustVolumeWidget.widget);
 				guiMain.backgroundPane.getChildren().add(adjustVolumeWidget.cord);
-				
+
 			}
 		});
-		
-		
 
 	}
 
