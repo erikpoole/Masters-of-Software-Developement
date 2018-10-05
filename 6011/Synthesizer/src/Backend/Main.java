@@ -13,13 +13,15 @@ public class Main {
 		SineWave sineWave2 = new SineWave(880);
 		AudioClip.playSound(sineWave2.getAudioClip());
 
+		SquareWave squareWave = new SquareWave(880);
+		AudioClip.playSound(squareWave.getAudioClip());
+
 		adjustVolume.connectInput(sineWave2);
 		AudioClip.playSound(adjustVolume.getAudioClip());
 
 		CombineClips combiner = new CombineClips();
 		combiner.connectInput(sineWave1);
 		combiner.connectInput(sineWave2);
-		combiner.addInput();
 		AudioClip.playSound(combiner.getAudioClip());
 	}
 

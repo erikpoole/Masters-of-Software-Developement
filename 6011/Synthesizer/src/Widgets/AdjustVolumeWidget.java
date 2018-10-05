@@ -21,7 +21,7 @@ public class AdjustVolumeWidget extends AbFilterWidget {
 		adjustVolume = (AdjustVolume) filter;
 		source = filter;
 
-		Label label = new Label("AdjustVolumeFilter");
+		Label label = new Label("Adjust Volume");
 		widget.setTop(label);
 		BorderPane.setAlignment(label, Pos.CENTER);
 

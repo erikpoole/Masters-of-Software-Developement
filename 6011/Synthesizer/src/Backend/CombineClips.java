@@ -28,9 +28,10 @@ public class CombineClips implements Mixer {
 			}
 		}
 	}
-	
+
 	@Override
 	public AudioClip getAudioClip() {
+		addInput();
 		return outputClip;
 	}
 
