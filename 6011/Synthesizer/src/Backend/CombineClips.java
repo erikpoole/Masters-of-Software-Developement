@@ -6,29 +6,32 @@ import javax.sound.sampled.LineUnavailableException;
 
 public class CombineClips implements Mixer {
 
-	// store source instead of audioclip
-	private AudioClip audioClip;
-	private ArrayList<AudioClip> audioClipArray = new ArrayList<AudioClip>();
+	private AudioClip workingClip;
+	private AudioClip outputClip;
+
+	private ArrayList<Source> sourceArray = new ArrayList<Source>();
 
 	@Override
 	public void connectInput(Source input) throws LineUnavailableException {
-		audioClipArray.add(input.getAudioClip());
+		sourceArray.add(input);
 	}
 
 	@Override
 	public void addInput() {
-		audioClip = new AudioClip();
-		int divisor = audioClipArray.size();
-		for (AudioClip singleClip : audioClipArray) {
-			for (int i = 0; i < singleClip.getByteArray().length; i++) {
-				audioClip.getByteArray()[i] += (singleClip.getByteArray()[i] / divisor);
+		outputClip = new AudioClip();
+		int divisor = sourceArray.size();
+		for (Source singleSource : sourceArray) {
+			workingClip = singleSource.getAudioClip();
+			System.out.println("Working");
+			for (int i = 0; i < workingClip.getByteArray().length; i++) {
+				outputClip.getByteArray()[i] += (workingClip.getByteArray()[i] / divisor);
 			}
 		}
 	}
-
+	
 	@Override
 	public AudioClip getAudioClip() {
-		return audioClip;
+		return outputClip;
 	}
 
 }
