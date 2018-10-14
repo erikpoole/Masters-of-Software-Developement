@@ -79,6 +79,7 @@ public class MyApp extends Application {
 								sourceWidget.cord.setEndX(jackPosition.getX());
 								sourceWidget.cord.setEndY(jackPosition.getY());
 
+
 							} else {
 								originalX = event.getSceneX();
 								originalY = event.getSceneY();
