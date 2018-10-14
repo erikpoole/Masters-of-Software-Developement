@@ -18,6 +18,8 @@ public class GUICable {
 		line.setStartY(location.getY());
 		line.setEndX(location.getX());
 		line.setEndY(location.getY());
+		
 	}
 	
 }
+

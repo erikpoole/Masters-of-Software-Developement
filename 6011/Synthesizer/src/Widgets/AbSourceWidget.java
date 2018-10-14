@@ -2,7 +2,6 @@ package Widgets;
 
 import Backend.AudioClip;
 import Backend.Source;
-import Background.GUICable;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -16,7 +15,7 @@ import javafx.scene.shape.Line;
 public abstract class AbSourceWidget {
 
 	public BorderPane widget;
-	public Line cord;
+	//public Line cord;
 	public Button playButton;
 
 	protected Source source;
@@ -34,7 +33,7 @@ public abstract class AbSourceWidget {
 		widget.setRight(outputJack);
 		BorderPane.setAlignment(outputJack, Pos.CENTER);
 
-		cord = new Line();
+		//cord = new Line();
 		
 		playButton = new Button("Play");
 		widget.setBottom(playButton);

@@ -24,7 +24,7 @@ public class GUIButtonLibrary {
 			AbSourceWidget sineWaveWidget = new SineWaveWidget();
 			guiMain.sourceList.add(sineWaveWidget);
 			guiMain.backgroundPane.getChildren().add(sineWaveWidget.widget);
-			guiMain.backgroundPane.getChildren().add(sineWaveWidget.cord);
+			//guiMain.backgroundPane.getChildren().add(sineWaveWidget.cord);
 		});
 
 		squareWaveButton.setOnAction((e) -> {
@@ -32,7 +32,7 @@ public class GUIButtonLibrary {
 			SquareWaveWidget squareWaveWidget = new SquareWaveWidget();
 			guiMain.sourceList.add(squareWaveWidget);
 			guiMain.backgroundPane.getChildren().add(squareWaveWidget.widget);
-			guiMain.backgroundPane.getChildren().add(squareWaveWidget.cord);
+			//guiMain.backgroundPane.getChildren().add(squareWaveWidget.cord);
 		});
 
 		adjustVolumeButton.setOnAction((e) -> {
@@ -41,7 +41,7 @@ public class GUIButtonLibrary {
 			guiMain.sourceList.add(adjustVolumeWidget);
 			guiMain.targestList.add(adjustVolumeWidget);
 			guiMain.backgroundPane.getChildren().add(adjustVolumeWidget.widget);
-			guiMain.backgroundPane.getChildren().add(adjustVolumeWidget.cord);
+			//guiMain.backgroundPane.getChildren().add(adjustVolumeWidget.cord);
 		});
 
 		combineClipsButton.setOnAction((e) -> {
@@ -50,14 +50,14 @@ public class GUIButtonLibrary {
 			guiMain.sourceList.add(combineClipWidget);
 			guiMain.targestList.add(combineClipWidget);
 			guiMain.backgroundPane.getChildren().add(combineClipWidget.widget);
-			guiMain.backgroundPane.getChildren().add(combineClipWidget.cord);
+			//guiMain.backgroundPane.getChildren().add(combineClipWidget.cord);
 		});
 
 		squareWaveButton.setOnAction((e) -> {
 			SquareWaveWidget squareWaveWidget = new SquareWaveWidget();
 			guiMain.sourceList.add(squareWaveWidget);
 			guiMain.backgroundPane.getChildren().add(squareWaveWidget.widget);
-			guiMain.backgroundPane.getChildren().add(squareWaveWidget.cord);
+			//guiMain.backgroundPane.getChildren().add(squareWaveWidget.cord);
 		});
 
 	}

@@ -22,6 +22,7 @@ public class MyApp extends Application {
 
 	public ArrayList<AbSourceWidget> sourceList = new ArrayList<AbSourceWidget>();
 	public ArrayList<AbFilterWidget> targestList = new ArrayList<AbFilterWidget>();
+	public ArrayList<GUICable> cableList = new ArrayList<GUICable>();
 
 	private double originalX, originalY;
 	private double translateX, translateY;
@@ -74,11 +75,13 @@ public class MyApp extends Application {
 								Point2D jackPosition = sourceWidget.outputJack.localToParent(
 										sourceWidget.outputJack.getTranslateX(),
 										sourceWidget.outputJack.getTranslateY());
-								sourceWidget.cord.setStartX(jackPosition.getX());
-								sourceWidget.cord.setStartY(jackPosition.getY());
-								sourceWidget.cord.setEndX(jackPosition.getX());
-								sourceWidget.cord.setEndY(jackPosition.getY());
-
+//								sourceWidget.cord.setStartX(jackPosition.getX());
+//								sourceWidget.cord.setStartY(jackPosition.getY());
+//								sourceWidget.cord.setEndX(jackPosition.getX());
+//								sourceWidget.cord.setEndY(jackPosition.getY());
+								GUICable guiCable = new GUICable(sourceWidget, jackPosition);
+								cableList.add(guiCable);
+								backgroundPane.getChildren().add(guiCable.line);
 
 							} else {
 								originalX = event.getSceneX();
@@ -93,48 +96,97 @@ public class MyApp extends Application {
 
 						public void handle(MouseEvent event) {
 							if (sourceWidget.outputJack.isPressed()) {
-								sourceWidget.cord.setEndX(event.getX());
-								sourceWidget.cord.setEndY(event.getY());
+//								sourceWidget.cord.setEndX(event.getX());
+//								sourceWidget.cord.setEndY(event.getY());
+
+								for (GUICable cable : cableList) {
+									if (sourceWidget.equals(cable.sourceWidget)) {
+										cable.line.setEndX(event.getX());
+										cable.line.setEndY(event.getY());
+									}
+								}
+
 							} else {
 								sourceWidget.widget.setTranslateX(event.getSceneX() - originalX + translateX);
 								sourceWidget.widget.setTranslateY(event.getSceneY() - originalY + translateY);
-								sourceWidget.cord.setTranslateX(event.getSceneX() - originalX + translateX);
-								sourceWidget.cord.setTranslateY(event.getSceneY() - originalY + translateY);
+//								sourceWidget.cord.setTranslateX(event.getSceneX() - originalX + translateX);
+//								sourceWidget.cord.setTranslateY(event.getSceneY() - originalY + translateY);
+
+								for (GUICable cable : cableList) {
+//									System.out.println("Cable Exists");
+									if (sourceWidget.equals(cable.sourceWidget)) {
+//										System.out.println("Widget Matches");
+										cable.line.setTranslateX(event.getSceneX() - originalX + translateX);
+										cable.line.setTranslateY(event.getSceneY() - originalY + translateY);
+									}
+								}
+
 							}
 						}
 					});
 
 					sourceWidget.widget.setOnMouseReleased((e) -> {
-						boolean isConnected = false;
+//						boolean isConnected = false;
 						for (AbFilterWidget targetWidget : targestList) {
-							Point2D cordPosition = sourceWidget.cord.localToScene(sourceWidget.cord.getEndX(),
-									sourceWidget.cord.getEndY());
-							Point2D cordPositionLocal = targetWidget.inputJack.sceneToLocal(cordPosition);
+//							Point2D cordPosition = sourceWidget.cord.localToScene(sourceWidget.cord.getEndX(),
+//									sourceWidget.cord.getEndY());
+//							Point2D cordPositionLocal = targetWidget.inputJack.sceneToLocal(cordPosition);
 
-							if (targetWidget.inputJack.contains(cordPositionLocal)) {
-								isConnected = true;
-								System.out.println("Connected!");
-								try {
-									targetWidget.getFilter().connectInput(sourceWidget.getSource());
-								} catch (LineUnavailableException e1) {
-									e1.printStackTrace();
+							for (GUICable cable : cableList) {
+								if (sourceWidget.equals(cable.sourceWidget)) {
+									Point2D cordPosition = cable.line.localToScene(cable.line.getEndX(),
+											cable.line.getEndY());
+									Point2D cordPositionLocal = targetWidget.inputJack.sceneToLocal(cordPosition);
+									
+//									System.out.println(cordPosition);
+//									System.out.println(cordPositionLocal);
+//									System.out.println(cordPosition2);
+//									System.out.println(cordPositionLocal2);
+									
+									if (targetWidget.inputJack.contains(cordPositionLocal)) {
+//										isConnected = true;
+										System.out.println("Connected");
+										cable.filterWidget = targetWidget;
+										try {
+											targetWidget.getFilter().connectInput(sourceWidget.getSource());
+										} catch (LineUnavailableException e1) {
+											e1.printStackTrace();
+										}
+									}
+
+									Point2D cordPositionLocal2 = guiSpeaker.speaker.sceneToLocal(cordPosition);
+									if (guiSpeaker.speaker.contains(cordPositionLocal2)) {
+										System.out.println("Speaker");
+										GUISpeaker.source = sourceWidget.getSource();
+									} 
 								}
 							}
+
+
+//							if (targetWidget.inputJack.contains(cordPositionLocal)) {
+//								isConnected = true;
+//								System.out.println("Connected!");
+//								try {
+//									targetWidget.getFilter().connectInput(sourceWidget.getSource());
+//								} catch (LineUnavailableException e1) {
+//									e1.printStackTrace();
+//								}
+//							}
 						}
 
-						Point2D cordPosition = sourceWidget.cord.localToScene(sourceWidget.cord.getEndX(),
-								sourceWidget.cord.getEndY());
-						Point2D cordPositionLocal = guiSpeaker.speaker.sceneToLocal(cordPosition);
-
-						if (guiSpeaker.speaker.contains(cordPositionLocal)) {
-							isConnected = true;
-							System.out.println("Speaker");
-							GUISpeaker.source = sourceWidget.getSource();
-						}
-						if (!isConnected) {
-							sourceWidget.cord.setEndX(sourceWidget.cord.getStartX());
-							sourceWidget.cord.setEndY(sourceWidget.cord.getStartY());
-						}
+//						Point2D cordPosition = sourceWidget.cord.localToScene(sourceWidget.cord.getEndX(),
+//								sourceWidget.cord.getEndY());
+//						Point2D cordPositionLocal = guiSpeaker.speaker.sceneToLocal(cordPosition);
+//
+//						if (guiSpeaker.speaker.contains(cordPositionLocal)) {
+//							isConnected = true;
+//							System.out.println("Speaker");
+//							GUISpeaker.source = sourceWidget.getSource();
+//						}
+//						if (!isConnected) {
+//							sourceWidget.cord.setEndX(sourceWidget.cord.getStartX());
+//							sourceWidget.cord.setEndY(sourceWidget.cord.getStartY());
+//						}
 					});
 				}
 
