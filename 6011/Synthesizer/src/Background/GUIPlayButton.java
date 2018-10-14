@@ -19,6 +19,8 @@ public class GUIPlayButton {
 
 				try {
 					AudioClip.playSound(GUISpeaker.source.getAudioClip());
+				} catch (NullPointerException e) {
+					System.out.println("No Audio Source");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

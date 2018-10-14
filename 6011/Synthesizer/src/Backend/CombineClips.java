@@ -22,7 +22,6 @@ public class CombineClips implements Mixer {
 		int divisor = sourceArray.size();
 		for (Source singleSource : sourceArray) {
 			workingClip = singleSource.getAudioClip();
-			System.out.println("Working");
 			for (int i = 0; i < workingClip.getByteArray().length; i++) {
 				outputClip.getByteArray()[i] += (workingClip.getByteArray()[i] / divisor);
 			}

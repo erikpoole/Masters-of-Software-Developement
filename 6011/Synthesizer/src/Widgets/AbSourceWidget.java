@@ -10,15 +10,13 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 
 public abstract class AbSourceWidget {
 
 	public BorderPane widget;
-	//public Line cord;
 	public Button playButton;
 
-	protected Source source;
+	public Source source;
 
 	public Circle outputJack;
 
@@ -33,8 +31,6 @@ public abstract class AbSourceWidget {
 		widget.setRight(outputJack);
 		BorderPane.setAlignment(outputJack, Pos.CENTER);
 
-		//cord = new Line();
-		
 		playButton = new Button("Play");
 		widget.setBottom(playButton);
 		BorderPane.setAlignment(playButton, Pos.CENTER);
@@ -45,6 +41,8 @@ public abstract class AbSourceWidget {
 			public void handle(ActionEvent event) {
 				try {
 					AudioClip.playSound(source.getAudioClip());
+				} catch (NullPointerException e) {
+					System.out.println("No Audio Source");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
