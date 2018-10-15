@@ -10,7 +10,7 @@ public abstract class AbFilterWidget extends AbSourceWidget {
 
 	public Circle inputJack;
 
-	protected Filter filter;
+	public Filter filter;
 
 	protected AbFilterWidget() {
 		super();

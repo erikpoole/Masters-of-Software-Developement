@@ -76,6 +76,7 @@ public class MyApp extends Application {
 								for (GUICable cable : cableList) {
 									if (sourceWidget.equals(cable.sourceWidget)) {
 										hasCable = true;
+										cable.hasOutput = false;
 									}
 								}
 								if (!hasCable) {
@@ -113,13 +114,18 @@ public class MyApp extends Application {
 								sourceWidget.widget.setTranslateY(event.getSceneY() - originalY + translateY);
 
 								for (GUICable cable : cableList) {
+									// -10 accounts for padding on scene
+									Point2D jackPosition = sourceWidget.outputJack.localToScene(
+											sourceWidget.outputJack.getTranslateX() - 10,
+											sourceWidget.outputJack.getTranslateY() - 10);
 									if (sourceWidget.equals(cable.sourceWidget)) {
-										// -10 accounts for padding on scene
-										Point2D jackPosition = sourceWidget.outputJack.localToScene(
-												sourceWidget.outputJack.getTranslateX() - 10,
-												sourceWidget.outputJack.getTranslateY() - 10);
 										cable.line.setStartX(jackPosition.getX());
 										cable.line.setStartY(jackPosition.getY());
+									}
+									if (sourceWidget.equals(cable.filterWidget)) {
+										// -135 relocates between input and output jacks
+										cable.line.setEndX(jackPosition.getX() - 135);
+										cable.line.setEndY(jackPosition.getY());
 									}
 								}
 
@@ -127,14 +133,15 @@ public class MyApp extends Application {
 						}
 					});
 
+					// only the widget clicked will interact
 					sourceWidget.widget.setOnMouseReleased((e) -> {
-						for (AbFilterWidget targetWidget : targestList) {
-							for (GUICable cable : cableList) {
-								if (sourceWidget.equals(cable.sourceWidget)) {
+						GUISpeaker.source = null;
+						for (GUICable cable : cableList) {
+							if (sourceWidget.equals(cable.sourceWidget)) {
+								for (AbFilterWidget targetWidget : targestList) {
 									Point2D cordPosition = cable.line.localToScene(cable.line.getEndX(),
 											cable.line.getEndY());
 									Point2D cordPositionLocalFilter = targetWidget.inputJack.sceneToLocal(cordPosition);
-									Point2D cordPositionLocalSpeaker = guiSpeaker.speaker.sceneToLocal(cordPosition);
 
 									if (targetWidget.inputJack.contains(cordPositionLocalFilter)) {
 										cable.filterWidget = targetWidget;
@@ -144,28 +151,34 @@ public class MyApp extends Application {
 										} catch (LineUnavailableException e1) {
 											e1.printStackTrace();
 										}
-									} else if (guiSpeaker.speaker.contains(cordPositionLocalSpeaker)) {
-										cable.hasOutput = true;
-										GUISpeaker.source = sourceWidget.getSource();
-									} else {
-										cable.hasOutput = false;
 									}
 								}
 							}
 
+							Point2D cordPosition = cable.line.localToScene(cable.line.getEndX(), cable.line.getEndY());
+							Point2D cordPositionLocalSpeaker = guiSpeaker.speaker.sceneToLocal(cordPosition);
+							if (guiSpeaker.speaker.contains(cordPositionLocalSpeaker)) {
+								cable.hasOutput = true;
+								GUISpeaker.source = sourceWidget.getSource();
+							}
+
 						}
+
 						for (int i = 0; i < cableList.size(); i++) {
-							if (cableList.get(i).hasOutput == false) {
-								System.out.println("Should Delete");
-								cableList.get(i).filterWidget.source = null;
+							if (!cableList.get(i).hasOutput) {
+								if (cableList.get(i).filterWidget != null) {
+									try {
+										//buggy with CombineClips
+										cableList.get(i).filterWidget.filter.connectInput(null);
+									} catch (LineUnavailableException e1) {
+										e1.printStackTrace();
+									}
+								}
 								backgroundPane.getChildren().remove(cableList.get(i).line);
 								cableList.remove(i);
 								i++;
-								System.out.println(cableList.size());
-
 							}
 						}
-
 					});
 				}
 
