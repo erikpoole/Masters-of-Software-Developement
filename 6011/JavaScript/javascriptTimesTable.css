@@ -1,0 +1,15 @@
+.hovered {
+    background-color: red;
+}
+
+.clicked {
+    background-color: blue;
+}
+
+th {
+    border: 1px black solid;
+}
+
+td {
+    border: 1px black solid;
+}
