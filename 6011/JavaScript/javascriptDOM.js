@@ -7,22 +7,28 @@ Use the DOM api to recreate the HTML/CSS page you wrote.
 
 'use strict';
 
+document.body.style.backgroundImage = "url('https://i.kym-cdn.com/photos/images/newsfeed/001/332/955/58e.gif')";
+//radial gradient?
+document.body.style.backgroundRepeat = "no-repeat";
 
-function addTextElement(elementType, text) {
+function addTextElement(elementType, text, color) {
     let element = document.createElement(elementType);
+    element.style.color = color;
     let textNode = document.createTextNode(text);
     document.body.appendChild(element);
     element.appendChild(textNode);
 }
 
-addTextElement('h1', 'This is a Title!');
-addTextElement('p', 'This is a sentence!');
-addTextElement('b', 'This is a bold sentence!');
+//border for header?
+addTextElement('h1', 'This is a Title!', 'red');
+addTextElement('p', 'This is a sentence!', 'pink');
+addTextElement('b', 'This is a bold sentence!', 'black');
 document.body.appendChild(document.createElement('br'));
 document.body.appendChild(document.createElement('br'));
 
 
 let abbreviation = document.createElement('abbr');
+abbreviation.style.color = 'pink';
 let abbreviationText = document.createTextNode('The CRAP');
 abbreviation.setAttribute('Title', 'Creative Renaissance Artists and Painters')
 abbreviation.appendChild(abbreviationText);
@@ -68,27 +74,10 @@ document.body.appendChild(listMain);
 
 let link = document.createElement('a');
 let linktext = document.createTextNode('This is a link to the whole of human knowledge');
+link.style.color = 'goldenrod';
 link.href = 'https://www.wikipedia.org/';
 document.body.appendChild(link);
 link.appendChild(linktext);
 
-/*
 
-
-        <iframe width="560" height="315" 
-        src="https://www.youtube.com/embed/DLzxrzFCyOs" 
-        frameborder="0" allow="autoplay; encrypted-media" 
-        allowfullscreen></iframe>
-
-        <iframe width="1120" height="630" 
-        src="https://www.youtube.com/embed/DLzxrzFCyOs" 
-        frameborder="0" allow="autoplay; encrypted-media" 
-        allowfullscreen></iframe>
-
-        <iframe width="1680" height="945" 
-        src="https://www.youtube.com/embed/DLzxrzFCyOs" 
-        frameborder="0" allow="autoplay; encrypted-media" 
-        allowfullscreen></iframe>
-
-
-*/
+//youtube embedding?
