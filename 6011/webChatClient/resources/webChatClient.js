@@ -25,10 +25,10 @@ The server sends them in json format:
 Create simple HTML & Javascript File for first page (Username/Room Entry)
 	Working buttons and console.debug to list messages sent to/from server
 Successfully change to blank second HTML page with AJAX
-
 Add HTML / Javascript elements to second page
 	Listen for server messages and append them to the page
 Add functionality to second HTML/JS page to send message 
+
 Add functionality to second HTML/JS page to leave room (return to first) and reset server connection
 Add CSS elements to HTML page one
 Add CSS elements to HTML page two
@@ -83,8 +83,6 @@ function runChatRoom() {
 }
 
 function sendMessage() {
-    console.log(username);
-    console.log(document.getElementById("message").value);
     mySocket.send(username + " " + document.getElementById("message").value);
 
 }
@@ -106,6 +104,18 @@ function switchPage(pageName) {
 
 function messageReceipt(event) {
     let response = event.data;
-    JSON.parse(response);
-    console.log(response);
+    let parsed = JSON.parse(response);
+
+    let newUser = document.createElement("b");
+    let newUserText = document.createTextNode(parsed.user);
+    newUser.appendChild(newUserText);
+    document.getElementById("body").appendChild(newUser);
+
+    let newMessage = document.createElement("p");
+    let newMessageText = document.createTextNode(parsed.message);
+    newMessage.appendChild(newMessageText);
+    document.getElementById("body").appendChild(newMessage);
+
+
+
 }
