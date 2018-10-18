@@ -41,11 +41,35 @@ window.onload = runProgram;
 let mySocket;
 let socketOpen = false;
 
+let username;
+let room;
+
 function runProgram() {
     console.log('Working');
     mySocket = new WebSocket("ws://localhost:8080")
-    mySocket.onopen = function () { socketOpen = true };
+    mySocket.onopen = function () {
+        socketOpen = true
+        console.log(socketOpen);
+    };
 
-    let button = document.getElementById(button);
-    button2.addEventListener("click", sendServerRequest);
+    let button = document.getElementById("button");
+    button.addEventListener("click", sendJoinRequest);
+}
+
+function sendJoinRequest() {
+    let room = document.getElementById("room").value;
+    console.log(room);
+    mySocket.send("join " + room);
+
+    if (socketOpen) {
+        console.log("listening");
+        mySocket.onmessage = messageReceipt;
+    }
+
+
+}
+
+function messageReceipt(event) {
+    let response = event.data;
+    console.log(response);
 }
