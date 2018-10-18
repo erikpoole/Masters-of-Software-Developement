@@ -44,7 +44,7 @@ let socketOpen = false;
 
 let username;
 let room;
-
+let inRoom = false;
 
 
 function runChatLogin() {
@@ -75,9 +75,12 @@ function sendJoinRequest() {
 
 
 function runChatRoom() {
-    let button = document.getElementById("sendButton");
-    console.log(button);
-    button.addEventListener("click", sendMessage);
+    let sendButton = document.getElementById("sendButton");
+    sendButton.addEventListener("click", sendMessage);
+
+    let exitButton = document.getElementById("exitButton");
+    exitButton.addEventListener("click", function() {switchPage("webChatLogin.html")});
+
 
 }
 
@@ -91,13 +94,23 @@ function sendMessage() {
 function switchPage(pageName) {
     let xhr = new XMLHttpRequest();
     xhr.open("GET", pageName);
-    xhr.addEventListener("load", function() {
+    xhr.addEventListener("load", function () {
         document.getElementById("body").innerHTML = this.responseText;
-        mySocket.send("join " + room);
-        runChatRoom();
+        if (inRoom) {
+            inRoom = false;
+            mySocket.close();
+            mySocket.onclose = runChatLogin;
+        } else {
+            inRoom = true;
+            mySocket.send("join " + room);
+            runChatRoom();
+        }
     })
     xhr.send();
 }
+
+
+
 
 function messageReceipt(event) {
     let response = event.data;
