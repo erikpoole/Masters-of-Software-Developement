@@ -25,6 +25,7 @@ The server sends them in json format:
 Create simple HTML & Javascript File for first page (Username/Room Entry)
 	Working buttons and console.debug to list messages sent to/from server
 Successfully change to blank second HTML page with AJAX
+
 Add HTML / Javascript elements to second page
 	Listen for server messages and append them to the page
 Add functionality to second HTML/JS page to send message 
@@ -57,16 +58,29 @@ function runProgram() {
 }
 
 function sendJoinRequest() {
-    let room = document.getElementById("room").value;
-    console.log(room);
-    mySocket.send("join " + room);
-
     if (socketOpen) {
         console.log("listening");
+
+        let room = document.getElementById("room").value;
+        let username = document.getElementById("username").value;
+        console.log(room);
+        mySocket.send("join " + room);
+
         mySocket.onmessage = messageReceipt;
+        switchPage("webChatRoom.html");
     }
 
 
+}
+
+function switchPage(pageName) {
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", pageName);
+    xhr.addEventListener("load", function() {
+        console.log(this);
+        document.getElementById("body").innerHTML = this.responseText;
+    })
+    xhr.send();
 }
 
 function messageReceipt(event) {
