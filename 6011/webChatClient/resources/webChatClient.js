@@ -65,10 +65,9 @@ function sendJoinRequest() {
 
         room = document.getElementById("room").value;
         username = document.getElementById("username").value;
-        console.log(room);
-        mySocket.send("join " + room);
 
         mySocket.onmessage = messageReceipt;
+
         switchPage("webChatRoom.html");
     }
 }
@@ -89,14 +88,12 @@ function sendMessage() {
 
 
 
-
-
 function switchPage(pageName) {
     let xhr = new XMLHttpRequest();
     xhr.open("GET", pageName);
     xhr.addEventListener("load", function() {
-        console.log(this);
         document.getElementById("body").innerHTML = this.responseText;
+        mySocket.send("join " + room);
         runChatRoom();
     })
     xhr.send();
@@ -105,6 +102,7 @@ function switchPage(pageName) {
 function messageReceipt(event) {
     let response = event.data;
     let parsed = JSON.parse(response);
+    console.log(parsed);
 
     let newUser = document.createElement("b");
     let newUserText = document.createTextNode(parsed.user);
