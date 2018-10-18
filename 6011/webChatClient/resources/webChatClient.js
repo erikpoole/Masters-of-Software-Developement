@@ -13,6 +13,7 @@ let socketOpen = false;
 
 let username;
 let room;
+
 let inRoom = false;
 
 
@@ -25,11 +26,14 @@ function runChatLogin() {
         console.log(socketOpen);
     };
 
-    let joinForm= document.getElementById("joinForm");
-    addEnterEventHandler(joinForm, sendJoinRequest);
-
     let button = document.getElementById("joinButton");
     button.addEventListener("click", sendJoinRequest);
+
+    let joinForm = document.getElementById("joinForm");
+    fixEnterEvent(joinForm, sendJoinRequest);
+
+    addBlankListener(document.getElementById("username"), button);
+    addBlankListener(document.getElementById("room"), button);
 }
 
 function sendJoinRequest() {
@@ -67,14 +71,16 @@ function switchPage(pageName) {
 
 
 function runChatRoom() {
-    let messageForm = document.getElementById("messageForm");
-    addEnterEventHandler(messageForm, sendMessage);
-
     let sendButton = document.getElementById("sendButton");
     sendButton.addEventListener("click", sendMessage);
 
     let exitButton = document.getElementById("exitButton");
     exitButton.addEventListener("click", function () { switchPage("webChatLogin.html") });
+
+    let messageForm = document.getElementById("messageForm");
+    fixEnterEvent(messageForm, sendMessage);
+
+    addBlankListener(document.getElementById("messageBox"), sendButton);
 }
 
 function sendMessage() {
@@ -99,12 +105,21 @@ function messageReceipt(event) {
 
 
 
-function addEnterEventHandler(form, functionToCall) {
-    form.addEventListener("keydown", function(event) {
+function fixEnterEvent(element, functionToCall) {
+    element.addEventListener("keydown", function (event) {
         //'Enter key is key 13'
         if (event.keyCode == 13) {
             event.preventDefault();
             functionToCall();
+        }
+    });
+}
+
+function addBlankListener(element, button) {
+    element.addEventListener("keyup", function () {
+        button.disabled = true;
+        if (element.value != "") {  
+            button.disabled = false;
         }
     });
 }
