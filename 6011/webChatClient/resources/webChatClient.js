@@ -38,14 +38,16 @@ Add CSS elements to HTML page two
 
 "use strict";
 
-window.onload = runProgram;
+window.onload = runChatLogin;
 let mySocket;
 let socketOpen = false;
 
 let username;
 let room;
 
-function runProgram() {
+
+
+function runChatLogin() {
     console.log('Working');
     mySocket = new WebSocket("ws://localhost:8080")
     mySocket.onopen = function () {
@@ -53,7 +55,7 @@ function runProgram() {
         console.log(socketOpen);
     };
 
-    let button = document.getElementById("button");
+    let button = document.getElementById("joinButton");
     button.addEventListener("click", sendJoinRequest);
 }
 
@@ -61,17 +63,35 @@ function sendJoinRequest() {
     if (socketOpen) {
         console.log("listening");
 
-        let room = document.getElementById("room").value;
-        let username = document.getElementById("username").value;
+        room = document.getElementById("room").value;
+        username = document.getElementById("username").value;
         console.log(room);
         mySocket.send("join " + room);
 
         mySocket.onmessage = messageReceipt;
         switchPage("webChatRoom.html");
     }
+}
 
+
+
+function runChatRoom() {
+    let button = document.getElementById("sendButton");
+    console.log(button);
+    button.addEventListener("click", sendMessage);
 
 }
+
+function sendMessage() {
+    console.log(username);
+    console.log(document.getElementById("message").value);
+    mySocket.send(username + " " + document.getElementById("message").value);
+
+}
+
+
+
+
 
 function switchPage(pageName) {
     let xhr = new XMLHttpRequest();
@@ -79,11 +99,13 @@ function switchPage(pageName) {
     xhr.addEventListener("load", function() {
         console.log(this);
         document.getElementById("body").innerHTML = this.responseText;
+        runChatRoom();
     })
     xhr.send();
 }
 
 function messageReceipt(event) {
     let response = event.data;
+    JSON.parse(response);
     console.log(response);
 }
