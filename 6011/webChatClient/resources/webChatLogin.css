@@ -1,0 +1,17 @@
+div {
+    height: 500px;
+    width: 300 px;
+    overflow: scroll;
+    border: 1px solid black;
+    padding: 10px
+}
+
+b {
+    color: darkblue;
+}
+
+#messageBox {
+    height: 100 px;
+    width: 300 px;
+}
+

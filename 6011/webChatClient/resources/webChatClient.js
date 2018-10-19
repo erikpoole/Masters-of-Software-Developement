@@ -95,12 +95,12 @@ function messageReceipt(event) {
     let newUser = document.createElement("b");
     let newUserText = document.createTextNode(parsed.user);
     newUser.appendChild(newUserText);
-    document.getElementById("body").appendChild(newUser);
+    document.getElementById("messages").appendChild(newUser);
 
     let newMessage = document.createElement("p");
     let newMessageText = document.createTextNode(parsed.message);
     newMessage.appendChild(newMessageText);
-    document.getElementById("body").appendChild(newMessage);
+    document.getElementById("messages").appendChild(newMessage);
 }
 
 
@@ -117,9 +117,9 @@ function fixEnterEvent(element, functionToCall) {
 
 function addBlankListener(element, button) {
     element.addEventListener("keyup", function () {
-        button.disabled = true;
-        if (element.value != "") {  
-            button.disabled = false;
+        button.disabled = false;
+        if (element.value == "") {  
+            button.disabled = true;
         }
     });
 }
