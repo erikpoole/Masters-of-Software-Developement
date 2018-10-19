@@ -1,9 +1,3 @@
-/*
-
-Add CSS elements to HTML page one
-Add CSS elements to HTML page two
-
-*/
 
 "use strict";
 
@@ -20,7 +14,7 @@ let inRoom = false;
 
 function runChatLogin() {
     console.log('Working');
-    mySocket = new WebSocket("ws://localhost:8080")
+    mySocket = new WebSocket("ws://" + location.host);
     mySocket.onopen = function () {
         socketOpen = true
         console.log(socketOpen);
@@ -84,7 +78,9 @@ function runChatRoom() {
 }
 
 function sendMessage() {
-    mySocket.send(username + " " + document.getElementById("messageBox").value);
+    let messageBox = document.getElementById("messageBox");
+    mySocket.send(username + " " + messageBox.value);
+    messageBox.value = "";
 }
 
 function messageReceipt(event) {
@@ -101,9 +97,14 @@ function messageReceipt(event) {
     let newMessageText = document.createTextNode(parsed.message);
     newMessage.appendChild(newMessageText);
     document.getElementById("messages").appendChild(newMessage);
+    newMessage.scrollIntoView({behavior: "smooth"});
 }
 
 
+
+function clearElement(element) {
+    element.value = "";
+}
 
 function fixEnterEvent(element, functionToCall) {
     element.addEventListener("keydown", function (event) {
