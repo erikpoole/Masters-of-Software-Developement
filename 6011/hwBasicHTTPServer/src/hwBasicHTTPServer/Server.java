@@ -12,8 +12,7 @@ import java.util.Scanner;
 
 public class Server {
 
-	private ServerSocket serverSocket;
-	public Socket socket;
+	public ServerSocket serverSocket;
 
 	// Constructor - takes socket number as argument
 	// exception not caught - will crash if something goes wrong
@@ -21,21 +20,13 @@ public class Server {
 		serverSocket = new ServerSocket(socketNum);
 	}
 
-	// Hangs until connection is made and returns connected socket
-	// exception not caught - will crash if something goes wrong
-	public Socket listen() throws IOException {
-		System.out.println("Server is Listening");
-		socket = serverSocket.accept();
-		return socket;
-	}
-
 	// reads in argument sent by client
 	// if file not found will return 404
 	// if attempts to find file out of current directory will return 404
 	// if HTTP argument other than "GET" will close socket
 	// if IOexception will close socket
-	public File httpRequest() throws FileNotFoundException, IOException, BadRequestException {
-		Scanner input = new Scanner(socket.getInputStream());
+	public File httpRequest(Socket inputSocket) throws FileNotFoundException, IOException, BadRequestException {
+		Scanner input = new Scanner(inputSocket.getInputStream());
 
 		if (!input.next().equals("GET")) {
 			throw new BadRequestException();
@@ -60,9 +51,9 @@ public class Server {
 
 	// reads bytes from file and sends them to client
 	// if IOexception will close socket
-	public void httpResponse(File file) throws IOException {
+	public void httpResponse(File file, Socket inputSocket) throws IOException {
 		byte[] fileBytes = {};
-		PrintWriter outputHeader = new PrintWriter(socket.getOutputStream(), true);
+		PrintWriter outputHeader = new PrintWriter(inputSocket.getOutputStream(), true);
 
 		FileInputStream fileStream = new FileInputStream(file.getCanonicalPath());
 		fileBytes = fileStream.readAllBytes();
@@ -71,30 +62,40 @@ public class Server {
 		outputHeader.println("HTTP/1.1 200 OK");
 		outputHeader.println("Content-Length: " + fileBytes.length);
 		outputHeader.println();
-		OutputStream outputBody = socket.getOutputStream();
+		OutputStream outputBody = inputSocket.getOutputStream();
+		outputBody.flush();
+//		for (byte specificByte : fileBytes) {
+//			outputBody.write(specificByte);
+//			outputBody.flush();
+//			try {
+//				Thread.sleep(10);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
 		outputBody.write(fileBytes);
-		socket.close();
+		inputSocket.close();
 	}
 
 	// catches 404 - fileNotFound Exceptions
-	public void respond404() throws IOException {
-		PrintWriter outputHeader = new PrintWriter(socket.getOutputStream(), true);
+	public void respond404(Socket inputSocket) throws IOException {
+		PrintWriter outputHeader = new PrintWriter(inputSocket.getOutputStream(), true);
 		outputHeader.println("HTTP/1.1 404 FILE NOT FOUND");
 		outputHeader.println("Content-Length: 0");
 		outputHeader.println();
 		outputHeader.close();
 		System.out.println("Client Received 404");
-		socket.close();
+		inputSocket.close();
 	}
 
 	// catches 400 - fileNotFound Exceptions
-	public void respond400() throws IOException {
-		PrintWriter outputHeader = new PrintWriter(socket.getOutputStream(), true);
+	public void respond400(Socket inputSocket) throws IOException {
+		PrintWriter outputHeader = new PrintWriter(inputSocket.getOutputStream(), true);
 		outputHeader.println("HTTP/1.1 400 BAD REQUEST");
 		outputHeader.println("Content-Length: 0");
 		outputHeader.println();
 		outputHeader.close();
 		System.out.println("Client Received 400");
-		socket.close();
+		inputSocket.close();
 	}
 }
