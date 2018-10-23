@@ -10,41 +10,41 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 
-		Server myserver = new Server(8080);
+		Server thisServer = new Server(8080);
 		while (true) {
 
 			System.out.println("Server is Listening");
-			Socket mySocket = myserver.serverSocket.accept();
+			Socket connectingSocket = thisServer.serverSocket.accept();
+			ClientSocket clientSocket = new ClientSocket(connectingSocket);
 			Thread thread = new Thread(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					try {
-						File file = myserver.httpRequest(mySocket);
-						myserver.httpResponse(file, mySocket);
-						mySocket.close();
+						File file = clientSocket.httpRequest();
+						clientSocket.httpResponse(file);
+						clientSocket.socket.close();
 
 					} catch (FileNotFoundException e) {
 						try {
-							myserver.respond404(mySocket);
+							clientSocket.respond404();
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
-						
+
 					} catch (BadRequestException | IOException | NoSuchElementException e) {
 						try {
-							myserver.respond400(mySocket);
+							clientSocket.respond400();
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
 					}
 					System.out.println();
-					
+
 				}
 			});
 			thread.start();
-			
-			
+
 		}
 
 	}
