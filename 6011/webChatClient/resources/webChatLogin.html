@@ -10,13 +10,24 @@
 
 <body id="body">
 
-    <form id="joinForm">
-        Username: <input id="username" , type="text" , value="">
-        <br>
-        Room: <input id="room" , type="text" , value="">
-        <br>
-        <input id="joinButton", type="button", value="Join Room" disabled>
-    </form>
+    <div id="loginBody">
+        <!-- <form id="joinForm">
+            Username: <input id="username" , type="text" , value="">
+            <br>
+            Room: <input id="room" , type="text" , value="">
+            <br>
+            <input id="joinButton" , type="button" , value="Join Room" disabled>
+        </form> -->
+        <div class="grid", id="joinForm">
+            <div id="usernameText"> Username: </div>
+            <input id="username", type="text", value="">
+
+            <div id="roomText"> Room: </div>
+            <input id="room", type="text", value="">
+
+            <input id="joinButton", type="button", value="Join Room" disabled>
+        </div>
+    </div>
 
 
 </body>
