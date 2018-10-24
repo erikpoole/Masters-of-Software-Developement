@@ -18,11 +18,13 @@ public class Main {
 			ClientSocket clientSocket = new ClientSocket(connectingSocket);
 			Thread thread = new Thread(new Runnable() {
 
+				//extend runnable to be able to throw errors ???
 				@Override
 				public void run() {
 					try {
 						clientSocket.httpRequest();
 						if (clientSocket.isWebSocketRequest) {
+							
 						} else {
 							clientSocket.httpResponse();
 						}

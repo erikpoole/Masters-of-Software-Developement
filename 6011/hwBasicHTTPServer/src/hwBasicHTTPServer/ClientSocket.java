@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -18,7 +19,7 @@ public class ClientSocket<V> {
 	public HashMap<String, String> httpMap;
 	public String clientKey;
 	public boolean isWebSocketRequest;
-	
+
 	public File file;
 
 	public ClientSocket(Socket inputSocket) {
@@ -50,18 +51,19 @@ public class ClientSocket<V> {
 			clientKey = httpMap.get("Sec-WebSocket-Key:");
 			isWebSocketRequest = true;
 			System.out.println("Websocket Request");
+
 		} else {
 			isWebSocketRequest = false;
 			file = new File(filename);
 			System.out.println("Webpage Request");
+			
+			System.out.println(file.getCanonicalPath());
+			if (!file.getAbsolutePath().equals(file.getCanonicalPath())) {
+				throw new FileNotFoundException();
+			}
 		}
 
 
-
-		System.out.println(file.getCanonicalPath());
-		if (!file.getAbsolutePath().equals(file.getCanonicalPath())) {
-			throw new FileNotFoundException();
-		}
 	}
 
 	public void setHTTPMap() {
@@ -81,6 +83,25 @@ public class ClientSocket<V> {
 		}
 	}
 
+//*************************************************************************************	
+//*************************************************************************************
+
+	public void returnHandshake() throws IOException, NoSuchAlgorithmException {
+		PrintWriter outputHeader = new PrintWriter(socket.getOutputStream(), true);
+		outputHeader.println("HTTP/1.1 101 Switching Protocols");
+		outputHeader.println("Upgrade: websocket");
+		outputHeader.println("Connection: Upgrade");
+		outputHeader.println("Sec-WebSocket-Accept: " + Server.calculateHash(clientKey));
+		outputHeader.println();
+	}
+
+//	HTTP/1.1 101 Switching Protocols
+//	• Upgrade: websocket
+//	• Connection: Upgrade
+//	• Sec-WebSocket-Accept: secretComputedOnPreviousSlide
+//	• blank line
+	
+	
 //*************************************************************************************	
 //*************************************************************************************
 
