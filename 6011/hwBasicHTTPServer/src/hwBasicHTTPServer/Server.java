@@ -26,7 +26,5 @@ public class Server {
 		byte hashedBytes[] = messageDigest.digest(protocolBytes);
 		
 		return Base64.getEncoder().encodeToString(hashedBytes);
-		
-		
 	}
 }

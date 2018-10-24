@@ -7,9 +7,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Scanner;
 
-public class ClientSocket {
+import com.sun.javadoc.Tag;
+
+import javafx.scene.shape.Line;
+
+
+public class ClientSocket<V> {
 
 	public Socket socket;
 	public Scanner input;
@@ -36,7 +42,31 @@ public class ClientSocket {
 		if (!input.next().equals("HTTP/1.1")) {
 			throw new BadRequestException();
 		}
+		input.nextLine();
 
+		HashMap<String, String> httpMap = new HashMap<String, String>();
+		while (true) {
+			String line = input.nextLine();
+			if (line.isEmpty()) { 
+				break;
+			}
+			
+			String splitline [] = line.split("\\s+");
+			String tag = splitline[0];
+			String value = splitline[1];
+			httpMap.put(tag, value);
+
+		}
+		System.out.println(httpMap);
+		
+		
+//		GET /chat HTTP/1.1
+//		Host: example.com:8000
+//		Upgrade: websocket
+//		Connection: Upgrade
+//		Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+//		Sec-WebSocket-Version: 13
+		
 		File file = new File(filename);
 
 		System.out.println(file.getCanonicalPath());
