@@ -1,6 +1,5 @@
 package hwBasicHTTPServer;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
@@ -11,9 +10,10 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 
 		Server thisServer = new Server(8080);
+		System.out.println("Server is Listening");
+		System.out.println();
 		while (true) {
 
-			System.out.println("Server is Listening");
 			Socket connectingSocket = thisServer.serverSocket.accept();
 			ClientSocket clientSocket = new ClientSocket(connectingSocket);
 			Thread thread = new Thread(new Runnable() {
@@ -21,8 +21,11 @@ public class Main {
 				@Override
 				public void run() {
 					try {
-						File file = clientSocket.httpRequest();
-						clientSocket.httpResponse(file);
+						clientSocket.httpRequest();
+						if (clientSocket.isWebSocketRequest) {
+						} else {
+							clientSocket.httpResponse();
+						}
 						clientSocket.socket.close();
 
 					} catch (FileNotFoundException e) {

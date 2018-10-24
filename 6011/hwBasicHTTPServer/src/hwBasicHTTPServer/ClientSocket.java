@@ -10,15 +10,16 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import com.sun.javadoc.Tag;
-
-import javafx.scene.shape.Line;
-
-
 public class ClientSocket<V> {
 
 	public Socket socket;
 	public Scanner input;
+
+	public HashMap<String, String> httpMap;
+	public String clientKey;
+	public boolean isWebSocketRequest;
+	
+	public File file;
 
 	public ClientSocket(Socket inputSocket) {
 		socket = inputSocket;
@@ -29,7 +30,7 @@ public class ClientSocket<V> {
 	// if attempts to find file out of current directory will return 404
 	// if HTTP argument other than "GET" will close socket
 	// if IOexception will close socket
-	public File httpRequest() throws FileNotFoundException, IOException, BadRequestException {
+	public void httpRequest() throws FileNotFoundException, IOException, BadRequestException {
 		input = new Scanner(socket.getInputStream());
 
 		if (!input.next().equals("GET")) {
@@ -43,43 +44,49 @@ public class ClientSocket<V> {
 			throw new BadRequestException();
 		}
 		input.nextLine();
+		setHTTPMap();
 
-		HashMap<String, String> httpMap = new HashMap<String, String>();
-		while (true) {
-			String line = input.nextLine();
-			if (line.isEmpty()) { 
-				break;
-			}
-			
-			String splitline [] = line.split("\\s+");
-			String tag = splitline[0];
-			String value = splitline[1];
-			httpMap.put(tag, value);
-
+		if (httpMap.containsKey("Sec-WebSocket-Key:")) {
+			clientKey = httpMap.get("Sec-WebSocket-Key:");
+			isWebSocketRequest = true;
+			System.out.println("Websocket Request");
+		} else {
+			isWebSocketRequest = false;
+			file = new File(filename);
+			System.out.println("Webpage Request");
 		}
-		System.out.println(httpMap);
-		
-		
-//		GET /chat HTTP/1.1
-//		Host: example.com:8000
-//		Upgrade: websocket
-//		Connection: Upgrade
-//		Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
-//		Sec-WebSocket-Version: 13
-		
-		File file = new File(filename);
+
+
 
 		System.out.println(file.getCanonicalPath());
 		if (!file.getAbsolutePath().equals(file.getCanonicalPath())) {
 			throw new FileNotFoundException();
 		}
-
-		return file;
 	}
+
+	public void setHTTPMap() {
+		httpMap = new HashMap<String, String>();
+		while (true) {
+
+			String line = input.nextLine();
+			if (line.isEmpty()) {
+				break;
+			}
+
+			String splitline[] = line.split("\\s+");
+			String tag = splitline[0];
+			String value = splitline[1];
+			httpMap.put(tag, value);
+
+		}
+	}
+
+//*************************************************************************************	
+//*************************************************************************************
 
 	// reads bytes from file and sends them to client
 	// if IOexception will close socket
-	public void httpResponse(File file) throws IOException {
+	public void httpResponse() throws IOException {
 		byte[] fileBytes = {};
 		PrintWriter outputHeader = new PrintWriter(socket.getOutputStream(), true);
 
@@ -90,20 +97,16 @@ public class ClientSocket<V> {
 		outputHeader.println("HTTP/1.1 200 OK");
 		outputHeader.println("Content-Length: " + fileBytes.length);
 		outputHeader.println();
+
 		OutputStream outputBody = socket.getOutputStream();
-		outputBody.flush();
-//		for (byte specificByte : fileBytes) {
-//			outputBody.write(specificByte);
-//			outputBody.flush();
-//			try {
-//				Thread.sleep(10);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		}
 		outputBody.write(fileBytes);
+		outputBody.flush();
+
 		socket.close();
 	}
+
+//*************************************************************************************	
+//*************************************************************************************
 
 	// catches 404 - fileNotFound Exceptions
 	public void respond404() throws IOException {
