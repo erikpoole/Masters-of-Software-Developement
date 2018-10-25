@@ -118,11 +118,11 @@ public class ClientSocket {
 
 			String bodyString = new String(bodyBytes);
 			System.out.println("Received: " + bodyString);
-			if (bodyString == "serverclose") {
-				System.out.println("Socket Closed");
-				socket.close();
-				break;
-			}
+//			if (bodyString == "serverclose") {
+//				System.out.println("Socket Closed");
+//				socket.close();
+//				break;
+//			}
 
 			OutputStream outputBody = socket.getOutputStream();
 			byte[] outputBytes = new byte[2 + payloadLength];
