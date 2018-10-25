@@ -8,9 +8,6 @@ let socketOpen = false;
 let username;
 let room;
 
-let inRoom = false;
-
-
 
 function runChatLogin() {
     console.log('Working');
@@ -48,22 +45,10 @@ function switchPage(pageName) {
     xhr.open("GET", pageName);
     xhr.addEventListener("load", function () {
         document.getElementById("body").innerHTML = this.responseText;
-        if (inRoom) {
-            inRoom = false;
-
-            // mySocket.onmessage = function () {
-            //     console.log("Poop");
-            //     runChatLogin();
-            // }
-            mySocket.send("serverclose");
-            mySocket.close();
-        } else {
-            inRoom = true;
-            mySocket.onmessage = messageReceipt;
-            mySocket.send("join " + room);
-            runChatRoom();
-        }
-    })
+        mySocket.onmessage = messageReceipt;
+        mySocket.send("join " + room);
+        runChatRoom();
+    });
     xhr.send();
 }
 
@@ -74,7 +59,7 @@ function runChatRoom() {
     sendButton.addEventListener("click", sendMessage);
 
     let exitButton = document.getElementById("exitButton");
-    exitButton.addEventListener("click", function () { switchPage("webChatLoginShort.html") });
+    exitButton.addEventListener("click", function () { window.location.reload(true) });
 
     let messageForm = document.getElementById("messageForm");
     fixEnterEvent(messageForm, sendMessage);
@@ -93,10 +78,6 @@ function messageReceipt(event) {
     console.log(response);
     // let parsed = JSON.parse(response);
     // console.log(parsed);
-
-    // if (response == 'serverclose') {
-    //     switchPage("webChatLoginShort.html");
-    // }
 
     let newUser = document.createElement("b");
     let newUserText = document.createTextNode(response.user);
