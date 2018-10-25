@@ -16,7 +16,7 @@ public class Server {
 		serverSocket = new ServerSocket(socketNum);
 	}
 	
-	public static String calculateHash(String inputHash) throws NoSuchAlgorithmException {
+	public static synchronized String calculateHash(String inputHash) throws NoSuchAlgorithmException {
 		String protocolString = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 		String concatStrings = inputHash + protocolString;
 		

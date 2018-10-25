@@ -1,6 +1,5 @@
 package hwBasicHTTPServer;
 
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,13 +9,10 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Scanner;
 
-
-public class ClientSocket<V> {
+public class ClientSocket {
 
 	public Socket socket;
 	public Scanner input;
@@ -102,43 +98,45 @@ public class ClientSocket<V> {
 	public void listenWebSocket() throws IOException {
 		System.out.println("Web Socket - Listening");
 		InputStream inputStream = socket.getInputStream();
-		byte[] headerBytes = new byte[6];
+		while (true) {
+			byte[] headerBytes = new byte[6];
 
-		for (int i = 0; i < 6; i++) {
-			headerBytes[i] = (byte) (inputStream.read());
+			for (int i = 0; i < 6; i++) {
+				headerBytes[i] = (byte) (inputStream.read());
+			}
+
+			byte secondByte = headerBytes[1];
+			byte mask = 0x7F;
+			byte payloadLength = (byte) (secondByte & mask);
+
+			byte[] bodyBytes = new byte[payloadLength];
+			for (int i = 0; i < payloadLength; i++) {
+				byte currentByte = (byte) inputStream.read();
+				currentByte = (byte) (currentByte ^ headerBytes[2 + (i % 4)]);
+				bodyBytes[i] = currentByte;
+			}
+
+			String bodyString = new String(bodyBytes);
+			System.out.println("Received: " + bodyString);
+			if (bodyString == "serverclose") {
+				System.out.println("Socket Closed");
+				socket.close();
+				break;
+			}
+
+			OutputStream outputBody = socket.getOutputStream();
+			byte[] outputBytes = new byte[2 + payloadLength];
+
+			outputBytes[0] = (byte) 0x81;
+			outputBytes[1] = payloadLength;
+			for (int i = 0; i < payloadLength; i++) {
+				outputBytes[i + 2] = bodyBytes[i];
+			}
+			outputBody.write(outputBytes);
+			outputBody.flush();
 		}
 
-		byte secondByte = headerBytes[1];
-		byte mask = 0x7F;
-		byte payloadLength = (byte) (secondByte & mask);
-
-		byte[] bodyBytes = new byte[payloadLength];
-		for (int i = 0; i < payloadLength; i++) {
-			byte currentByte = (byte) inputStream.read();
-			currentByte = (byte) (currentByte ^ headerBytes[2 + (i % 4)]);
-			bodyBytes[i] = currentByte;
-//			System.out.println(bodyBytes[i]);
-		}
-
-//		String bodyString = Base64.getEncoder().encodeToString(bodyBytes);
-//		String bodyString = new String(bodyBytes);
-//		System.out.println(bodyString);
-		
-		OutputStream outputBody = socket.getOutputStream();
-		byte[] outputBytes = new byte[2+payloadLength];
-		
-		outputBytes[0] = (byte) 0x81;
-		outputBytes[1] = payloadLength;
-		for (int i = 0; i < payloadLength; i++) {
-			outputBytes[i+2] = bodyBytes[i];
-		}
-		outputBody.write(outputBytes);
-		outputBody.flush();
-		
 	}
-
-//	To decode the message, byte[i] of the message needs to be decoded by xor-ing it
-//	with byte[i%4] of the “masking key”
 
 //*************************************************************************************	
 //*************************************************************************************

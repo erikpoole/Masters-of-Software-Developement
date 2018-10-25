@@ -44,20 +44,17 @@ function sendJoinRequest() {
 
 
 function switchPage(pageName) {
-        // if (mySocket.readyState === mySocket.OPEN) {
-        //     console.log("Socket Open");
-        // } else {
-        //     console.log("Socket Closed");
-        // }
-
     let xhr = new XMLHttpRequest();
     xhr.open("GET", pageName);
     xhr.addEventListener("load", function () {
         document.getElementById("body").innerHTML = this.responseText;
         if (inRoom) {
             inRoom = false;
+            mySocket.onclose = function () {
+                console.log("Poop");
+                runChatLogin();
+            }
             mySocket.close();
-            mySocket.onclose = runChatLogin;
         } else {
             inRoom = true;
             mySocket.onmessage = messageReceipt;
@@ -75,7 +72,10 @@ function runChatRoom() {
     sendButton.addEventListener("click", sendMessage);
 
     let exitButton = document.getElementById("exitButton");
-    exitButton.addEventListener("click", function () { switchPage("webChatLogin.html") });
+    exitButton.addEventListener("click", function () {
+        mySocket.send("serverclose");
+        // switchPage("webChatLoginShort.html") 
+    });
 
     let messageForm = document.getElementById("messageForm");
     fixEnterEvent(messageForm, sendMessage);
@@ -84,7 +84,6 @@ function runChatRoom() {
 }
 
 function sendMessage() {
-    console.log("Spaghetti");
     let messageBox = document.getElementById("messageBox");
     mySocket.send(username + " " + messageBox.value);
     messageBox.value = "";
@@ -96,6 +95,10 @@ function messageReceipt(event) {
     // let parsed = JSON.parse(response);
     // console.log(parsed);
 
+    if (response == 'serverclose') {
+        switchPage("webChatLoginShort.html");
+    }
+
     let newUser = document.createElement("b");
     let newUserText = document.createTextNode(response.user);
     newUser.appendChild(newUserText);
@@ -105,7 +108,7 @@ function messageReceipt(event) {
     let newMessageText = document.createTextNode(response.message);
     newMessage.appendChild(newMessageText);
     document.getElementById("messages").appendChild(newMessage);
-    newMessage.scrollIntoView({behavior: "smooth"});
+    newMessage.scrollIntoView({ behavior: "smooth" });
 }
 
 
@@ -126,8 +129,9 @@ function fixEnterEvent(element, functionToCall) {
 
 function addBlankListener(element, button) {
     element.addEventListener("keyup", function () {
+        console.log("Keyup");
         button.disabled = false;
-        if (element.value == "") {  
+        if (element.value == "") {
             button.disabled = true;
         }
     });
