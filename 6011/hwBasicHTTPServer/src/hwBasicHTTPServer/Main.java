@@ -3,6 +3,7 @@ package hwBasicHTTPServer;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
 import java.util.NoSuchElementException;
 
 public class Main {
@@ -18,13 +19,17 @@ public class Main {
 			ClientSocket clientSocket = new ClientSocket(connectingSocket);
 			Thread thread = new Thread(new Runnable() {
 
-				//extend runnable to be able to throw errors ???
 				@Override
 				public void run() {
 					try {
 						clientSocket.httpRequest();
 						if (clientSocket.isWebSocketRequest) {
-							
+							try {
+								clientSocket.returnHandshake();
+								clientSocket.listenWebSocket();
+							} catch (NoSuchAlgorithmException e) {
+								e.printStackTrace();
+							}
 						} else {
 							clientSocket.httpResponse();
 						}

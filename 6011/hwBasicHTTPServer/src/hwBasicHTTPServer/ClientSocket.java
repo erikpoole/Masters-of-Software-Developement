@@ -1,15 +1,19 @@
 package hwBasicHTTPServer;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+
 
 public class ClientSocket<V> {
 
@@ -56,13 +60,12 @@ public class ClientSocket<V> {
 			isWebSocketRequest = false;
 			file = new File(filename);
 			System.out.println("Webpage Request");
-			
+
 			System.out.println(file.getCanonicalPath());
 			if (!file.getAbsolutePath().equals(file.getCanonicalPath())) {
 				throw new FileNotFoundException();
 			}
 		}
-
 
 	}
 
@@ -95,13 +98,40 @@ public class ClientSocket<V> {
 		outputHeader.println();
 	}
 
-//	HTTP/1.1 101 Switching Protocols
-//	• Upgrade: websocket
-//	• Connection: Upgrade
-//	• Sec-WebSocket-Accept: secretComputedOnPreviousSlide
-//	• blank line
-	
-	
+	// Buffer Array???
+	public void listenWebSocket() throws IOException {
+		System.out.println("Web Socket - Listening");
+		InputStream inputStream = socket.getInputStream();
+		ArrayList<Integer> headerBytes = new ArrayList<Integer>();
+
+		for (int i = 0; i < 6; i++) {
+			headerBytes.add(inputStream.read());
+		}
+
+		int secondByte = headerBytes.get(1);
+		int mask = 0x7F;
+		int payloadLength = (secondByte & mask);
+
+//		int maskingKey = 0x0;
+//		for (int i = 2; i < 6; i++) {
+//			int currentByte = headerBytes.get(i);
+//			currentByte <<= 8 * (5 - i);
+//			maskingKey |= currentByte;
+//		}
+//		System.out.println(maskingKey);
+
+		ArrayList<Integer> bodyBytes = new ArrayList<Integer>();
+		for (int i = 0; i < payloadLength; i++) {
+			int currentByte = inputStream.read();
+			currentByte ^= headerBytes.get(2 + i % 4);
+			bodyBytes.add(currentByte);
+			System.out.println(bodyBytes.get(i));
+		}
+	}
+
+//	To decode the message, byte[i] of the message needs to be decoded by xor-ing it
+//	with byte[i%4] of the “masking key”
+
 //*************************************************************************************	
 //*************************************************************************************
 
