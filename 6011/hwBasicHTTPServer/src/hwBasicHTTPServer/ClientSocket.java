@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -98,35 +99,42 @@ public class ClientSocket<V> {
 		outputHeader.println();
 	}
 
-	// Buffer Array???
 	public void listenWebSocket() throws IOException {
 		System.out.println("Web Socket - Listening");
 		InputStream inputStream = socket.getInputStream();
-		ArrayList<Integer> headerBytes = new ArrayList<Integer>();
+		byte[] headerBytes = new byte[6];
 
 		for (int i = 0; i < 6; i++) {
-			headerBytes.add(inputStream.read());
+			headerBytes[i] = (byte) (inputStream.read());
 		}
 
-		int secondByte = headerBytes.get(1);
-		int mask = 0x7F;
-		int payloadLength = (secondByte & mask);
+		byte secondByte = headerBytes[1];
+		byte mask = 0x7F;
+		byte payloadLength = (byte) (secondByte & mask);
 
-//		int maskingKey = 0x0;
-//		for (int i = 2; i < 6; i++) {
-//			int currentByte = headerBytes.get(i);
-//			currentByte <<= 8 * (5 - i);
-//			maskingKey |= currentByte;
-//		}
-//		System.out.println(maskingKey);
-
-		ArrayList<Integer> bodyBytes = new ArrayList<Integer>();
+		byte[] bodyBytes = new byte[payloadLength];
 		for (int i = 0; i < payloadLength; i++) {
-			int currentByte = inputStream.read();
-			currentByte ^= headerBytes.get(2 + i % 4);
-			bodyBytes.add(currentByte);
-			System.out.println(bodyBytes.get(i));
+			byte currentByte = (byte) inputStream.read();
+			currentByte = (byte) (currentByte ^ headerBytes[2 + (i % 4)]);
+			bodyBytes[i] = currentByte;
+//			System.out.println(bodyBytes[i]);
 		}
+
+//		String bodyString = Base64.getEncoder().encodeToString(bodyBytes);
+//		String bodyString = new String(bodyBytes);
+//		System.out.println(bodyString);
+		
+		OutputStream outputBody = socket.getOutputStream();
+		byte[] outputBytes = new byte[2+payloadLength];
+		
+		outputBytes[0] = (byte) 0x81;
+		outputBytes[1] = payloadLength;
+		for (int i = 0; i < payloadLength; i++) {
+			outputBytes[i+2] = bodyBytes[i];
+		}
+		outputBody.write(outputBytes);
+		outputBody.flush();
+		
 	}
 
 //	To decode the message, byte[i] of the message needs to be decoded by xor-ing it

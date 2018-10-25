@@ -92,16 +92,17 @@ function sendMessage() {
 
 function messageReceipt(event) {
     let response = event.data;
-    let parsed = JSON.parse(response);
-    console.log(parsed);
+    console.log(response);
+    // let parsed = JSON.parse(response);
+    // console.log(parsed);
 
     let newUser = document.createElement("b");
-    let newUserText = document.createTextNode(parsed.user);
+    let newUserText = document.createTextNode(response.user);
     newUser.appendChild(newUserText);
     document.getElementById("messages").appendChild(newUser);
 
     let newMessage = document.createElement("p");
-    let newMessageText = document.createTextNode(parsed.message);
+    let newMessageText = document.createTextNode(response.message);
     newMessage.appendChild(newMessageText);
     document.getElementById("messages").appendChild(newMessage);
     newMessage.scrollIntoView({behavior: "smooth"});
