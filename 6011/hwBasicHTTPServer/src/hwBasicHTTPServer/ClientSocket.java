@@ -22,6 +22,7 @@ public class ClientSocket {
 	public boolean isWebSocketRequest;
 
 	public File file;
+	public String room;
 
 	public ClientSocket(Socket inputSocket) {
 		socket = inputSocket;
@@ -117,18 +118,46 @@ public class ClientSocket {
 			}
 
 			String bodyString = new String(bodyBytes);
-			System.out.println("Received: " + bodyString);
+			System.out.println(bodyString);
+			String branchingString = ModifyUsers(bodyString);
+			if (branchingString == "added") {
+				continue;
+			} else if (branchingString == "removed") {
+				break;
+			} else if (branchingString == "message") {
+				Room.sendMessage();
+				
+				OutputStream outputBody = socket.getOutputStream();
+				byte[] outputBytes = new byte[2 + payloadLength];
 
-			OutputStream outputBody = socket.getOutputStream();
-			byte[] outputBytes = new byte[2 + payloadLength];
-
-			outputBytes[0] = (byte) 0x81;
-			outputBytes[1] = payloadLength;
-			for (int i = 0; i < payloadLength; i++) {
-				outputBytes[i + 2] = bodyBytes[i];
+				outputBytes[0] = (byte) 0x81;
+				outputBytes[1] = payloadLength;
+				for (int i = 0; i < payloadLength; i++) {
+					outputBytes[i + 2] = bodyBytes[i];
+				}
+				outputBody.write(outputBytes);
+				outputBody.flush();
 			}
-			outputBody.write(outputBytes);
-			outputBody.flush();
+
+		}
+
+	}
+
+	public synchronized String ModifyUsers(String inputString) {
+		if (inputString.contains("serverJoin")) {
+			String[] splitString = inputString.split("\\s+");
+			room = splitString[1];
+			Room.map.put(room, splitString[2]);
+			Room.clientList.add(this);
+			return "added";
+
+		} else if (inputString.contains("serverExit")) {
+			Room.map.remove(room);
+			Room.clientList.remove(this);
+			return "removed";
+			
+		} else {
+			return "message";
 		}
 
 	}

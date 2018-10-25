@@ -46,7 +46,7 @@ function switchPage(pageName) {
     xhr.addEventListener("load", function () {
         document.getElementById("body").innerHTML = this.responseText;
         mySocket.onmessage = messageReceipt;
-        mySocket.send("join " + room);
+        mySocket.send("serverJoin " + room + " " + username);
         runChatRoom();
     });
     xhr.send();
@@ -59,7 +59,9 @@ function runChatRoom() {
     sendButton.addEventListener("click", sendMessage);
 
     let exitButton = document.getElementById("exitButton");
-    exitButton.addEventListener("click", function () { window.location.reload(true) });
+    exitButton.addEventListener("click", function () { window.location.reload(true)
+        mySocket.send("serverExit");
+     });
 
     let messageForm = document.getElementById("messageForm");
     fixEnterEvent(messageForm, sendMessage);
@@ -76,16 +78,14 @@ function sendMessage() {
 function messageReceipt(event) {
     let response = event.data;
     console.log(response);
-    // let parsed = JSON.parse(response);
-    // console.log(parsed);
 
     let newUser = document.createElement("b");
-    let newUserText = document.createTextNode(response.user);
+    let newUserText = document.createTextNode(response);
     newUser.appendChild(newUserText);
     document.getElementById("messages").appendChild(newUser);
 
     let newMessage = document.createElement("p");
-    let newMessageText = document.createTextNode(response.message);
+    let newMessageText = document.createTextNode(response);
     newMessage.appendChild(newMessageText);
     document.getElementById("messages").appendChild(newMessage);
     newMessage.scrollIntoView({ behavior: "smooth" });
@@ -109,7 +109,6 @@ function fixEnterEvent(element, functionToCall) {
 
 function addBlankListener(element, button) {
     element.addEventListener("keyup", function () {
-        console.log("Keyup");
         button.disabled = false;
         if (element.value == "") {
             button.disabled = true;
