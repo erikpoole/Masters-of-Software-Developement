@@ -3,7 +3,6 @@ package hwBasicHTTPServer;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
-import java.security.NoSuchAlgorithmException;
 import java.util.NoSuchElementException;
 
 public class Main {
@@ -22,37 +21,31 @@ public class Main {
 				@Override
 				public void run() {
 					try {
-						clientSocket.httpRequest();
-						if (clientSocket.isWebSocketRequest) {
-							try {
+						try {
+							clientSocket.httpRequest();
+							if (clientSocket.isWebSocketRequest) {
 								clientSocket.returnHandshake();
 								clientSocket.listenWebSocket();
-							} catch (NoSuchAlgorithmException e) {
-								e.printStackTrace();
+							} else {
+								clientSocket.httpResponse();
 							}
-						} else {
-							clientSocket.httpResponse();
-						}
-						clientSocket.socket.close();
+							clientSocket.socket.close();
 
-					} catch (FileNotFoundException e) {
-						try {
+						} catch (FileNotFoundException e) {
 							clientSocket.respond404();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
-
-					} catch (BadRequestException | IOException | NoSuchElementException e) {
-						try {
+						} catch (BadRequestException | IOException | NoSuchElementException e) {
 							clientSocket.respond400();
-						} catch (IOException e1) {
-							e1.printStackTrace();
+
 						}
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
+					
 					System.out.println();
 
 				}
 			});
+			
 			thread.start();
 
 		}

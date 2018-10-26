@@ -103,7 +103,7 @@ public class ClientSocket {
 			while (true) {
 				byte[] headerBytes = new byte[6];
 
-				//if inputStream.read() is closed exception will be thrown - catch to handle refresh problems
+				//if inputStream.read() is closed exception will be thrown - catch to handle browser refresh problems
 				for (int i = 0; i < 6; i++) {
 					headerBytes[i] = (byte) (inputStream.read());
 				}
