@@ -4,18 +4,19 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 
 public class Server {
 
 	public ServerSocket serverSocket;
-	public static ArrayList<ClientSocket> clientList = new ArrayList<ClientSocket>();
-
+	public static HashMap<String, Room> roomList;
+	
 	// Constructor - takes socket number as argument
 	// exception not caught - will crash if something goes wrong
 	public Server(int socketNum) throws IOException {
 		serverSocket = new ServerSocket(socketNum);
+		roomList = new HashMap<String, Room>();
 	}
 
 //*************************************************************************************	
@@ -23,11 +24,8 @@ public class Server {
 
 	public static synchronized void broadcastMessage(byte[] messageBytes, String roomName)
 			throws IOException {
-		for (ClientSocket clientSocket : clientList) {
-			if (roomName.equals(clientSocket.room)) {
-				clientSocket.sendMessage(messageBytes);
-			}
-		}
+		for (ClientSocket socket : roomList.get(roomName).clientList)
+			socket.sendMessage(messageBytes);
 	}
 
 	public static synchronized String calculateHash(String inputHash) throws NoSuchAlgorithmException {

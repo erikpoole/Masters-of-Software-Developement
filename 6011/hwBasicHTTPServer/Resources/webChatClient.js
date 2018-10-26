@@ -84,7 +84,11 @@ function messageReceipt(event) {
     let splitResponse = response.split(" ");
     let usernameOutput = splitResponse[0];
     let messageOutput = splitResponse.slice(1).join(" ");
-    // messageOutput.join(" ");
+
+    // let response = event.data;
+    // let parsed = JSON.parse(response);
+    // console.log(parsed);
+
 
     let newUser = document.createElement("b");
     let newUserText = document.createTextNode(usernameOutput);

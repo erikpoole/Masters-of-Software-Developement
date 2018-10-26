@@ -1,0 +1,35 @@
+Room - 
+	List of Clients
+	Post Message
+
+New Room Class -
+	When client Sends text
+		 is decoded in Room and then sent to all clients in room
+
+	Map of Rooms {Room:Name}
+	.getroom  		(in serverclass)
+
+Change the way server listens (should be handled by Room)
+
+
+
+Client -		Finished already (?)
+	Listen
+	Send
+
+Make necessary methods synchronized (Mostly in Room Class)
+
+
+
+
+Make Client Class
+Make Room Class
+
+Day 2: 
+Refactor message and send
+	Parse JSON objects correctly {" ":" "}
+
+Change static Arraylist to Hashmap (more efficient)
+
+Persistant Storage
+	SQlight - Database Library

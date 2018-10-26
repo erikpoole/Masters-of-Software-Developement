@@ -20,7 +20,7 @@ public class ClientSocket {
 	public HashMap<String, String> httpMap;
 	public String clientKey;
 	public boolean isWebSocketRequest;
-	public String room;
+	public String roomName;
 
 	public File file;
 
@@ -126,7 +126,7 @@ public class ClientSocket {
 			} else if (branchingString == "removed") {
 				break;
 			} else if (branchingString == "message") {
-				Server.broadcastMessage(bodyBytes, room);
+				Server.broadcastMessage(bodyBytes, roomName);
 			}
 
 		}
@@ -149,12 +149,20 @@ public class ClientSocket {
 	public synchronized String ModifyUsers(String inputString) {
 		if (inputString.contains("serverJoin")) {
 			String[] splitString = inputString.split("\\s+");
-			room = splitString[1];
-			Server.clientList.add(this);
+			roomName = splitString[1];
+
+			if (!Server.roomList.containsKey(roomName)) {
+				Server.roomList.put(roomName, new Room(roomName));
+			}
+
+			Server.roomList.get(roomName).clientList.add(this);
+			System.out.println("#Clients in Room: " + Server.roomList.get(roomName).clientList.size());
+			System.out.println("#Rooms: " + Server.roomList.size());
+
 			return "added";
 
 		} else if (inputString.contains("serverExit")) {
-			Server.clientList.remove(this);
+			// Server.clientList.remove(roomName, this);
 			return "removed";
 
 		} else {
