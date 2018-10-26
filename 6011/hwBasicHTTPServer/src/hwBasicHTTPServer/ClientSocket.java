@@ -96,42 +96,52 @@ public class ClientSocket {
 		outputHeader.println();
 	}
 
-	public void listenWebSocket() throws IOException {
-		System.out.println("Web Socket - Listening");
-		InputStream inputStream = socket.getInputStream();
-		while (true) {
-			byte[] headerBytes = new byte[6];
+	public void listenWebSocket() {
+		try {
+			System.out.println("Web Socket - Listening");
+			InputStream inputStream = socket.getInputStream();
+			while (true) {
+				byte[] headerBytes = new byte[6];
 
-			for (int i = 0; i < 6; i++) {
-				headerBytes[i] = (byte) (inputStream.read());
+				//if inputStream.read() is closed exception will be thrown - catch to handle refresh problems
+				for (int i = 0; i < 6; i++) {
+					headerBytes[i] = (byte) (inputStream.read());
+				}
+
+				byte secondByte = headerBytes[1];
+				byte mask = 0x7F;
+				byte payloadLength = (byte) (secondByte & mask);
+
+				byte[] bodyBytes = new byte[payloadLength];
+				for (int i = 0; i < payloadLength; i++) {
+					byte currentByte = (byte) inputStream.read();
+					currentByte = (byte) (currentByte ^ headerBytes[2 + (i % 4)]);
+					bodyBytes[i] = currentByte;
+				}
+
+				String bodyString = new String(bodyBytes);
+
+				if (bodyString.contains("serverJoin")) {
+					String[] splitString = bodyString.split("\\s+");
+					roomName = splitString[1];
+					Server.addClient(this);
+					
+				} else if (bodyString.contains("serverExit")) {
+					Server.removeClient(this);
+					
+				} else {
+					Server.broadcastMessage(bodyBytes, roomName);
+				}
+
+				System.out.println(bodyString);
 			}
 
-			byte secondByte = headerBytes[1];
-			byte mask = 0x7F;
-			byte payloadLength = (byte) (secondByte & mask);
-
-			byte[] bodyBytes = new byte[payloadLength];
-			for (int i = 0; i < payloadLength; i++) {
-				byte currentByte = (byte) inputStream.read();
-				currentByte = (byte) (currentByte ^ headerBytes[2 + (i % 4)]);
-				bodyBytes[i] = currentByte;
-			}
-
-			String bodyString = new String(bodyBytes);
-			System.out.println(bodyString);
-
-			String branchingString = ModifyUsers(bodyString);
-			if (branchingString == "added") {
-				continue;
-			} else if (branchingString == "removed") {
-				break;
-			} else if (branchingString == "message") {
-				Server.broadcastMessage(bodyBytes, roomName);
-			}
-
+		} catch (Exception e) {
+			System.out.println("Page Refreshed");
+			Server.removeClient(this);
 		}
-
 	}
+
 
 	public void sendMessage(byte[] messageBytes) throws IOException {
 		OutputStream outputBody = socket.getOutputStream();
@@ -144,31 +154,6 @@ public class ClientSocket {
 		}
 		outputBody.write(outputBytes);
 		outputBody.flush();
-	}
-
-	public synchronized String ModifyUsers(String inputString) {
-		if (inputString.contains("serverJoin")) {
-			String[] splitString = inputString.split("\\s+");
-			roomName = splitString[1];
-
-			if (!Server.roomList.containsKey(roomName)) {
-				Server.roomList.put(roomName, new Room(roomName));
-			}
-
-			Server.roomList.get(roomName).clientList.add(this);
-			System.out.println("#Clients in Room: " + Server.roomList.get(roomName).clientList.size());
-			System.out.println("#Rooms: " + Server.roomList.size());
-
-			return "added";
-
-		} else if (inputString.contains("serverExit")) {
-			// Server.clientList.remove(roomName, this);
-			return "removed";
-
-		} else {
-			return "message";
-		}
-
 	}
 
 //*************************************************************************************	
