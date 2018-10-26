@@ -39,10 +39,12 @@ html, body {
 
 
 
-
+.title {
+    height: 2%;
+}
 
 #messages {
-    height: 70%;
+    height: 60%;
     width: 90%;
     overflow: scroll;
     word-wrap: break-word;

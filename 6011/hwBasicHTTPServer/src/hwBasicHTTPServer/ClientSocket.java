@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64.Encoder;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -127,20 +126,20 @@ public class ClientSocket {
 			} else if (branchingString == "removed") {
 				break;
 			} else if (branchingString == "message") {
-				Server.broadcastMessage(bodyBytes, payloadLength, room);
+				Server.broadcastMessage(bodyBytes, room);
 			}
 
 		}
 
 	}
 
-	public void sendMessage(byte[] messageBytes, byte messageLength) throws IOException {
+	public void sendMessage(byte[] messageBytes) throws IOException {
 		OutputStream outputBody = socket.getOutputStream();
-		byte[] outputBytes = new byte[2 + messageLength];
+		byte[] outputBytes = new byte[2 + messageBytes.length];
 
 		outputBytes[0] = (byte) 0x81;
-		outputBytes[1] = messageLength;
-		for (int i = 0; i < messageLength; i++) {
+		outputBytes[1] = (byte) messageBytes.length;
+		for (int i = 0; i < messageBytes.length; i++) {
 			outputBytes[i + 2] = messageBytes[i];
 		}
 		outputBody.write(outputBytes);

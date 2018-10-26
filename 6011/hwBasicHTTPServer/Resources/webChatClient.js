@@ -45,6 +45,9 @@ function switchPage(pageName) {
     xhr.open("GET", pageName);
     xhr.addEventListener("load", function () {
         document.getElementById("body").innerHTML = this.responseText;
+        console.log(room + username);
+        document.getElementById("roomName").innerText = "Room: " + room;
+        document.getElementById("userName").innerText = "Username: " + username;
         mySocket.onmessage = messageReceipt;
         mySocket.send("serverJoin " + room + " " + username);
         runChatRoom();

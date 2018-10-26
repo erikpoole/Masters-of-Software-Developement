@@ -21,11 +21,11 @@ public class Server {
 //*************************************************************************************	
 //*************************************************************************************
 
-	public static synchronized void broadcastMessage(byte[] messageBytes, byte messageLength, String roomName)
+	public static synchronized void broadcastMessage(byte[] messageBytes, String roomName)
 			throws IOException {
 		for (ClientSocket clientSocket : clientList) {
 			if (roomName.equals(clientSocket.room)) {
-				clientSocket.sendMessage(messageBytes, messageLength);
+				clientSocket.sendMessage(messageBytes);
 			}
 		}
 	}
