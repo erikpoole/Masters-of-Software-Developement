@@ -24,11 +24,7 @@ public class Server {
 	public static synchronized void broadcastMessage(byte[] messageBytes, byte messageLength, String roomName)
 			throws IOException {
 		for (ClientSocket clientSocket : clientList) {
-			System.out.println("Target Room: " + roomName);
-			System.out.println("Current Room: " + clientSocket.room);
-			// needs help - not sure why not matching
 			if (roomName.equals(clientSocket.room)) {
-				System.out.println("Matched!");
 				clientSocket.sendMessage(messageBytes, messageLength);
 			}
 		}

@@ -78,14 +78,15 @@ function sendMessage() {
 function messageReceipt(event) {
     let response = event.data;
     console.log(response);
+    let splitResponse = response.split(" ");
 
     let newUser = document.createElement("b");
-    let newUserText = document.createTextNode(response);
+    let newUserText = document.createTextNode(splitResponse[0]);
     newUser.appendChild(newUserText);
     document.getElementById("messages").appendChild(newUser);
 
     let newMessage = document.createElement("p");
-    let newMessageText = document.createTextNode(response);
+    let newMessageText = document.createTextNode(splitResponse[1]);
     newMessage.appendChild(newMessageText);
     document.getElementById("messages").appendChild(newMessage);
     newMessage.scrollIntoView({ behavior: "smooth" });

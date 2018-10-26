@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64.Encoder;
 import java.util.HashMap;
 import java.util.Scanner;
 
