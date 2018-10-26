@@ -126,7 +126,7 @@ public class ClientSocket {
 			} else if (branchingString == "removed") {
 				break;
 			} else if (branchingString == "message") {
-				Room.broadcastMessage(bodyBytes, payloadLength, room);
+				Server.broadcastMessage(bodyBytes, payloadLength, room);
 			}
 
 		}
@@ -150,13 +150,11 @@ public class ClientSocket {
 		if (inputString.contains("serverJoin")) {
 			String[] splitString = inputString.split("\\s+");
 			room = splitString[1];
-//			Room.map.put(room, splitString[2]);
-			Room.clientList.add(this);
+			Server.clientList.add(this);
 			return "added";
 
 		} else if (inputString.contains("serverExit")) {
-//			Room.map.remove(room);
-			Room.clientList.remove(this);
+			Server.clientList.remove(this);
 			return "removed";
 
 		} else {
