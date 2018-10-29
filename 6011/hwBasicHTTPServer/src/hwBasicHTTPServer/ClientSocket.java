@@ -96,49 +96,31 @@ public class ClientSocket {
 		outputHeader.println();
 	}
 
+	// if inputStream.read() is closed exception will be thrown - catch to handle
+	// browser refresh problems
 	public void listenWebSocket() {
 		try {
 			System.out.println("Web Socket - Listening");
 			InputStream inputStream = socket.getInputStream();
 			while (true) {
-				byte[] headerBytes = new byte[6];
+				String bodyString = interpretHTTP(inputStream);
 
-				// if inputStream.read() is closed exception will be thrown - catch to handle
-				// browser refresh problems
-				for (int i = 0; i < 6; i++) {
-					headerBytes[i] = (byte) (inputStream.read());
+				String[] splitBody = bodyString.split("\\s+");
+				String username = splitBody[0];
+				String message = new String();
+				for (int i = 1; i < splitBody.length; i++) {
+					message += " ";
+					message += splitBody[i];
 				}
-
-				byte secondByte = headerBytes[1];
-				byte mask = 0x7F;
-				byte payloadLength = (byte) (secondByte & mask);
-
-				byte[] bodyBytes = new byte[payloadLength];
-				for (int i = 0; i < payloadLength; i++) {
-					byte currentByte = (byte) inputStream.read();
-					currentByte = (byte) (currentByte ^ headerBytes[2 + (i % 4)]);
-					bodyBytes[i] = currentByte;
-				}
-
-				String bodyString = new String(bodyBytes);
-				System.out.println(bodyString);
-
-				if (bodyString.contains("serverJoin")) {
-					String[] splitString = bodyString.split("\\s+");
-					roomName = splitString[1];
+				
+				if (username.equals("serverJoin")) {
+					roomName = message;
 					Server.addClient(this);
 
-				} else if (bodyString.contains("serverExit")) {
+				} else if (username.equals("serverExit")) {
 					Server.removeClient(this);
 
-				} else {
-					String[] splitBody = bodyString.split(" ");
-					String username = splitBody[0];
-					String message = new String();
-					for (int i = 1; i < splitBody.length; i++) {
-						message += " ";
-						message += splitBody[i];
-					}
+				} else if (message.length() != 0){
 					bodyString = "{ \"username\":\"" + username + "\" , \"message\":\"" + message + "\" }";
 					Server.broadcastMessage(bodyString, roomName);
 				}
@@ -149,6 +131,31 @@ public class ClientSocket {
 			System.out.println("Page Refreshed");
 			Server.removeClient(this);
 		}
+	}
+
+//*************************************************************************************	
+//*************************************************************************************
+
+	private String interpretHTTP(InputStream inputStream) throws IOException {
+		byte[] headerBytes = new byte[6];
+
+		for (int i = 0; i < 6; i++) {
+			headerBytes[i] = (byte) (inputStream.read());
+		}
+
+		byte secondByte = headerBytes[1];
+		byte mask = 0x7F;
+		byte payloadLength = (byte) (secondByte & mask);
+
+		byte[] bodyBytes = new byte[payloadLength];
+		for (int i = 0; i < payloadLength; i++) {
+			byte currentByte = (byte) inputStream.read();
+			currentByte = (byte) (currentByte ^ headerBytes[2 + (i % 4)]);
+			bodyBytes[i] = currentByte;
+		}
+
+		String bodyString = new String(bodyBytes);
+		return bodyString;
 	}
 
 	public void sendMessage(String message) throws IOException {

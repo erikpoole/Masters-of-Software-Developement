@@ -49,7 +49,7 @@ function switchPage(pageName) {
         document.getElementById("roomName").innerText = "Room: " + room;
         document.getElementById("userName").innerText = "Username: " + username;
         mySocket.onmessage = messageReceipt;
-        mySocket.send("serverJoin " + room + " " + username);
+        mySocket.send("serverJoin " + room);
         runChatRoom();
     });
     xhr.send();
