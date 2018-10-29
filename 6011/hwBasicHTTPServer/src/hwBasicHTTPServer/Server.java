@@ -42,9 +42,9 @@ public class Server {
 
 	}
 
-	public static synchronized void broadcastMessage(byte[] messageBytes, String roomName) throws IOException {
+	public static synchronized void broadcastMessage(String message, String roomName) throws IOException {
 		for (ClientSocket socket : roomList.get(roomName).clientList)
-			socket.sendMessage(messageBytes);
+			socket.sendMessage(message);
 	}
 
 	public static synchronized String calculateHash(String inputHash) throws NoSuchAlgorithmException {

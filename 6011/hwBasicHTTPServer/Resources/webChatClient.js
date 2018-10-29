@@ -62,9 +62,10 @@ function runChatRoom() {
     sendButton.addEventListener("click", sendMessage);
 
     let exitButton = document.getElementById("exitButton");
-    exitButton.addEventListener("click", function () { window.location.reload(true)
+    exitButton.addEventListener("click", function () {
         mySocket.send("serverExit");
-     });
+        window.location.reload(true);
+    });
 
     let messageForm = document.getElementById("messageForm");
     fixEnterEvent(messageForm, sendMessage);
@@ -81,22 +82,17 @@ function sendMessage() {
 function messageReceipt(event) {
     let response = event.data;
     console.log(response);
-    let splitResponse = response.split(" ");
-    let usernameOutput = splitResponse[0];
-    let messageOutput = splitResponse.slice(1).join(" ");
 
-    // let response = event.data;
-    // let parsed = JSON.parse(response);
-    // console.log(parsed);
-
+    let parsed = JSON.parse(response);
+    console.log(parsed);
 
     let newUser = document.createElement("b");
-    let newUserText = document.createTextNode(usernameOutput);
+    let newUserText = document.createTextNode(parsed.username);
     newUser.appendChild(newUserText);
     document.getElementById("messages").appendChild(newUser);
 
     let newMessage = document.createElement("p");
-    let newMessageText = document.createTextNode(messageOutput);
+    let newMessageText = document.createTextNode(parsed.message);
     newMessage.appendChild(newMessageText);
     document.getElementById("messages").appendChild(newMessage);
     newMessage.scrollIntoView({ behavior: "smooth" });

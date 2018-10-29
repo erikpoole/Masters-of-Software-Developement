@@ -103,7 +103,8 @@ public class ClientSocket {
 			while (true) {
 				byte[] headerBytes = new byte[6];
 
-				//if inputStream.read() is closed exception will be thrown - catch to handle browser refresh problems
+				// if inputStream.read() is closed exception will be thrown - catch to handle
+				// browser refresh problems
 				for (int i = 0; i < 6; i++) {
 					headerBytes[i] = (byte) (inputStream.read());
 				}
@@ -120,20 +121,28 @@ public class ClientSocket {
 				}
 
 				String bodyString = new String(bodyBytes);
+				System.out.println(bodyString);
 
 				if (bodyString.contains("serverJoin")) {
 					String[] splitString = bodyString.split("\\s+");
 					roomName = splitString[1];
 					Server.addClient(this);
-					
+
 				} else if (bodyString.contains("serverExit")) {
 					Server.removeClient(this);
-					
+
 				} else {
-					Server.broadcastMessage(bodyBytes, roomName);
+					String[] splitBody = bodyString.split(" ");
+					String username = splitBody[0];
+					String message = new String();
+					for (int i = 1; i < splitBody.length; i++) {
+						message += " ";
+						message += splitBody[i];
+					}
+					bodyString = "{ \"username\":\"" + username + "\" , \"message\":\"" + message + "\" }";
+					Server.broadcastMessage(bodyString, roomName);
 				}
 
-				System.out.println(bodyString);
 			}
 
 		} catch (Exception e) {
@@ -142,9 +151,9 @@ public class ClientSocket {
 		}
 	}
 
-
-	public void sendMessage(byte[] messageBytes) throws IOException {
+	public void sendMessage(String message) throws IOException {
 		OutputStream outputBody = socket.getOutputStream();
+		byte[] messageBytes = message.getBytes();
 		byte[] outputBytes = new byte[2 + messageBytes.length];
 
 		outputBytes[0] = (byte) 0x81;
@@ -154,6 +163,7 @@ public class ClientSocket {
 		}
 		outputBody.write(outputBytes);
 		outputBody.flush();
+		System.out.println(message);
 	}
 
 //*************************************************************************************	
