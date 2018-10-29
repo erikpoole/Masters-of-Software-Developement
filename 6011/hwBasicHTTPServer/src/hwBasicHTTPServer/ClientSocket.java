@@ -120,7 +120,7 @@ public class ClientSocket {
 				} else if (username.equals("serverExit")) {
 					Server.removeClient(this);
 
-				} else if (message.length() != 0){
+				} else {
 					bodyString = "{ \"username\":\"" + username + "\" , \"message\":\"" + message + "\" }";
 					Server.broadcastMessage(bodyString, roomName);
 				}
@@ -128,7 +128,7 @@ public class ClientSocket {
 			}
 
 		} catch (Exception e) {
-			System.out.println("Page Refreshed");
+			System.out.println("Bad Client Request");
 			Server.removeClient(this);
 		}
 	}

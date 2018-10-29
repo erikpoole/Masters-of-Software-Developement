@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 
@@ -43,9 +44,17 @@ public class Server {
 	}
 
 	public static synchronized void broadcastMessage(String message, String roomName) throws IOException {
-		for (ClientSocket socket : roomList.get(roomName).clientList)
-			socket.sendMessage(message);
+		for (int i = 0; i < roomList.get(roomName).clientList.size(); i++) {
+			if (roomList.get(roomName).clientList.get(i).socket.isClosed()) {
+				System.out.println("Missing Client Removed");
+				removeClient(roomList.get(roomName).clientList.get(i));
+				i--;
+			} else {
+				roomList.get(roomName).clientList.get(i).sendMessage(message);
+			}
+		}
 	}
+	
 
 	public static synchronized String calculateHash(String inputHash) throws NoSuchAlgorithmException {
 		String protocolString = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
