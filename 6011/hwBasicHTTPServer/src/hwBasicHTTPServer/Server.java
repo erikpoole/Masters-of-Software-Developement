@@ -43,6 +43,7 @@ public class Server {
 
 	}
 
+	//isClosed doesn't seem to work
 	public static synchronized void broadcastMessage(String message, String roomName) throws IOException {
 		for (int i = 0; i < roomList.get(roomName).clientList.size(); i++) {
 			if (roomList.get(roomName).clientList.get(i).socket.isClosed()) {

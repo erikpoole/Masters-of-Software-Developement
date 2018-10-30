@@ -120,7 +120,7 @@ public class ClientSocket {
 				} else if (username.equals("serverExit")) {
 					Server.removeClient(this);
 
-				} else {
+				} else if (!message.isEmpty()) {
 					bodyString = "{ \"username\":\"" + username + "\" , \"message\":\"" + message + "\" }";
 					Server.broadcastMessage(bodyString, roomName);
 				}
