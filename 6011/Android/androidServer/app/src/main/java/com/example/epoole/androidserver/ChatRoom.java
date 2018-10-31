@@ -1,19 +1,16 @@
 package com.example.epoole.androidserver;
 
-import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.JsonReader;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.neovisionaries.ws.client.WebSocket;
@@ -37,6 +34,7 @@ public class ChatRoom extends AppCompatActivity {
 
     public ArrayAdapter<String> adapter;
     public ArrayList<String> messageList =  new ArrayList<String>();
+    public Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +49,7 @@ public class ChatRoom extends AppCompatActivity {
         usernameTitle.setText("Username: " + username);
         roomTitle.setText("Room: " + room);
 
-        ListView messageDisplay = (ListView) findViewById(R.id.messages);
+        final ListView messageDisplay = (ListView) findViewById(R.id.messages);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, messageList);
         messageDisplay.setAdapter(adapter);
 
@@ -59,7 +57,8 @@ public class ChatRoom extends AppCompatActivity {
 
         try {
             Log.d("myDebug", "Activity Opened");
-            ws = factory.createSocket("ws://10.0.2.2:8080");
+            //ws = factory.createSocket("ws://10.0.2.2:8080");
+            ws = factory.createSocket("http://erikpooleserver.eastus.cloudapp.azure.com:8080/webChatLogin.html");
 
             ws.addListener(new WebSocketAdapter() {
                 @Override
@@ -72,7 +71,13 @@ public class ChatRoom extends AppCompatActivity {
                 @Override
                 public void onTextMessage(WebSocket webSocket, String message) throws Exception {
                     messageReceipt(message);
-                    adapter.notifyDataSetChanged();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                            messageDisplay.setSelection(adapter.getCount() - 1);
+                        }
+                    });
                 }
             });
 
@@ -112,8 +117,7 @@ public class ChatRoom extends AppCompatActivity {
             editMessage.onEditorAction(EditorInfo.IME_ACTION_DONE);
         }
     }
-
-    //only updates message when keyboard is down (?)
+    
     public void messageReceipt(String message) throws Exception {
         JSONObject jsonMessage = new JSONObject(message);
         String sendingUser = jsonMessage.getString("username");
