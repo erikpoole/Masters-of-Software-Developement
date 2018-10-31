@@ -179,7 +179,6 @@ public class ClientSocket {
 		}
 		outputBody.write(outputBytes);
 		outputBody.flush();
-		System.out.println(message);
 	}
 
 //*************************************************************************************	
