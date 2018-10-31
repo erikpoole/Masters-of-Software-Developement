@@ -23,17 +23,11 @@ public class Main {
 					try {
 						try {
 							clientSocket.httpRequest();
-							if (clientSocket.isWebSocketRequest) {
-								clientSocket.returnHandshake();
-								clientSocket.listenWebSocket();
-							} else {
-								clientSocket.httpResponse();
-							}
 							clientSocket.socket.close();
 
 						} catch (FileNotFoundException e) {
 							clientSocket.respond404();
-						} catch (BadRequestException | IOException | NoSuchElementException e) {
+						} catch (IOException | NoSuchElementException e) {
 							clientSocket.respond400();
 
 						}

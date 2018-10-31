@@ -117,7 +117,7 @@ public class ChatRoom extends AppCompatActivity {
             editMessage.onEditorAction(EditorInfo.IME_ACTION_DONE);
         }
     }
-    
+
     public void messageReceipt(String message) throws Exception {
         JSONObject jsonMessage = new JSONObject(message);
         String sendingUser = jsonMessage.getString("username");
