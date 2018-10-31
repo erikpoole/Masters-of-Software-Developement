@@ -1,10 +1,11 @@
 package hwBasicHTTPServer;
 
+import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -98,10 +99,11 @@ public class ClientSocket {
 
 	// if inputStream.read() is closed exception will be thrown - catch to handle
 	// browser refresh problems
-	public void listenWebSocket() {
+	public void listenWebSocket() throws IOException {
 		try {
 			System.out.println("Web Socket - Listening");
-			InputStream inputStream = socket.getInputStream();
+			DataInputStream inputStream = new DataInputStream(socket.getInputStream());
+
 			while (true) {
 				String bodyString = interpretHTTP(inputStream);
 
@@ -112,7 +114,7 @@ public class ClientSocket {
 					message += " ";
 					message += splitBody[i];
 				}
-				
+
 				if (username.equals("serverJoin")) {
 					roomName = message;
 					Server.addClient(this);
@@ -128,7 +130,8 @@ public class ClientSocket {
 			}
 
 		} catch (Exception e) {
-			System.out.println("Bad Client Request");
+			System.out.println("Bad Client Request: ");
+			e.printStackTrace();
 			Server.removeClient(this);
 		}
 	}
@@ -136,25 +139,31 @@ public class ClientSocket {
 //*************************************************************************************	
 //*************************************************************************************
 
-	private String interpretHTTP(InputStream inputStream) throws IOException {
+	private String interpretHTTP(DataInputStream inputStream) throws IOException {
 		byte[] headerBytes = new byte[6];
+		byte[] bodyBytes = null;
+		String bodyString = null;
 
-		for (int i = 0; i < 6; i++) {
-			headerBytes[i] = (byte) (inputStream.read());
+		try {
+			inputStream.readFully(headerBytes, 0, 6);
+
+			byte secondByte = headerBytes[1];
+			byte mask = 0x7F;
+			byte payloadLength = (byte) (secondByte & mask);
+
+			bodyBytes = new byte[payloadLength];
+			inputStream.readFully(bodyBytes, 0, payloadLength);
+			for (int i = 0; i < payloadLength; i++) {
+				bodyBytes[i] = (byte) (bodyBytes[i] ^ headerBytes[2 + (i % 4)]);
+			}
+
+			bodyString = new String(bodyBytes);
+			System.out.println(bodyString);
+			
+		} catch (EOFException e) {
+			Server.removeClient(this);
 		}
-
-		byte secondByte = headerBytes[1];
-		byte mask = 0x7F;
-		byte payloadLength = (byte) (secondByte & mask);
-
-		byte[] bodyBytes = new byte[payloadLength];
-		for (int i = 0; i < payloadLength; i++) {
-			byte currentByte = (byte) inputStream.read();
-			currentByte = (byte) (currentByte ^ headerBytes[2 + (i % 4)]);
-			bodyBytes[i] = currentByte;
-		}
-
-		String bodyString = new String(bodyBytes);
+		
 		return bodyString;
 	}
 

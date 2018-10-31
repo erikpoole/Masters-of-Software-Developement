@@ -32,17 +32,18 @@ public class Server {
 
 	}
 
-	public static synchronized void removeClient(ClientSocket socket) {
+	public static synchronized void removeClient(ClientSocket socket) throws IOException {
 		if (roomList.containsKey(socket.roomName)) {
 			roomList.get(socket.roomName).clientList.remove(socket);
 			if (roomList.get(socket.roomName).clientList.isEmpty()) {
 				roomList.remove(socket.roomName);
 			}
 		}
-
+		if (!socket.socket.isClosed()) {
+			socket.socket.close();
+		}
 	}
 
-	//isClosed doesn't seem to work
 	public static synchronized void broadcastMessage(String message, String roomName) throws IOException {
 		for (int i = 0; i < roomList.get(roomName).clientList.size(); i++) {
 			if (roomList.get(roomName).clientList.get(i).socket.isClosed()) {
