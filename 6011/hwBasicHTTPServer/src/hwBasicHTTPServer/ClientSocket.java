@@ -110,18 +110,11 @@ public class ClientSocket {
 		System.out.println();
 		DataInputStream inputStream = new DataInputStream(socket.getInputStream());
 
-		try {
-			while (true) {
-				String wholeMessage = readMessage(inputStream);
-				String[] parsedMessage = splitMessage(wholeMessage);
-				handleMessage(parsedMessage);
+		while (true) {
+			String wholeMessage = readMessage(inputStream);
+			String[] parsedMessage = splitMessage(wholeMessage);
+			handleMessage(parsedMessage);
 
-			}
-
-		} catch (Exception e) {
-			System.out.println("Bad Client Request: ");
-			e.printStackTrace();
-			Server.removeClient(this);
 		}
 	}
 
@@ -144,9 +137,10 @@ public class ClientSocket {
 			}
 
 			bodyString = new String(bodyBytes);
-			System.out.println("poop" + bodyString);
+			System.out.println("Decoded Message: " + bodyString);
 
 		} catch (EOFException e) {
+			System.out.println("!!! EOF Found !!!");
 			Server.removeClient(this);
 		}
 
@@ -187,18 +181,18 @@ public class ClientSocket {
 //*************************************************************************************	
 //*************************************************************************************	
 
-	public void sendMessage(String message) throws IOException {
-		OutputStream outputBody = socket.getOutputStream();
-		byte[] messageBytes = message.getBytes();
-		byte[] outputBytes = new byte[2 + messageBytes.length];
+	public void sendMessage(String input) throws IOException {
+		OutputStream outputStream = socket.getOutputStream();
+		byte[] inputBytes = input.getBytes();
+		byte[] outputBytes = new byte[2 + inputBytes.length];
 
 		outputBytes[0] = (byte) 0x81;
-		outputBytes[1] = (byte) messageBytes.length;
-		for (int i = 0; i < messageBytes.length; i++) {
-			outputBytes[i + 2] = messageBytes[i];
+		outputBytes[1] = (byte) inputBytes.length;
+		for (int i = 0; i < inputBytes.length; i++) {
+			outputBytes[i + 2] = inputBytes[i];
 		}
-		outputBody.write(outputBytes);
-		outputBody.flush();
+		outputStream.write(outputBytes);
+		outputStream.flush();
 	}
 
 //*************************************************************************************	
