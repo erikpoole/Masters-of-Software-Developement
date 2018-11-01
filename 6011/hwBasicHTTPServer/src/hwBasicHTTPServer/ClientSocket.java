@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -25,14 +24,18 @@ public class ClientSocket {
 		socket = inputSocket;
 	}
 
-	public void httpRequest() throws IOException, NoSuchAlgorithmException {
+//*************************************************************************************	
+//*************************************************************************************
+
+	// Called from Main when ServerSocket accepts this new Socket connection
+	public void httpRequest() throws IOException {
 		File file = getRequestedFile();
 		handleRequest(file);
 	}
 
-	// reads header from client HTTP request and returns requested file
-	// if the HTTP request is invalid will respond400()
-	// if file is outside current directory will respond404();
+	// Reads header from client HTTP request and returns requested file
+	// If the HTTP request is invalid will respond400()
+	// If file is outside current directory will respond404();
 	private File getRequestedFile() throws IOException {
 		input = new Scanner(socket.getInputStream());
 		File file = null;
@@ -40,13 +43,11 @@ public class ClientSocket {
 		if (!input.next().equals("GET")) {
 			respond400();
 		}
-
 		String filename = "Resources" + input.next();
 		if (filename.equals("Resources/")) {
 			filename = "Resources/index.html";
 		}
 		file = new File(filename);
-		System.out.println(file.getCanonicalPath());
 		if (!file.getAbsolutePath().equals(file.getCanonicalPath())) {
 			respond404();
 		}
@@ -59,10 +60,11 @@ public class ClientSocket {
 		return file;
 	}
 
-	public void handleRequest(File requestedFile) throws IOException, NoSuchAlgorithmException {
-		HashMap<String, String> httpMap = new HashMap<String, String>();
+	// Determines if client HTTP request is for WebSocket upgrade or single webpage
+	// Handles request appropriately
+	public void handleRequest(File requestedFile) throws IOException {
+		HashMap<String, String> requestMap = new HashMap<String, String>();
 		while (true) {
-
 			String line = input.nextLine();
 			if (line.isEmpty()) {
 				break;
@@ -71,61 +73,48 @@ public class ClientSocket {
 			String splitline[] = line.split("\\s+");
 			String tag = splitline[0];
 			String value = splitline[1];
-			httpMap.put(tag, value);
+			requestMap.put(tag, value);
 		}
 
-		if (httpMap.containsKey("Sec-WebSocket-Key:")) {
-			clientKey = httpMap.get("Sec-WebSocket-Key:");
+		if (requestMap.containsKey("Sec-WebSocket-Key:")) {
+			clientKey = requestMap.get("Sec-WebSocket-Key:");
 			System.out.println("Websocket Request");
 			returnHandshake();
 			listenWebSocket();
+		} else {
+			System.out.println("Webpage Request");
+			System.out.println(requestedFile.getCanonicalPath());
+			httpResponse(requestedFile);
 		}
-		System.out.println("Webpage Request");
-		httpResponse(requestedFile);
 
 	}
 
 //*************************************************************************************	
 //*************************************************************************************
 
-	public void returnHandshake() throws IOException, NoSuchAlgorithmException {
-		PrintWriter outputHeader = new PrintWriter(socket.getOutputStream(), true);
-		outputHeader.println("HTTP/1.1 101 Switching Protocols");
-		outputHeader.println("Upgrade: websocket");
-		outputHeader.println("Connection: Upgrade");
-		outputHeader.println("Sec-WebSocket-Accept: " + Server.calculateHash(clientKey));
-		outputHeader.println();
+	// returns HTTP handshake to client if WebSocket upgrade requested
+	public void returnHandshake() throws IOException {
+		PrintWriter writer = new PrintWriter(socket.getOutputStream());
+		writer.println("HTTP/1.1 101 Switching Protocols");
+		writer.println("Upgrade: websocket");
+		writer.println("Connection: Upgrade");
+		writer.println("Sec-WebSocket-Accept: " + Server.calculateHash(clientKey));
+		writer.println();
+		writer.flush();
 	}
 
 	// if inputStream.read() is closed exception will be thrown - catch to handle
 	// browser refresh problems
 	public void listenWebSocket() throws IOException {
+		System.out.println("Web Socket - Listening");
+		System.out.println();
+		DataInputStream inputStream = new DataInputStream(socket.getInputStream());
+
 		try {
-			System.out.println("Web Socket - Listening");
-			DataInputStream inputStream = new DataInputStream(socket.getInputStream());
-
 			while (true) {
-				String bodyString = interpretHTTP(inputStream);
-
-				String[] splitBody = bodyString.split("\\s+");
-				String username = splitBody[0];
-				String message = new String();
-				for (int i = 1; i < splitBody.length; i++) {
-					message += " ";
-					message += splitBody[i];
-				}
-
-				if (username.equals("serverJoin")) {
-					roomName = message;
-					Server.addClient(this);
-
-				} else if (username.equals("serverExit")) {
-					Server.removeClient(this);
-
-				} else if (!message.isEmpty()) {
-					bodyString = "{ \"username\":\"" + username + "\" , \"message\":\"" + message + "\" }";
-					Server.broadcastMessage(bodyString, roomName);
-				}
+				String wholeMessage = readMessage(inputStream);
+				String[] parsedMessage = splitMessage(wholeMessage);
+				handleMessage(parsedMessage);
 
 			}
 
@@ -136,10 +125,7 @@ public class ClientSocket {
 		}
 	}
 
-//*************************************************************************************	
-//*************************************************************************************
-
-	private String interpretHTTP(DataInputStream inputStream) throws IOException {
+	private String readMessage(DataInputStream inputStream) throws IOException {
 		byte[] headerBytes = new byte[6];
 		byte[] bodyBytes = null;
 		String bodyString = null;
@@ -158,7 +144,7 @@ public class ClientSocket {
 			}
 
 			bodyString = new String(bodyBytes);
-			System.out.println(bodyString);
+			System.out.println("poop" + bodyString);
 
 		} catch (EOFException e) {
 			Server.removeClient(this);
@@ -166,6 +152,40 @@ public class ClientSocket {
 
 		return bodyString;
 	}
+
+	private String[] splitMessage(String inputMessage) {
+		String[] splitMessage = inputMessage.split("\\s+");
+		String username = splitMessage[0];
+		String message = new String();
+		for (int i = 1; i < splitMessage.length; i++) {
+			message += " ";
+			message += splitMessage[i];
+		}
+		String[] parsedMessage = new String[2];
+		parsedMessage[0] = username;
+		parsedMessage[1] = message;
+		return parsedMessage;
+	}
+
+	private void handleMessage(String[] parsedMessage) throws IOException {
+		String username = parsedMessage[0];
+		String message = parsedMessage[1];
+
+		if (username.equals("serverJoin")) {
+			roomName = message;
+			Server.addClient(this);
+
+//		} else if (username.equals("serverExit")) {
+//			Server.removeClient(this);
+
+		} else if (!message.isEmpty()) {
+			String jsonString = "{ \"username\":\"" + username + "\" , \"message\":\"" + message + "\" }";
+			Server.broadcastMessage(jsonString, roomName);
+		}
+	}
+
+//*************************************************************************************	
+//*************************************************************************************	
 
 	public void sendMessage(String message) throws IOException {
 		OutputStream outputBody = socket.getOutputStream();

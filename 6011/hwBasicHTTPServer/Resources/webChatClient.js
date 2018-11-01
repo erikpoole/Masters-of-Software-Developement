@@ -10,12 +10,7 @@ let room;
 
 
 function runChatLogin() {
-    console.log('Working');
-    mySocket = new WebSocket("ws://" + location.host);
-    mySocket.onopen = function () {
-        socketOpen = true
-        console.log(socketOpen);
-    };
+    console.log('Page Loaded');
 
     let button = document.getElementById("joinButton");
     button.addEventListener("click", sendJoinRequest);
@@ -28,17 +23,18 @@ function runChatLogin() {
 }
 
 function sendJoinRequest() {
-    if (socketOpen) {
-        console.log("listening");
+    room = document.getElementById("room").value;
+    username = document.getElementById("username").value;
 
-        room = document.getElementById("room").value;
-        username = document.getElementById("username").value;
-
+    mySocket = new WebSocket("ws://" + location.host);
+    mySocket.onopen = function () {
+        socketOpen = true
+        console.log("WebSocket Listening");
+        
         switchPage("webChatRoom.html");
-    }
+    };
+
 }
-
-
 
 function switchPage(pageName) {
     let xhr = new XMLHttpRequest();
@@ -106,7 +102,7 @@ function clearElement(element) {
 
 function fixEnterEvent(element, functionToCall) {
     element.addEventListener("keydown", function (event) {
-        //'Enter key is key 13'
+        // 'Enter key is key 13'
         if (event.keyCode == 13) {
             event.preventDefault();
             functionToCall();

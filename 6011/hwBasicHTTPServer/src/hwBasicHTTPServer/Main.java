@@ -8,10 +8,10 @@ import java.util.NoSuchElementException;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-
 		Server thisServer = new Server(8080);
 		System.out.println("Server is Listening");
 		System.out.println();
+		
 		while (true) {
 
 			Socket connectingSocket = thisServer.serverSocket.accept();
