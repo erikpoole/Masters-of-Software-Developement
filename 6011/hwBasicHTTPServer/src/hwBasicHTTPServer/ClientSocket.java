@@ -14,11 +14,10 @@ import java.util.Scanner;
 public class ClientSocket {
 
 	public Socket socket;
-	public Scanner input;
-
-	public String clientKey;
-	public boolean isWebSocketRequest;
 	public String roomName;
+
+	private Scanner input;
+	private String clientKey;
 
 	public ClientSocket(Socket inputSocket) {
 		socket = inputSocket;
@@ -28,7 +27,7 @@ public class ClientSocket {
 //*************************************************************************************
 
 	// Called from Main when ServerSocket accepts this new Socket connection
-	public void httpRequest() throws IOException {
+	public void start() throws IOException {
 		File file = getRequestedFile();
 		handleRequest(file);
 	}
@@ -92,7 +91,7 @@ public class ClientSocket {
 //*************************************************************************************	
 //*************************************************************************************
 
-	// returns HTTP handshake to client if WebSocket upgrade requested
+	// Returns HTTP handshake to client if WebSocket upgrade requested
 	public void returnHandshake() throws IOException {
 		PrintWriter writer = new PrintWriter(socket.getOutputStream());
 		writer.println("HTTP/1.1 101 Switching Protocols");
@@ -103,50 +102,54 @@ public class ClientSocket {
 		writer.flush();
 	}
 
-	// if inputStream.read() is closed exception will be thrown - catch to handle
-	// browser refresh problems
+	// Listens for client messages
+	// Handles based on type of message sent (joinServer, serverExit, Message)
 	public void listenWebSocket() throws IOException {
 		System.out.println("Web Socket - Listening");
 		System.out.println();
 		DataInputStream inputStream = new DataInputStream(socket.getInputStream());
 
 		while (true) {
-			String wholeMessage = readMessage(inputStream);
-			String[] parsedMessage = splitMessage(wholeMessage);
-			handleMessage(parsedMessage);
+			try {
+				String wholeMessage = readMessage(inputStream);
+				String[] parsedMessage = splitMessage(wholeMessage);
+				handleMessage(parsedMessage);
+			} catch (EOFException e) {
+				System.out.println("Client Left Room");
+				Server.removeClient(this);
+				break;
+			}
 
 		}
 	}
 
-	private String readMessage(DataInputStream inputStream) throws IOException {
+	//Called by listenWebSocket and will hang until message received
+	//Decodes message
+	private String readMessage(DataInputStream inputStream) throws IOException, EOFException {
 		byte[] headerBytes = new byte[6];
 		byte[] bodyBytes = null;
 		String bodyString = null;
 
-		try {
-			inputStream.readFully(headerBytes, 0, 6);
+		inputStream.readFully(headerBytes, 0, 6);
 
-			byte secondByte = headerBytes[1];
-			byte mask = 0x7F;
-			byte payloadLength = (byte) (secondByte & mask);
+		byte secondByte = headerBytes[1];
+		byte mask = 0x7F;
+		byte payloadLength = (byte) (secondByte & mask);
 
-			bodyBytes = new byte[payloadLength];
-			inputStream.readFully(bodyBytes, 0, payloadLength);
-			for (int i = 0; i < payloadLength; i++) {
-				bodyBytes[i] = (byte) (bodyBytes[i] ^ headerBytes[2 + (i % 4)]);
-			}
-
-			bodyString = new String(bodyBytes);
-			System.out.println("Decoded Message: " + bodyString);
-
-		} catch (EOFException e) {
-			System.out.println("!!! EOF Found !!!");
-			Server.removeClient(this);
+		bodyBytes = new byte[payloadLength];
+		inputStream.readFully(bodyBytes, 0, payloadLength);
+		for (int i = 0; i < payloadLength; i++) {
+			bodyBytes[i] = (byte) (bodyBytes[i] ^ headerBytes[2 + (i % 4)]);
 		}
+
+		bodyString = new String(bodyBytes);
+		System.out.println("Message: " + bodyString);
 
 		return bodyString;
 	}
 
+	//Splits received message into appropriate parts for handling
+	//!!! Should consider switching client side to send JSON and handle message that way instead !!!
 	private String[] splitMessage(String inputMessage) {
 		String[] splitMessage = inputMessage.split("\\s+");
 		String username = splitMessage[0];
@@ -161,6 +164,7 @@ public class ClientSocket {
 		return parsedMessage;
 	}
 
+	//Handles message appropriately based on first word in message received
 	private void handleMessage(String[] parsedMessage) throws IOException {
 		String username = parsedMessage[0];
 		String message = parsedMessage[1];
@@ -169,8 +173,8 @@ public class ClientSocket {
 			roomName = message;
 			Server.addClient(this);
 
-//		} else if (username.equals("serverExit")) {
-//			Server.removeClient(this);
+		} else if (username.equals("serverExit")) {
+			Server.removeClient(this);
 
 		} else if (!message.isEmpty()) {
 			String jsonString = "{ \"username\":\"" + username + "\" , \"message\":\"" + message + "\" }";
@@ -181,6 +185,8 @@ public class ClientSocket {
 //*************************************************************************************	
 //*************************************************************************************	
 
+	// Called by broadcast method
+	// Sends message to client
 	public void sendMessage(String input) throws IOException {
 		OutputStream outputStream = socket.getOutputStream();
 		byte[] inputBytes = input.getBytes();
@@ -198,19 +204,18 @@ public class ClientSocket {
 //*************************************************************************************	
 //*************************************************************************************
 
-	// reads bytes from file and sends them to client
-	// if IOexception will close socket
+	// Reads bytes from file and sends them to client
 	public void httpResponse(File file) throws IOException {
 		byte[] fileBytes = {};
-		PrintWriter outputHeader = new PrintWriter(socket.getOutputStream(), true);
-
 		FileInputStream fileStream = new FileInputStream(file.getCanonicalPath());
 		fileBytes = fileStream.readAllBytes();
 		fileStream.close();
 
+		PrintWriter outputHeader = new PrintWriter(socket.getOutputStream());
 		outputHeader.println("HTTP/1.1 200 OK");
 		outputHeader.println("Content-Length: " + fileBytes.length);
 		outputHeader.println();
+		outputHeader.flush();
 
 		OutputStream outputBody = socket.getOutputStream();
 		outputBody.write(fileBytes);
@@ -222,7 +227,7 @@ public class ClientSocket {
 //*************************************************************************************	
 //*************************************************************************************
 
-	// catches 404 - fileNotFound Exceptions
+	// Sends 404 - File Not Found
 	public void respond404() throws IOException {
 		PrintWriter outputHeader = new PrintWriter(socket.getOutputStream(), true);
 		outputHeader.println("HTTP/1.1 404 FILE NOT FOUND");
@@ -233,6 +238,7 @@ public class ClientSocket {
 		socket.close();
 	}
 
+	// Sends 400 - Bad Request
 	public void respond400() throws IOException {
 		PrintWriter outputHeader = new PrintWriter(socket.getOutputStream(), true);
 		outputHeader.println("HTTP/1.1 400 BAD REQUEST");

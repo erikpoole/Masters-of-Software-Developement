@@ -27,7 +27,8 @@ public class Server {
 			roomList.put(socket.roomName, new Room(socket.roomName));
 		}
 		roomList.get(socket.roomName).clientList.add(socket);
-		System.out.println("#Clients in Room: " + roomList.get(socket.roomName).clientList.size());
+		System.out.println(
+				"#Clients in room \"" + socket.roomName + "\": " + roomList.get(socket.roomName).clientList.size());
 		System.out.println("#Rooms: " + roomList.size());
 
 	}
@@ -38,9 +39,6 @@ public class Server {
 			if (roomList.get(socket.roomName).clientList.isEmpty()) {
 				roomList.remove(socket.roomName);
 			}
-		}
-		if (!socket.socket.isClosed()) {
-			socket.socket.close();
 		}
 	}
 
@@ -55,8 +53,10 @@ public class Server {
 			}
 		}
 	}
-	
 
+//*************************************************************************************	
+//*************************************************************************************	
+	
 	public static synchronized String calculateHash(String inputHash) {
 		String protocolString = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 		String concatStrings = inputHash + protocolString;
@@ -70,7 +70,6 @@ public class Server {
 			System.out.println("!!! CRITICAL ERROR - HASH FAILED !!!");
 			e.printStackTrace();
 		}
-
 
 		return Base64.getEncoder().encodeToString(hashedBytes);
 	}
