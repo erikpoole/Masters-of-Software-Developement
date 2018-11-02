@@ -1,6 +1,7 @@
 package com.example.epoole.androidserver;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
@@ -33,7 +34,7 @@ public class ChatRoom extends AppCompatActivity {
     public String room = null;
 
     public ArrayAdapter<String> adapter;
-    public ArrayList<String> messageList =  new ArrayList<String>();
+    public ArrayList<String> messageList = new ArrayList<String>();
     public Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
@@ -69,13 +70,20 @@ public class ChatRoom extends AppCompatActivity {
 
             ws.addListener(new WebSocketAdapter() {
                 @Override
-                public void onTextMessage(WebSocket webSocket, String message) throws Exception {
+                public void onTextMessage(WebSocket webSocket, final String message) throws Exception {
                     messageReceipt(message);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             adapter.notifyDataSetChanged();
-                            messageDisplay.setSelection(adapter.getCount() - 1);
+
+                            //attempting to get color working:
+                            //
+//                            int temp = messageDisplay.getChildCount();
+//                            String temp2 = String.valueOf(temp);
+//                            Log.d("myDebug", temp2);
+                            messageDisplay.smoothScrollToPosition(adapter.getCount() - 1);
+//                            messageDisplay.getChildAt(messageDisplay.getLastVisiblePosition() - messageDisplay.getFirstVisiblePosition()).setBackgroundColor(Color.GREEN);
                         }
                     });
                 }
@@ -125,7 +133,6 @@ public class ChatRoom extends AppCompatActivity {
 
         Log.d("myDebug", "From: " + sendingUser);
         Log.d("myDebug", "Message:" + sentMessage);
-
         messageList.add(sendingUser + ": " + sentMessage);
     }
 }
