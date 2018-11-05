@@ -70,7 +70,7 @@ public class ChatRoom extends AppCompatActivity {
 
             ws.addListener(new WebSocketAdapter() {
                 @Override
-                public void onTextMessage(WebSocket webSocket, final String message) throws Exception {
+                public synchronized void onTextMessage(WebSocket webSocket, final String message) throws Exception {
                     messageReceipt(message);
                     handler.post(new Runnable() {
                         @Override
