@@ -1,0 +1,83 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf600
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red164\green8\blue3;\red164\green8\blue3;\red0\green0\blue192;
+\red127\green0\blue85;\red100\green100\blue100;}
+{\*\expandedcolortbl;;\cssrgb\c71055\c10387\c0;\cssrgb\c71055\c10387\c0;\csgenericrgb\c0\c0\c75294;
+\csgenericrgb\c49804\c0\c33333;\csgenericrgb\c39216\c39216\c39216;}
+\margl1440\margr1440\vieww12540\viewh11380\viewkind1
+\deftab720
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+
+\f0\fs24 \cf0 Lab 1 Worksheet\
+\
+Answer the following questions by modifying this text file. Add your answer below each question.\
+\
+1. Where is the assertEquals method defined? What does it do? Can we use assertEquals for more than just int types? (Hint: Consult the API for JUnit)\
+\cf2 	As part of the \'93Assert\'94 class in the unit library.  It checks to see if two values are equivalent.  The assertEquals method can be used on all primitive data types as well as objects per \'93http://junit.sourceforge.net/javadoc/org/junit/Assert.html\'94.\cf0 \
+\
+2. Briefly describe what each of the three tests is checking.\cf3 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf3 	Test one verifies that our method works as intended if it\'92s passed an empty array.  Test two verified that our methods works as intended with an array that\'92s all equivalent values.  Test three verifies that our method works as intended with an assortment of small negative and positive numbers.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf0 \
+3. Why is our unimplemented findSmallestDiff method passing one of the tests?\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf3 	Because our unimplemented findSmallestDiff was always returning \'930\'94. And our second test expected \'930\'94 as the result.\cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf0 \
+4. Why are we failing the third test? How should our method be modified to correct this?\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf3 	The method given in the lab was not taking into account negative numbers correctly.  If a negative distance was determined then it would override all positive distances going forward.  \
+\
+	E.g. \
+		-10 & 5 should result in distance 15 (incorrect, results in distance -15)\
+		-10 & -5 should result in distance 5 (incorrect, results in distance -5)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf0 \
+5. What is the appropriate call to assertEquals for your new test (test 4)?\
+\pard\pardeftab720\partightenfactor0
+\cf0 	\cf4 arr4\cf0  = 
+\b \cf5 new
+\b0 \cf0  
+\b \cf5 int
+\b0 \cf0 [] \{0, 0, 10\};\
+	\cf6 @Test\cf0 \
+	
+\b \cf5 public
+\b0 \cf0  
+\b \cf5 void
+\b0 \cf0  checkLowerArrayLimit() \{\
+		
+\i assertEquals
+\i0 (0, DiffUtil.
+\i findSmallestDiff
+\i0 (\cf4 arr4\cf0 ));\
+	\}\cf3 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf3 	\
+	(I also checked the upper limit)\
+\pard\pardeftab720\partightenfactor0
+\cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf0 6. Provide one more test (test 5) for the findSmallestDiff method. Briefly describe your test and write the call to assertEquals here.\cf3 \
+\pard\pardeftab720\partightenfactor0
+\cf0 	\cf4 arr6\cf0  = 
+\b \cf5 new
+\b0 \cf0  
+\b \cf5 int
+\b0 \cf0 [] \{ 2, 3, 4 \};\
+	\cf6 @Test\cf0 \
+	
+\b \cf5 public
+\b0 \cf0  
+\b \cf5 void
+\b0 \cf0  checkSequentialArray() \{\
+		
+\i assertEquals
+\i0 (1, DiffUtil.
+\i findSmallestDiff
+\i0 (\cf4 arr6\cf0 ));\
+	\}\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf3 	This second test caught an error - I wasn\'92t taking the absolute value of my very first comparision and so if the first comparison was the smallest one found and it was negative the distance would be negative.  In this case the test was sequential and ascending so it failed and caught a bug!\
+	}
