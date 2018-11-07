@@ -1,0 +1,59 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf600
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red110\green5\blue2;\red110\green5\blue2;}
+{\*\expandedcolortbl;;\cssrgb\c51239\c6511\c0;\cssrgb\c51239\c6511\c0;}
+\margl1440\margr1440\vieww12540\viewh14760\viewkind1
+\deftab720
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+
+\f0\fs24 \cf0 Lab 4 Worksheet\
+\
+Answer the following questions by modifying this text file. Add your answer below each question.\
+\
+1. Which two binarySearch tests are failing?\
+\cf2 Part1.binarySearch(arr1, 0) == true \
+& \
+Part1.binarySearch(arr2, 20) == false\cf0 \
+\
+\
+2. What are the values of arr and goal passed in to binary search?\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf3 arr == [1, 2, 3, 4, 5] 	\
+&\
+goal == 0;\cf2 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf0 \
+\
+3. For each of the two cases of binarySearch that are failing, which return statements are they executing in error (is it returning true when it should be returning false, or the other way around)?\cf3 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf3 \'93Part1.binarySearch(arr1, 0) == true\'94 is returning true @ line 10 (should be false)\
+\'93Part1.binarySearch(arr2, 20) == false\'94 is returning false @ line 17 (should be true)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf0 \
+\
+4. What is the bug in binarySearch? How do you fix it?\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf3 \'93goal\'94 was being compared with the index of the array not the value at that index.  I changed the values from: \
+goal == mid 	to	 goal == arr[mid] 	(line 9)\
+&\
+Goal < mid	to	goal < arr[mid]	(line 11)\
+\cf0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf0 5. Which loops appear to be inifinite?\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf3 Loops #2 & #4\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf0 \
+\
+6. For the loops that you found to be infinite, briefly explain why they are never progressing.\cf3 \
+In loop #2 the loop continues while (b < 10), b is initially set as zero and is only modified by multiplying it with another variable.  Zero multiplied by any number is still zero and so b never changes and the loop never ends.\
+\
+In loop #4 the loop continues while (f > 0), f is initially set as five and is only ever changed by having \'93c\'94 subtracted from it.  \'93c\'94  is initially set at -1 but changes sign (*-1) in each iteration of the loop and so f repeatedly 1 added or subtracted from it and will never decrease 0 and the loop never ends.\
+\cf0 \
+\
+7. What does the call to password.split(" ") appear to do? Hint: examine the input value of "password", then examine the items in the "tokens" array returned by the call.\cf3 \
+\'93.split\'94 appears to break up a string based on a delineator  (in this case \'93 \'93) and then return an array with each split portion in order.\
+\cf0 \
+8. What is the correct password?\cf3 \
+\'931 4 9 16 25\'94}
