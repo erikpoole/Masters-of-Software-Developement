@@ -65,24 +65,34 @@ public class LibraryTest {
    System.err.println("TEST FAILED -- medium library: lookupNotPresent(name)");
   }
   
+  
   lib.checkout(9781843190875L, "eve", 1, 1, 1);
 
   if (lib.lookup("eve").isEmpty()) {
    System.err.println("TEST FAILED -- medium library: lookupPresent(name)");
   }
   
+  if(lib.lookup(9781843190875L) != "eve") {
+   System.err.println("TEST FAILED -- medium library: lookupPresent(isbn)");
+  }
+  
+  
   lib.checkin("eve");
   
   if (!(lib.lookup("eve").isEmpty())) {
    System.err.println("TEST FAILED -- medium library: lookupNotPresent(name)");
   }
-
   
-  
+  if(lib.lookup(9781843190875L) != null) {
+   System.err.println("TEST FAILED -- medium library: lookupNotPresent(isbn)");
+  }
   
   System.out.println("Testing done.");
  }
 
+ 
+ 
+ 
  /**
   * Returns a library of "dummy" books (random ISBN and placeholders for author and title).
   * 

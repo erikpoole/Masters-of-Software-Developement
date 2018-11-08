@@ -61,31 +61,10 @@ public class LibraryGenericTest {
   if (!lib2.checkin(patron2))
    System.err.println("TEST FAILED: checkin(holder)");
 
-
-  // ********************************************************************************
-  // ********************************************************************************
-
-  LibraryGeneric<String> testLibrary = new LibraryGeneric<>();
-  testLibrary.addAll("Mushroom_Publishing.txt");
-  ArrayList<LibraryBookGeneric<String>> sortedLibrary = testLibrary.getOrderedByAuthor();
-
-  for (LibraryBookGeneric<String> b : sortedLibrary) {
-   System.out.println(b.getAuthor() + "\t\t\t" + b.getTitle());
-  }
-  System.out.println();
-
+  //additional junit testing in "MyLibraryTests.java"
   
-  
-  testLibrary.checkout(9781843192701L, "me", 1, 1, 2001);
-  testLibrary.checkout(9781843190349L, "me", 1, 1, 2000);
-
-  ArrayList<LibraryBookGeneric<String>> overdueList = testLibrary.getOverdueList(1, 1, 2010);
-
-  for (LibraryBookGeneric<String> b : overdueList) {
-   System.out.println(b.getHolder() + "\t\t\t" + b.getTitle());
-  }
-
-
   System.out.println("Testing done.");
  }
+ 
+ 
 }
