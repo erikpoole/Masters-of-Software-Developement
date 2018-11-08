@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
 
@@ -194,6 +195,124 @@ public class LibraryGeneric<Type> {
   }
   return hadBook;
  }
+
+
+ // ********************************************************************************
+ // ********************************************************************************
+
+ /**
+  * Returns the list of library books, sorted by ISBN (smallest ISBN first).
+  */
+ public ArrayList<LibraryBookGeneric<Type>> getInventoryList() {
+  ArrayList<LibraryBookGeneric<Type>> libraryCopy = new ArrayList<LibraryBookGeneric<Type>>();
+  libraryCopy.addAll(library);
+
+  OrderByIsbn comparator = new OrderByIsbn();
+
+  sort(libraryCopy, comparator);
+
+  return libraryCopy;
+ }
+
+ /**
+  * Returns the list of library books, sorted by author
+  */
+ public ArrayList<LibraryBookGeneric<Type>> getOrderedByAuthor() {
+  ArrayList<LibraryBookGeneric<Type>> libraryCopy = new ArrayList<LibraryBookGeneric<Type>>();
+  libraryCopy.addAll(library);
+
+  OrderByAuthor comparator = new OrderByAuthor();
+
+  sort(libraryCopy, comparator);
+
+  return libraryCopy;
+ }
+
+ /**
+  * Returns the list of library books whose due date is older than the input date. The list is
+  * sorted by date (oldest first).
+  *
+  * If no library books are overdue, returns an empty list.
+  */
+ public ArrayList<LibraryBookGeneric<Type>> getOverdueList(int month, int day, int year) {
+  ArrayList<LibraryBookGeneric<Type>> libraryCopy = new ArrayList<LibraryBookGeneric<Type>>();
+  for (LibraryBookGeneric<Type> book : library) {
+   if (book.getDueDate() != null) {
+    if (book.getDueDate().compareTo(new GregorianCalendar(year, month, day)) < 0) {
+     libraryCopy.add(book);
+    }
+   }
+  }
+
+  OrderByDueDate comparator = new OrderByDueDate();
+
+  sort(libraryCopy, comparator);
+
+  return libraryCopy;
+ }
+
+
+
+ /**
+  * Performs a SELECTION SORT on the input ArrayList. 1. Find the smallest item in the list. 2. Swap
+  * the smallest item with the first item in the list. 3. Now let the list be the remaining unsorted
+  * portion (second item to Nth item) and repeat steps 1, 2, and 3.
+  */
+ private static <ListType> void sort(ArrayList<ListType> list, Comparator<ListType> c) {
+  for (int i = 0; i < list.size() - 1; i++) {
+   int j, minIndex;
+   for (j = i + 1, minIndex = i; j < list.size(); j++)
+    if (c.compare(list.get(j), list.get(minIndex)) < 0)
+     minIndex = j;
+   ListType temp = list.get(i);
+   list.set(i, list.get(minIndex));
+   list.set(minIndex, temp);
+  }
+ }
+
+ /**
+  * Comparator that defines an ordering among library books using the ISBN.
+  */
+ protected class OrderByIsbn implements Comparator<LibraryBookGeneric<Type>> {
+
+  /**
+   * Returns a negative value if lhs is smaller than rhs. Returns a positive value if lhs is larger
+   * than rhs. Returns 0 if lhs and rhs are equal.
+   */
+  public int compare(LibraryBookGeneric<Type> lhs, LibraryBookGeneric<Type> rhs) {
+   return (int) (lhs.getIsbn() - rhs.getIsbn());
+  }
+ }
+
+ /**
+  * Comparator that defines an ordering among library books using the author, and book title as a
+  * tie-breaker.
+  */
+ protected class OrderByAuthor implements Comparator<LibraryBookGeneric<Type>> {
+
+  @Override
+  public int compare(LibraryBookGeneric<Type> book1, LibraryBookGeneric<Type> book2) {
+   if (book1.getAuthor().compareTo(book2.getAuthor()) == 0) {
+    return book1.getTitle().compareTo(book2.getTitle());
+   } else {
+    return book1.getAuthor().compareTo(book2.getAuthor());
+   }
+  }
+
+ }
+
+ /**
+  * Comparator that defines an ordering among library books using the due date.
+  */
+ protected class OrderByDueDate implements Comparator<LibraryBookGeneric<Type>> {
+
+  @Override
+  public int compare(LibraryBookGeneric<Type> book1, LibraryBookGeneric<Type> book2) {
+   return (book1.getDueDate().compareTo(book2.getDueDate()));
+  }
+
+ }
+
 
 
 }

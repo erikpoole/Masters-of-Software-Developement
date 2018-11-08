@@ -22,7 +22,7 @@ public class LibraryBookGeneric<Type> extends Book {
   return dueDate;
  }
 
- // currently dueDate = checkoutDate TODO
+ // currently dueDate = checkoutDate 
  public void checkOut(Type newHolder, GregorianCalendar checkoutDate) {
   holder = newHolder;
   dueDate = checkoutDate;
