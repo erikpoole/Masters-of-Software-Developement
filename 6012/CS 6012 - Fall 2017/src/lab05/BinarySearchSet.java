@@ -6,68 +6,97 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-//extend comparable?
-public class BinarySearchSet<E> implements SortedSet<E>, Iterable<E> {
+public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, Iterable<E> {
 
- public E[] baseArray;
- private int index;
+ private E[] baseArray;
+ private int size; // always one past end of accessible values e.g if five included values, size will be 5, but indices will be 0-4
 
-public Comparator<? super E> comparator;
+ // ********************************************************************************
+ // ********************************************************************************
 
- //use compareTo for primitive types
+ public Comparator<? super E> comparator;
+
+ // use compareTo for primitive types
  @SuppressWarnings("unchecked")
  public BinarySearchSet() {
-  baseArray = (E[]) new Object[16];
-  index = 0;
-  
+  baseArray = (E[]) new Comparable[16];
+  size = 0;
   comparator = null;
  }
 
- //use passed comparator for complex types
+ // use passed comparator for complex types
  @SuppressWarnings("unchecked")
  public BinarySearchSet(Comparator<? super E> inputComparator) {
-  baseArray = (E[]) new Object[16];
-  index = 0;
-
+  baseArray = (E[]) new Comparable[16];
+  size = 0;
   comparator = inputComparator;
-
  }
 
- @Override
- public Comparator<? super E> comparator() {
-//  comparator.compare(1, 1);
-  return comparator;
- }
-
- @Override
- public E first() throws NoSuchElementException {
-  return baseArray[0];
- }
-
- @Override
- public E last() throws NoSuchElementException {
-  System.out.println("index: " + index);
-  return baseArray[index-1];
- }
-
- //Alex's Code !!!!
-////binary search function if the user passed in a comparator
-// public boolean binarySearch(E[] arr, E goal) {
-//       int low = 0, high = arr.length - 1, mid = 0;
-//       while (low <= high) {
-//         mid = (low + high) / 2;
-//         if (comparator.compare(goal,(arr[mid]))==0) {
-//           return true;
-//         } else if (comparator.compare(goal,arr[mid])<0) {
-//           high = mid - 1;
-//         } else {
-//           low = mid + 1;
-//         }
-//       }
-//       return false;
-//     }
  
- //implement binary search
+ 
+ // ********************************************************************************
+ // ********************************************************************************
+
+ @SuppressWarnings("unchecked")
+ @Override
+ public boolean contains(Object element) {
+  // can't add instanceOf for a generic
+  if (element.equals(null)) {
+   return false;
+  }
+  E typedElement = (E) element;
+
+  int low = 0;
+  int high = size;
+  int changeValue = size / 2;
+
+  while (high > low) {
+   int center = (low + high) / 2;
+   if (changeValue / 2 == 0) {
+    changeValue = 1;
+   } else {
+    changeValue /= 2;
+   }
+
+   // System.out.println(low);
+   // System.out.println(high);
+   // System.out.println(center);
+   // System.out.println();
+   if (comparator == null) {
+    if (typedElement.compareTo(baseArray[center]) == 0) {
+     return true;
+    } else if (typedElement.compareTo(baseArray[center]) < 0) {
+     high -= changeValue;
+    } else {
+     low += changeValue;
+    }
+   } else {
+    if (comparator.compare(typedElement, baseArray[center]) == 0) {
+     return true;
+    } else if (comparator.compare(typedElement, baseArray[center]) < 0) {
+     high -= changeValue;
+    } else {
+     low += changeValue;
+    }
+   }
+  }
+  return false;
+ }
+
+ @SuppressWarnings("unchecked")
+ @Override
+ public boolean containsAll(Collection<?> elements) {
+  for(Object element : elements) {
+   if (!this.contains((E) element)) {
+    return false;
+   }
+  }
+  return true;
+ }
+
+ // ********************************************************************************
+ // ********************************************************************************
+
  @SuppressWarnings("unchecked")
  @Override
  public boolean add(E element) {
@@ -75,17 +104,17 @@ public Comparator<? super E> comparator;
    return false;
   }
 
-  if (index >= baseArray.length) {
+  if (size >= baseArray.length) {
    E[] tempArr = baseArray;
-   baseArray = (E[]) new Object[index * 2];
+   baseArray = (E[]) new Object[size * 2];
 
    for (int i = 0; i < tempArr.length; i++) {
     baseArray[i] = tempArr[i];
    }
 
   }
-  baseArray[index] = element;
-  index++;
+  baseArray[size] = element;
+  size++;
   return true;
  }
 
@@ -93,30 +122,9 @@ public Comparator<? super E> comparator;
  public boolean addAll(Collection<? extends E> elements) {
   return false;
  }
-
- @Override
- public void clear() {
-  // TODO Auto-generated method stub
-
- }
-
- @Override
- public boolean contains(Object element) {
-  // TODO Auto-generated method stub
-  return false;
- }
-
- @Override
- public boolean containsAll(Collection<?> elements) {
-  // TODO Auto-generated method stub
-  return false;
- }
-
- @Override
- public boolean isEmpty() {
-  // TODO Auto-generated method stub
-  return false;
- }
+ 
+ // ********************************************************************************
+ // ********************************************************************************
 
  @Override
  public boolean remove(Object element) {
@@ -129,25 +137,103 @@ public Comparator<? super E> comparator;
   // TODO Auto-generated method stub
   return false;
  }
+ 
+ @Override
+ public void clear() {
+  // TODO Auto-generated method stub
 
+ }
+
+ // ********************************************************************************
+ // ********************************************************************************
+
+ 
+ 
+ @Override
+ public E first() throws NoSuchElementException {
+  return baseArray[0];
+ }
+
+ @Override
+ public E last() throws NoSuchElementException {
+  return baseArray[size - 1];
+ }
+ 
  @Override
  public int size() {
-  // TODO Auto-generated method stub
-  return 0;
+  return size;
+ }
+ 
+ @Override
+ public boolean isEmpty() {
+  if (size == 0) {
+   return true;
+  }
+  return false;
  }
 
+ @SuppressWarnings("unchecked")
  @Override
  public Object[] toArray() {
-  // TODO Auto-generated method stub
-  return null;
+  E[] returnArr = (E[]) new Comparable[size];
+  for (int i = 0; i < size; i++) {
+   returnArr[i] = baseArray[i];
+  }
+  return returnArr;
  }
-
+ 
+ // ********************************************************************************
+ // ********************************************************************************
+ 
+ 
+ 
+ @Override
+ public Comparator<? super E> comparator() {
+  return comparator;
+ }
+ 
  @Override
  public Iterator<E> iterator() {
-  // TODO Auto-generated method stub
-  return null;
+  return new SearchSetIterator<>();
  }
 
+ // ********************************************************************************
+ // ********************************************************************************
 
 
+ @SuppressWarnings("hiding")
+ private class SearchSetIterator<E> implements Iterator<E> {
+
+  private int location = 0; // always one past location of interest
+
+  @Override
+  public boolean hasNext() {
+   if (location < size) {
+    return true;
+   }
+   return false;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public E next() {
+   if (this.hasNext()) {
+    location++;
+    return (E) baseArray[location - 1];
+   }
+   return null;
+  }
+
+  @Override
+  public void remove() {
+   size--;
+   for (int i = location; i < size; i++) {
+    baseArray[i] = baseArray[i + 1];
+   }
+   if (location >= size) {
+    location = size - 1;
+   }
+  }
+ }
+ 
 }

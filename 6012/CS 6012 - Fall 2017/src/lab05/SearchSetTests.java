@@ -15,15 +15,21 @@ class SearchSetTests {
 
  @Test
  void test() {
+  assertTrue(intSet.isEmpty());
+  assertTrue(intSet.size() == 0);
+  
   for (int i = 0; i < 8; i++) {
    intSet.add(i);
   }
   
   assertTrue(intSet.first() == 0);
   assertTrue(intSet.last() == 7);
-//  assertTrue(intSet.baseArray.length == 8);
+  assertTrue(intSet.size() == 8);
+  assertFalse(intSet.isEmpty());
 
-//  System.out.println(intSet.baseArray.length);
+  assertTrue(intSet.contains(0));
+  assertTrue(intSet.contains(7));
+  assertFalse(intSet.contains(8));
  }
  
  
