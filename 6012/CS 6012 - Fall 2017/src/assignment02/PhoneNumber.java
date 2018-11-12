@@ -12,6 +12,15 @@ public class PhoneNumber {
 
   private String rest;
 
+//********************************************************************************
+//********************************************************************************
+  
+  
+  /**
+   * Constructor for PhoneNumber
+   * takes string and verifies format before splitting into:
+   * areaCode, trunk, and rest
+   */
   public PhoneNumber(String phoneNum) {
     phoneNum = phoneNum.replaceAll("-|\\s|\\.|\\(|\\)", "");
 
@@ -35,6 +44,10 @@ public class PhoneNumber {
     }
   }
 
+/**
+ * Overrides Object.equals to check phone number individuals values
+ * against each other
+ */
   public boolean equals(Object other) {
     if (!(other instanceof PhoneNumber))
       return false;
@@ -45,10 +58,19 @@ public class PhoneNumber {
     return lhs.areaCode.equals(rhs.areaCode) && lhs.trunk.equals(rhs.trunk) && lhs.rest.equals(rhs.rest);
   }
 
+//********************************************************************************
+//********************************************************************************
+  
+  /**
+   * Returns a string representation of the phone number
+   */
   public String toString() {
     return "(" + areaCode + ") " + trunk + "-" + rest;
   }
 
+  /**
+   * Returns a hash representation of the phone number
+   */
   @Override
   public int hashCode() {
     return areaCode.hashCode() + trunk.hashCode() + rest.hashCode();

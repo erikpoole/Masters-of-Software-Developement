@@ -16,9 +16,19 @@ public class LibraryGeneric<Type> {
 
  private ArrayList<LibraryBookGeneric<Type>> library;
 
+//********************************************************************************
+//********************************************************************************
+ 
+ /**
+  * Constructor. Takes no arguments, sets up arraylist
+  * of LibraryBooks representing catalog
+  */
  public LibraryGeneric() {
   library = new ArrayList<LibraryBookGeneric<Type>>();
  }
+ 
+//********************************************************************************
+//********************************************************************************
 
  /**
   * Add the specified book to the library, assume no duplicates.
@@ -91,6 +101,9 @@ public class LibraryGeneric<Type> {
   library.addAll(toBeAdded);
  }
 
+//********************************************************************************
+//********************************************************************************
+ 
  /**
   * Returns the holder of the library book with the specified ISBN.
   * 
@@ -125,6 +138,9 @@ public class LibraryGeneric<Type> {
   return holderCheckoutList;
  }
 
+//********************************************************************************
+//********************************************************************************
+ 
  /**
   * Sets the holder and due date of the library book with the specified ISBN.
   * 
@@ -195,7 +211,6 @@ public class LibraryGeneric<Type> {
   }
   return hadBook;
  }
-
 
  // ********************************************************************************
  // ********************************************************************************
@@ -270,6 +285,9 @@ public class LibraryGeneric<Type> {
   }
  }
 
+//********************************************************************************
+//********************************************************************************
+ 
  /**
   * Comparator that defines an ordering among library books using the ISBN.
   */

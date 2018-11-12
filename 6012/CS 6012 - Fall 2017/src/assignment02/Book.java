@@ -9,6 +9,9 @@ package assignment02;
  */
 public class Book {
 
+//********************************************************************************
+//********************************************************************************
+ 
  private long isbn;
 
  private String author;
@@ -20,6 +23,9 @@ public class Book {
   this.author = author;
   this.title = title;
  }
+
+//********************************************************************************
+//********************************************************************************
 
  /**
   * @return the author
@@ -42,6 +48,9 @@ public class Book {
   return this.title;
  }
 
+//********************************************************************************
+//********************************************************************************
+ 
  /**
   * Two books are considered equal if they have the same ISBN, author, and title.
   * 
@@ -61,6 +70,9 @@ public class Book {
   return true;
  }
 
+//********************************************************************************
+//********************************************************************************
+ 
  /**
   * Returns a string representation of the book.
   */
@@ -68,6 +80,9 @@ public class Book {
   return isbn + ", " + author + ", \"" + title + "\"";
  }
 
+ /**
+  * Returns a hash representation of the book
+  */
  @Override
  public int hashCode() {
   return (int) isbn + author.hashCode() + title.hashCode();

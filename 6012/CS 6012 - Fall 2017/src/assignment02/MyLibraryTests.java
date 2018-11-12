@@ -2,6 +2,7 @@ package assignment02;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
+import org.junit.AfterClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,12 @@ class MyLibraryTests {
   phoneLibrary = new LibraryGeneric<>();
   phoneLibrary.addAll("Mushroom_Publishing.txt");
  }
+ 
+ @AfterClass
+ public void tearDown() throws Exception {
+  testLibrary = null;
+  phoneLibrary = null;
+ }
 
  @Test
  void testGetOrderedByAuthor() {
@@ -28,6 +35,18 @@ class MyLibraryTests {
   assertTrue("Whistler".equals(sortedLibrary.get(sortedLibrary.size()-2).getTitle()));
   assertTrue("The Call of the Sword".equals(sortedLibrary.get(sortedLibrary.size()-3).getTitle()));
   assertFalse("The Call".equals(sortedLibrary.get(sortedLibrary.size()-3).getTitle()));
+ }
+ 
+ @Test
+ void testGetOrderedByISBN() {
+  ArrayList<LibraryBookGeneric<String>> sortedLibrary = testLibrary.getInventoryList();
+  
+  assertTrue(sortedLibrary.get(0).getAuthor().equals("Moyra Caldecott"));
+  assertTrue(sortedLibrary.get(sortedLibrary.size()-1).getAuthor().equals("Alan Burt Akers"));
+  
+  assertTrue(sortedLibrary.get(5).getIsbn() == 9781843190110L);
+  assertFalse(sortedLibrary.get(6).getIsbn() == 9781843190110L);
+  
  }
  
  @Test
@@ -50,9 +69,7 @@ class MyLibraryTests {
   overdueList = testLibrary.getOverdueList(1, 1, 2010);
   assertTrue(overdueList.size() == 1);
   assertTrue(overdueList.get(0).getIsbn() == 9781843192701L);
-  assertFalse(overdueList.get(0).getAuthor() == "NotTheTitle");
-  
-  
+  assertFalse(overdueList.get(0).getAuthor() == "NotTheAuthor");  
  }
 
 }

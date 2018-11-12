@@ -15,10 +15,20 @@ public class Library {
 
  private ArrayList<LibraryBook> library;
 
+//********************************************************************************
+//********************************************************************************
+
+ /**
+  * Constructor. Takes no arguments, sets up arraylist
+  * of LibraryBooks representing catalog
+  */
  public Library() {
   library = new ArrayList<LibraryBook>();
  }
 
+//********************************************************************************
+//********************************************************************************
+ 
  /**
   * Add the specified book to the library, assume no duplicates.
   * 
@@ -89,6 +99,9 @@ public class Library {
 
   library.addAll(toBeAdded);
  }
+ 
+//********************************************************************************
+//********************************************************************************
 
  /**
   * Returns the holder of the library book with the specified ISBN.
@@ -124,6 +137,9 @@ public class Library {
   return holderCheckoutList;
  }
 
+//********************************************************************************
+//********************************************************************************
+ 
  /**
   * Sets the holder and due date of the library book with the specified ISBN.
   * 

@@ -54,6 +54,9 @@ public class LibraryTest {
   // test a medium library
   lib.addAll("Mushroom_Publishing.txt");
 
+  /*
+   * Tests that library was added correctly
+   */
   if (lib.lookup(100) != null) {
    System.err.println("TEST FAILED -- medium library: lookupNotPresent(isbn)");
   }
@@ -66,6 +69,9 @@ public class LibraryTest {
   }
   
   
+  /*
+   * Tests library checkout function
+   */
   lib.checkout(9781843190875L, "eve", 1, 1, 1);
 
   if (lib.lookup("eve").isEmpty()) {
@@ -76,7 +82,9 @@ public class LibraryTest {
    System.err.println("TEST FAILED -- medium library: lookupPresent(isbn)");
   }
   
-  
+  /*
+   * Tests library checkin function
+   */
   lib.checkin("eve");
   
   if (!(lib.lookup("eve").isEmpty())) {
@@ -90,8 +98,8 @@ public class LibraryTest {
   System.out.println("Testing done.");
  }
 
- 
- 
+//********************************************************************************
+//********************************************************************************
  
  /**
   * Returns a library of "dummy" books (random ISBN and placeholders for author and title).
