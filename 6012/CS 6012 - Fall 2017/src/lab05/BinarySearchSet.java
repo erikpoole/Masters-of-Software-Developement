@@ -1,6 +1,5 @@
 package lab05;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -9,7 +8,8 @@ import java.util.NoSuchElementException;
 public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, Iterable<E> {
 
  private E[] baseArray;
- private int size; // always one past end of accessible values e.g if five included values, size will be 5, but indices will be 0-4
+ private int size; // always one past end of accessible values e.g if five included values, size
+                   // will be 5, but indices will be 0-4
 
  // ********************************************************************************
  // ********************************************************************************
@@ -32,8 +32,6 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
   comparator = inputComparator;
  }
 
- 
- 
  // ********************************************************************************
  // ********************************************************************************
 
@@ -86,7 +84,7 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
  @SuppressWarnings("unchecked")
  @Override
  public boolean containsAll(Collection<?> elements) {
-  for(Object element : elements) {
+  for (Object element : elements) {
    if (!this.contains((E) element)) {
     return false;
    }
@@ -97,32 +95,75 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
  // ********************************************************************************
  // ********************************************************************************
 
- @SuppressWarnings("unchecked")
  @Override
  public boolean add(E element) {
-  if (element.equals(null) || Arrays.asList(baseArray).contains(element)) {
+  if (element.equals(null) || this.contains(element)) {
    return false;
+  }
+  E typedElement = (E) element;
+
+  int low = 0;
+  int high = size;
+  int changeValue = size / 2;
+
+  while (high > low) {
+   int center = (low + high) / 2;
+   if (changeValue / 2 == 0) {
+    changeValue = 1;
+   } else {
+    changeValue /= 2;
+   }
+
+   if (comparator == null) {
+    if (typedElement.compareTo(baseArray[center]) < 0) {
+     high -= changeValue;
+    } else {
+     low += changeValue;
+    }
+   } else {
+    if (comparator.compare(typedElement, baseArray[center]) < 0) {
+     high -= changeValue;
+    } else {
+     low += changeValue;
+    }
+   }
   }
 
   if (size >= baseArray.length) {
-   E[] tempArr = baseArray;
-   baseArray = (E[]) new Object[size * 2];
-
-   for (int i = 0; i < tempArr.length; i++) {
-    baseArray[i] = tempArr[i];
-   }
-
+   doubleSize();
   }
-  baseArray[size] = element;
+  
+  for (int i = size; i > low; i--) {
+   baseArray[i] = baseArray[i - 1];
+  }
+  baseArray[low] = typedElement;
   size++;
   return true;
  }
 
+ @SuppressWarnings("unchecked")
  @Override
  public boolean addAll(Collection<? extends E> elements) {
-  return false;
+  boolean wasAdded = false;
+  for (Object element : elements) {
+   if (!this.contains((E) element)) {
+    this.add((E) element);
+    wasAdded = true;
+   }
+  }
+  return wasAdded;
  }
- 
+
+ @SuppressWarnings("unchecked")
+ private void doubleSize() {
+  E[] tempArr = baseArray;
+  baseArray = (E[]) new Comparable[size * 2];
+
+  for (int i = 0; i < tempArr.length; i++) {
+   baseArray[i] = tempArr[i];
+  }
+ }
+
  // ********************************************************************************
  // ********************************************************************************
 
@@ -137,7 +178,7 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
   // TODO Auto-generated method stub
   return false;
  }
- 
+
  @Override
  public void clear() {
   // TODO Auto-generated method stub
@@ -147,8 +188,6 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
  // ********************************************************************************
  // ********************************************************************************
 
- 
- 
  @Override
  public E first() throws NoSuchElementException {
   return baseArray[0];
@@ -158,12 +197,12 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
  public E last() throws NoSuchElementException {
   return baseArray[size - 1];
  }
- 
+
  @Override
  public int size() {
   return size;
  }
- 
+
  @Override
  public boolean isEmpty() {
   if (size == 0) {
@@ -181,17 +220,15 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
   }
   return returnArr;
  }
- 
+
  // ********************************************************************************
  // ********************************************************************************
- 
- 
- 
+
  @Override
  public Comparator<? super E> comparator() {
   return comparator;
  }
- 
+
  @Override
  public Iterator<E> iterator() {
   return new SearchSetIterator<>();
@@ -199,7 +236,6 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
 
  // ********************************************************************************
  // ********************************************************************************
-
 
  @SuppressWarnings("hiding")
  private class SearchSetIterator<E> implements Iterator<E> {
@@ -229,11 +265,11 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
    size--;
    for (int i = location; i < size; i++) {
     baseArray[i] = baseArray[i + 1];
-   }
-   if (location >= size) {
-    location = size - 1;
+    if (location >= size) {
+     location = size - 1;
+    }
    }
   }
  }
- 
+
 }
