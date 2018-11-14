@@ -60,7 +60,7 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
 
   int low = 0;
   int high = size;
-  int changeValue = size / 2;
+  int changeValue = size;
 
   while (high > low) {
    int center = (low + high) / 2;
@@ -112,7 +112,7 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
  /*
   * Adds passed element to the set if the element is not already present
   * Places it in correct order using a binary search to find the correct index
-  * Returns true if element is added, false if the elment was already present
+  * Returns true if element is added, false if the element was already present
   */
  @Override
  public boolean add(E element) {
@@ -123,7 +123,7 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
 
   int low = 0;
   int high = size;
-  int changeValue = size / 2;
+  int changeValue = size;
 
   while (high > low) {
    int center = (low + high) / 2;
@@ -207,7 +207,7 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
   int low = 0;
   int high = size;
   int center = 0;
-  int changeValue = size / 2;
+  int changeValue = size;
 
   while (high > low) {
    center = (low + high) / 2;
@@ -235,7 +235,7 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
     }
    }
   }
-  for (int i = center; i < size; i++) {
+  for (int i = center; i < size-1; i++) {
    baseArray[i] = baseArray[i + 1];
   }
   size--;
@@ -382,11 +382,11 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
   @Override
   public void remove() {
    size--;
+   location--;
    for (int i = location; i < size; i++) {
     baseArray[i] = baseArray[i + 1];
    }
    baseArray[size]= null; 
-   location--;
   }
  }
 

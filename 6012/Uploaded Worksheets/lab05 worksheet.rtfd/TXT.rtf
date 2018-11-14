@@ -1,0 +1,53 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf600
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red164\green8\blue3;\red164\green8\blue3;}
+{\*\expandedcolortbl;;\cssrgb\c71055\c10387\c0;\cssrgb\c71055\c10387\c0;}
+\margl1440\margr1440\vieww13440\viewh12280\viewkind1
+\deftab720
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+
+\f0\fs24 \cf0 1. If you had backed the sorted set with a Java List instead of a basic array,\
+summarize the main points in which your implementation would have differed. Do\
+you expect that using a Java List would have more or less efficient and why?\
+(Consider efficiency both in running time and in program development time.)\
+\cf2 Most of our functionality would have already been implemented if we had utilized a Java List.  Java Lists already contain add, contains, remove, an iterator, sort, etc.  \
+\
+It looks like the Java list generally uses a linear search which will be dramatically less efficient than our binary search. Since we are guaranteed to have a sorted array utilizing binary search will speed things up dramatically (O( log(n) ) -> O( n^2 ) ).  Program development would have been substantially faster though since only small changes would have had to have been made to the already provided functionality.\
+\cf0 \
+2. What do you expect the Big-O behavior of BinarySearchSet's contains method\
+to be and why?\
+\cf2 My method runs a binary search on our already sorted array and so I expect the behavior to be O( log(n) ).  Each iteration of our binary search loop cuts the remaining indices to search in half and should therefore approximate log_2_n.\
+\cf0 \
+3. Plot the running time of BinarySearchSet's contains method, using the timing\
+techniques demonstrated in previous labs. Be sure to use a decent iteration\
+count to get a reasonable average of running times. Include your plot in your\
+analysis document. Does the growth rate of these running times match the Big-oh\
+behavior you predicted in question 2?\cf2 \
+\cf3 It does!  See figure 1 on the last page for details\cf0 \
+\
+4. Consider your add method. For an element not already contained in the set,\
+how long does it take to locate the correct position at which to insert the\
+element? Create a plot of running times. Pay close attention to the problem\
+size for which you are collecting running times. Beware that if you simply add\
+N items, the size of the sorted set is always changing. A good strategy is to\
+fill a sorted set with N items and time how long it takes to add one additional\
+item. To do this repeatedly (i.e., iteration count), remove the item and add it\
+again, being careful not to include the time required to call remove() in your\
+total. In the worst-case, how much time does it take to locate the position to\
+add an element (give your answer using Big-oh)?\cf2 \
+Finding the correct location to insert the element is relatively quick - .add() run .contains() on the array which we\'92ve already seen is O( log(n) ).  Even in the worst case (where the element we\'92re searching for is on one end of the array) we will only need to loop through log(n) times to find it, and the average and best cases will be even better.\
+\
+The reason .add() ends up being fairly slow is that once that position is found all of the elements up to that position have to be viewed and shifted - an O( n ) operation.  For large n the cost to shift position dwarfs the cost to find that position so the overall behavior approximates O( n ).  See figure 2 on the last page for the graph!\cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 Figure 1 - 
+\b0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+\cf0 {{\NeXTGraphic Pasted Graphic 4.pdf \width9360 \height5780 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\
+
+\b Figure 2 -
+\b0 \
+{{\NeXTGraphic Pasted Graphic 5.pdf \width9360 \height5780 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}}
