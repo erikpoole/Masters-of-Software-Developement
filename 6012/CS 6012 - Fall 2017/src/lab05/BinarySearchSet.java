@@ -10,6 +10,7 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
  private E[] baseArray;
  private int size; // always one past end of accessible values e.g if five included values, size
                    // will be 5, but indices will be 0-4
+ private Iterator<E> searchSetIterator;
 
  // ********************************************************************************
  // ********************************************************************************
@@ -22,6 +23,7 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
   baseArray = (E[]) new Comparable[16];
   size = 0;
   comparator = null;
+  searchSetIterator = new SearchSetIterator<>();
  }
 
  // use passed comparator for complex types
@@ -30,6 +32,7 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
   baseArray = (E[]) new Comparable[16];
   size = 0;
   comparator = inputComparator;
+  searchSetIterator = new SearchSetIterator<>();
  }
 
  // ********************************************************************************
@@ -56,10 +59,6 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
     changeValue /= 2;
    }
 
-   // System.out.println(low);
-   // System.out.println(high);
-   // System.out.println(center);
-   // System.out.println();
    if (comparator == null) {
     if (typedElement.compareTo(baseArray[center]) == 0) {
      return true;
@@ -132,7 +131,7 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
   if (size >= baseArray.length) {
    doubleSize();
   }
-  
+
   for (int i = size; i > low; i--) {
    baseArray[i] = baseArray[i - 1];
   }
@@ -167,22 +166,73 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
  // ********************************************************************************
  // ********************************************************************************
 
+ @SuppressWarnings("unchecked")
  @Override
  public boolean remove(Object element) {
-  // TODO Auto-generated method stub
-  return false;
+  if (element.equals(null) || !this.contains(element)) {
+   return false;
+  }
+  E typedElement = (E) element;
+
+  int low = 0;
+  int high = size;
+  int center = 0;
+  int changeValue = size / 2;
+
+  while (high > low) {
+   center = (low + high) / 2;
+   if (changeValue / 2 == 0) {
+    changeValue = 1;
+   } else {
+    changeValue /= 2;
+   }
+
+   if (comparator == null) {
+    if (typedElement.compareTo(baseArray[center]) == 0) {
+     break;
+    } else if (typedElement.compareTo(baseArray[center]) < 0) {
+     high -= changeValue;
+    } else {
+     low += changeValue;
+    }
+   } else {
+    if (typedElement.compareTo(baseArray[center]) == 0) {
+     break;
+    } else if (comparator.compare(typedElement, baseArray[center]) < 0) {
+     high -= changeValue;
+    } else {
+     low += changeValue;
+    }
+   }
+  }
+  for (int i = center; i < size; i++) {
+   baseArray[i] = baseArray[i + 1];
+  }
+  size--;
+  return true;
  }
 
+
+ @SuppressWarnings("unchecked")
  @Override
  public boolean removeAll(Collection<?> elements) {
-  // TODO Auto-generated method stub
-  return false;
+  boolean wasRemoved = false;
+  for (Object element : elements) {
+   if (this.contains((E) element)) {
+    this.remove((E) element);
+    wasRemoved = true;
+   }
+  }
+  return wasRemoved;
  }
 
+ @SuppressWarnings("unused")
  @Override
  public void clear() {
-  // TODO Auto-generated method stub
-
+  for (E value : baseArray) {
+   value = null;
+  }
+  size = 0;
  }
 
  // ********************************************************************************
@@ -231,7 +281,7 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
 
  @Override
  public Iterator<E> iterator() {
-  return new SearchSetIterator<>();
+  return searchSetIterator;
  }
 
  // ********************************************************************************
@@ -240,13 +290,14 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
  @SuppressWarnings("hiding")
  private class SearchSetIterator<E> implements Iterator<E> {
 
-  private int location = 0; // always one past location of interest
+  public int location = 0; // always one past location of interest
 
   @Override
   public boolean hasNext() {
    if (location < size) {
     return true;
    }
+   location = 0;
    return false;
   }
 
@@ -265,10 +316,9 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
    size--;
    for (int i = location; i < size; i++) {
     baseArray[i] = baseArray[i + 1];
-    if (location >= size) {
-     location = size - 1;
-    }
    }
+   baseArray[size]= null; 
+   location--;
   }
  }
 
