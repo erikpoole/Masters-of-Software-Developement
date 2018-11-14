@@ -10,14 +10,17 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
  private E[] baseArray;
  private int size; // always one past end of accessible values e.g if five included values, size
                    // will be 5, but indices will be 0-4
+ 
+ public Comparator<? super E> comparator;
  private Iterator<E> searchSetIterator;
 
  // ********************************************************************************
  // ********************************************************************************
 
- public Comparator<? super E> comparator;
-
- // use compareTo for primitive types
+ /*
+  * Constructor used if no comparator is passed
+  * Will use natural ordering via compareTo for searching
+  */
  @SuppressWarnings("unchecked")
  public BinarySearchSet() {
   baseArray = (E[]) new Comparable[16];
@@ -26,7 +29,10 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
   searchSetIterator = new SearchSetIterator<>();
  }
 
- // use passed comparator for complex types
+/*
+ * Constructor used if comparator is passed
+ * Will use custom comparator for searching
+ */
  @SuppressWarnings("unchecked")
  public BinarySearchSet(Comparator<? super E> inputComparator) {
   baseArray = (E[]) new Comparable[16];
@@ -38,6 +44,11 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
  // ********************************************************************************
  // ********************************************************************************
 
+ /*
+  * Checks to see if an object is contained by the generic-typed baseArray
+  * Utilizes a custom binary sort pattern to find the element
+  * Returns true if found or false otherwise
+  */
  @SuppressWarnings("unchecked")
  @Override
  public boolean contains(Object element) {
@@ -79,7 +90,11 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
   }
   return false;
  }
-
+ /*
+  * Loops through all elements in the passed collection
+  * Checks baseArray for each of the elements using the .contains() method
+  * If all elements are found return true, false otherwise
+  */
  @SuppressWarnings("unchecked")
  @Override
  public boolean containsAll(Collection<?> elements) {
@@ -94,6 +109,11 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
  // ********************************************************************************
  // ********************************************************************************
 
+ /*
+  * Adds passed element to the set if the element is not already present
+  * Places it in correct order using a binary search to find the correct index
+  * Returns true if element is added, false if the elment was already present
+  */
  @Override
  public boolean add(E element) {
   if (element.equals(null) || this.contains(element)) {
@@ -140,6 +160,11 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
   return true;
  }
 
+ /*
+  * Loops through all elements in the passed collection
+  * Will add the element according to the rules in the .add() method
+  * If at least one element is added will return true, otherwise false.
+  */
  @SuppressWarnings("unchecked")
  @Override
  public boolean addAll(Collection<? extends E> elements) {
@@ -166,6 +191,11 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
  // ********************************************************************************
  // ********************************************************************************
 
+ /*
+  * Removes passed element from baseArray if present
+  * Finds the element in baseArray using a binary search
+  * Returns true if element the element was removed, false if the elment was already present
+  */
  @SuppressWarnings("unchecked")
  @Override
  public boolean remove(Object element) {
@@ -212,7 +242,11 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
   return true;
  }
 
-
+ /*
+  * Loops through all elements in the passed collection
+  * Will remove the elements according to the rules in the .remove() method
+  * If at least one element is removed will return true, otherwise false.
+  */
  @SuppressWarnings("unchecked")
  @Override
  public boolean removeAll(Collection<?> elements) {
@@ -225,7 +259,9 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
   }
   return wasRemoved;
  }
-
+/*
+ * Removes all elements from the baseArray and resets size to 0
+ */
  @SuppressWarnings("unused")
  @Override
  public void clear() {
@@ -238,21 +274,33 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
  // ********************************************************************************
  // ********************************************************************************
 
+ /*
+  * Returns the first/smallest element in baseArray
+  */
  @Override
  public E first() throws NoSuchElementException {
   return baseArray[0];
  }
 
+ /*
+  * returns the last/largest element in baseArray
+  */
  @Override
  public E last() throws NoSuchElementException {
   return baseArray[size - 1];
  }
 
+ /*
+  * returns the size of the array
+  */
  @Override
  public int size() {
   return size;
  }
 
+ /*
+  * if size == 0 returns true, otherwise return false
+  */
  @Override
  public boolean isEmpty() {
   if (size == 0) {
@@ -260,7 +308,10 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
   }
   return false;
  }
-
+ 
+/*
+ * Returns array based on elements from 0 to size in baseArray
+ */
  @SuppressWarnings("unchecked")
  @Override
  public Object[] toArray() {
@@ -274,11 +325,17 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
  // ********************************************************************************
  // ********************************************************************************
 
+ /*
+  * Returns the comparator created in the constructor
+  */
  @Override
  public Comparator<? super E> comparator() {
   return comparator;
  }
-
+ 
+/*
+ * Returns the iterator created in the constructor
+ */
  @Override
  public Iterator<E> iterator() {
   return searchSetIterator;
@@ -292,6 +349,10 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
 
   public int location = 0; // always one past location of interest
 
+  /*
+   * Checks the baseArray if 'location' is at the upper bound of the array
+   * Returns true if location isn't, otherwise returns false;
+   */
   @Override
   public boolean hasNext() {
    if (location < size) {
@@ -300,7 +361,10 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
    location = 0;
    return false;
   }
-
+  
+/*
+ * Advances to the next index in baseArray if hasNext() returns true
+ */
   @SuppressWarnings("unchecked")
   @Override
   public E next() {
@@ -311,6 +375,10 @@ public class BinarySearchSet<E extends Comparable<E>> implements SortedSet<E>, I
    return null;
   }
 
+  /*
+   * Removes the value at the current index and shifts all other elements down
+   * deincrements size and location appropriately
+   */
   @Override
   public void remove() {
    size--;

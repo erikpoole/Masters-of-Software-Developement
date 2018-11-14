@@ -2,18 +2,37 @@ package lab05;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class SearchSetTests<E> {
 
  BinarySearchSet<Integer> intSet;
+ BinarySearchSet<String> reverseStringSet;
 
+ 
+ /*
+  * sets up sets for testing
+  */
  @BeforeEach
  void setUp() throws Exception {
   intSet = new BinarySearchSet<>();
+  
+  /*
+   * custom Comparator will sort in reverse
+   */
+  reverseStringSet = new BinarySearchSet<>(new Comparator<String>() {
+
+   @Override
+   public int compare(String o1, String o2) {
+    return (-1*o1.compareTo(o2));
+   }});
  }
 
+ /*
+  * testing all methods with an object that implements comparable (int)
+  */
  @Test
  void testIntSet() {
   assertTrue(intSet.isEmpty());
@@ -89,14 +108,22 @@ class SearchSetTests<E> {
 
  }
  
+ /*
+  * testing object with custom comparator for string
+  */
  @Test
- void testObjectSet() {
-
-
+ void testReverseStringSet() {
   
-//TODO Object
+  assertTrue(reverseStringSet.isEmpty());
   
-//TODO Analysis
+  assertTrue(reverseStringSet.add("AA"));
+  assertTrue(reverseStringSet.add("ZZ"));
+  assertTrue(reverseStringSet.add("KK"));
+  assertFalse(reverseStringSet.add("KK"));
+  
+  assertTrue(reverseStringSet.size() == 3);
+  assertTrue(reverseStringSet.last() == "AA");
+  assertTrue(reverseStringSet.first() == "ZZ");
  }
 
 }
