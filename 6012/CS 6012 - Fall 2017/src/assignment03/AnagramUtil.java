@@ -1,9 +1,10 @@
 package assignment03;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 
-// time spent 11:00
+// 2.5 + 1.5 + 9:00
 public class AnagramUtil {
 
  /*
@@ -39,7 +40,6 @@ public class AnagramUtil {
  /*
   * This generic method sorts the input array using an insertion sort and the input Comparator
   * object.
-  * TODO Handle Uppercase?
   */
  public static <T> void insertionSort(T[] inputArray, Comparator<? super T> comparator) {
 
@@ -88,26 +88,40 @@ public class AnagramUtil {
   * Will not contain duplicate words
   */
  public static String[] getLargestAnagramGroup(String[] sortedArray) {
-  ArrayList<AnagramGroup> groupList = new ArrayList<>();
-  for (String word : sortedArray) {
-   boolean wordAdded = false;
-   for (AnagramGroup group : groupList) {
-    if (areAnagrams(AnagramUtil.sort(word), group.sortedWord)) {
-     group.addWord(word);
-     wordAdded = true;
-     break;
+  insertionSort(sortedArray, new Comparator<String>() {
+   @Override
+   public int compare(String o1, String o2) {
+    if (AnagramUtil.areAnagrams(o1, o2)) {
+     return 0;
     }
+    return 1;
    }
-   if (!wordAdded) {groupList.add(new AnagramGroup(word));}
-  }
-  AnagramGroup biggestGroup = groupList.get(0);
-  for (AnagramGroup group : groupList) {
-   if (group.size > biggestGroup.size) {
-    biggestGroup = group;
+  });
+  
+  int largestSize = 1;
+  int largestIndex = 0;
+  int currentSize = 1;
+  int currentIndex = 0;
+  for (int i = 0; i < sortedArray.length - 1; i++) {
+   if (AnagramUtil.areAnagrams(sortedArray[i], sortedArray[i + 1])) {
+    currentSize++;
+   } else {
+    currentSize = 1;
+    currentIndex = i;
    }
+   if (currentSize > largestSize) {
+    largestSize = currentSize;
+    largestIndex = currentIndex;
+   }
+   
   }
-  return biggestGroup.getArray();
+  if (largestSize == 1) {
+   return new String[0];
+  }
+  String[] outputArr = Arrays.copyOfRange(sortedArray, largestIndex, largestIndex + largestSize);
+  return outputArr;
  }
+
 
 
  /*
@@ -120,6 +134,36 @@ public class AnagramUtil {
  public static String[] getLargestAnagramGroup(String filename) {
   // TODO
   return null;
+ }
+
+
+ // ****************************************************************************************
+ // ****************************************************************************************
+
+ // Was a reasonable implementation, but after reading the requirements of the analysis document
+ // it's clear that this was not how we were intended to solve the sorting problem
+ public static String[] customGetLargestAnagramGroup(String[] sortedArray) {
+  ArrayList<AnagramGroup> groupList = new ArrayList<>();
+  for (String word : sortedArray) {
+   boolean wordAdded = false;
+   for (AnagramGroup group : groupList) {
+    if (areAnagrams(AnagramUtil.sort(word), group.sortedWord)) {
+     group.addWord(word);
+     wordAdded = true;
+     break;
+    }
+   }
+   if (!wordAdded) {
+    groupList.add(new AnagramGroup(word));
+   }
+  }
+  AnagramGroup biggestGroup = groupList.get(0);
+  for (AnagramGroup group : groupList) {
+   if (group.size > biggestGroup.size) {
+    biggestGroup = group;
+   }
+  }
+  return biggestGroup.getArray();
  }
 
 
