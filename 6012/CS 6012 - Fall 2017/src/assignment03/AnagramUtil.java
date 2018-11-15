@@ -1,5 +1,6 @@
 package assignment03;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 
 // time spent 11:00
@@ -25,7 +26,7 @@ public class AnagramUtil {
 
    // shifts all values in the sorted portion up one location
    for (int j = i; j > location; j--) {
-    charArray[i] = charArray[i - 1];
+    charArray[j] = charArray[j - 1];
    }
 
    charArray[location] = changingChar;
@@ -38,6 +39,7 @@ public class AnagramUtil {
  /*
   * This generic method sorts the input array using an insertion sort and the input Comparator
   * object.
+  * TODO Handle Uppercase?
   */
  public static <T> void insertionSort(T[] inputArray, Comparator<? super T> comparator) {
 
@@ -54,7 +56,7 @@ public class AnagramUtil {
 
    // shifts all values in the sorted portion up one location
    for (int j = i; j > location; j--) {
-    inputArray[i] = inputArray[i - 1];
+    inputArray[j] = inputArray[j - 1];
    }
 
    inputArray[location] = changingValue;
@@ -67,11 +69,11 @@ public class AnagramUtil {
   * This method returns true if the two input strings are anagrams of each other, otherwise returns
   * false.
   */
- public static boolean areAnagrams(String input1, String input2) {  
-  
+ public static boolean areAnagrams(String input1, String input2) {
+
   String sorted1 = AnagramUtil.sort(input1).toLowerCase();
   String sorted2 = AnagramUtil.sort(input2).toLowerCase();
-  
+
   if (sorted1.equals(sorted2)) {
    return true;
   }
@@ -86,8 +88,25 @@ public class AnagramUtil {
   * Will not contain duplicate words
   */
  public static String[] getLargestAnagramGroup(String[] sortedArray) {
-  // TODO
-  return null;
+  ArrayList<AnagramGroup> groupList = new ArrayList<>();
+  for (String word : sortedArray) {
+   boolean wordAdded = false;
+   for (AnagramGroup group : groupList) {
+    if (areAnagrams(AnagramUtil.sort(word), group.sortedWord)) {
+     group.addWord(word);
+     wordAdded = true;
+     break;
+    }
+   }
+   if (!wordAdded) {groupList.add(new AnagramGroup(word));}
+  }
+  AnagramGroup biggestGroup = groupList.get(0);
+  for (AnagramGroup group : groupList) {
+   if (group.size > biggestGroup.size) {
+    biggestGroup = group;
+   }
+  }
+  return biggestGroup.getArray();
  }
 
 
