@@ -1,10 +1,13 @@
 package assignment03;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Scanner;
 
-// 2.5 + 1.5 + 9:00
+// 2.5 + 1.5 + 1.0
 public class AnagramUtil {
 
  /*
@@ -107,7 +110,7 @@ public class AnagramUtil {
     currentSize++;
    } else {
     currentSize = 1;
-    currentIndex = i;
+    currentIndex = i+1;
    }
    if (currentSize > largestSize) {
     largestSize = currentSize;
@@ -131,9 +134,17 @@ public class AnagramUtil {
   * 
   * Will not contain duplicate words
   */
- public static String[] getLargestAnagramGroup(String filename) {
-  // TODO
-  return null;
+ public static String[] getLargestAnagramGroup(String filename) throws FileNotFoundException {
+  Scanner scanner = new Scanner(new File(filename));
+  ArrayList<String> words = new ArrayList<>();
+  
+  while (scanner.hasNext()) {
+   words.add(scanner.next());
+  }
+  scanner.close();
+  
+  String[] wordsArr = words.toArray(new String[words.size()]);  
+  return getLargestAnagramGroup(wordsArr);
  }
 
 

@@ -1,7 +1,7 @@
 package assignment03;
 
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.ArrayList;
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Comparator;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +33,7 @@ class AnagramTests<T> {
 
 
  @Test
- void test() {
+ void test() throws FileNotFoundException {
 
   AnagramUtil.insertionSort(charArr, comparator);
   assertTrue(charArr[0] == 't');
@@ -50,7 +50,12 @@ class AnagramTests<T> {
   assertTrue(AnagramUtil.getLargestAnagramGroup(stringArr2).length == 3);
   assertTrue(Arrays.asList(stringArr2).contains("Acre"));
   assertTrue(AnagramUtil.getLargestAnagramGroup(mismatchedArr).length == 0);
-
+  
+  assertTrue(Arrays.asList((AnagramUtil.getLargestAnagramGroup("moderate_word_list.txt"))).contains("act"));
+  assertTrue(AnagramUtil.getLargestAnagramGroup("moderate_word_list.txt").length == 2);
+  
+  
+  
  }
 
  // testing my custom sort pattern
