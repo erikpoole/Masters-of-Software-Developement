@@ -5,14 +5,15 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Random;
 import java.util.Scanner;
 
-// 2.5 + 1.5 + 1.0
+// 2.5 + 1.5 + 1.0 + 2.0 + 1.0 + 3.0
 public class AnagramUtil {
 
  /*
-  * This method returns the sorted version of the input string. The sorting must be accomplished
-  * using an insertion sort.
+  * Sorts inputString based on character using an insertion sort
+  * takes into account character case during sorting but will retain original case in returned string
   */
  public static String sort(String inputString) {
   char[] charArray = inputString.toCharArray();
@@ -41,8 +42,7 @@ public class AnagramUtil {
 
 
  /*
-  * This generic method sorts the input array using an insertion sort and the input Comparator
-  * object.
+  * Sorts a generic inputArray using insertion sort based on the passed comparator
   */
  public static <T> void insertionSort(T[] inputArray, Comparator<? super T> comparator) {
 
@@ -69,8 +69,7 @@ public class AnagramUtil {
 
 
  /*
-  * This method returns true if the two input strings are anagrams of each other, otherwise returns
-  * false.
+  * Compares two words and returns true if are anagrams, false otherwise
   */
  public static boolean areAnagrams(String input1, String input2) {
 
@@ -85,10 +84,9 @@ public class AnagramUtil {
 
 
  /*
-  * This method returns the largest group of anagrams in the input array of words, in no particular
-  * order. It returns an empty array if there are no anagrams in the input array.
-  * 
-  * Will not contain duplicate words
+  * Sorts an array of strings based on .areAnagrams()
+  * Will return an array containing all strings in the largest group of anagrams
+  * If no anagrams are found will return an empty array
   */
  public static String[] getLargestAnagramGroup(String[] sortedArray) {
   insertionSort(sortedArray, new Comparator<String>() {
@@ -100,7 +98,7 @@ public class AnagramUtil {
     return 1;
    }
   });
-  
+
   int largestSize = 1;
   int largestIndex = 0;
   int currentSize = 1;
@@ -110,13 +108,13 @@ public class AnagramUtil {
     currentSize++;
    } else {
     currentSize = 1;
-    currentIndex = i+1;
+    currentIndex = i + 1;
    }
    if (currentSize > largestSize) {
     largestSize = currentSize;
     largestIndex = currentIndex;
    }
-   
+
   }
   if (largestSize == 1) {
    return new String[0];
@@ -128,23 +126,40 @@ public class AnagramUtil {
 
 
  /*
-  * Behaves the same as the previous method, but reads the list of words from the input filename. It
-  * is assumed that the file contains one word per line. If the file does not exist or is empty, the
-  * method returns an empty array because there are no anagrams.
-  * 
-  * Will not contain duplicate words
+  * Same functionality as .getLargestAnagramGroup()
+  * Takes a file as input rather than an array of strings
   */
  public static String[] getLargestAnagramGroup(String filename) throws FileNotFoundException {
   Scanner scanner = new Scanner(new File(filename));
   ArrayList<String> words = new ArrayList<>();
-  
+
   while (scanner.hasNext()) {
    words.add(scanner.next());
   }
   scanner.close();
-  
-  String[] wordsArr = words.toArray(new String[words.size()]);  
+
+  String[] wordsArr = words.toArray(new String[words.size()]);
   return getLargestAnagramGroup(wordsArr);
+ }
+
+
+ /*
+  * Generates an array of Strings with randomized size and characters for testing
+  */
+ public static String[] generateWordList(int size, int length) {
+  String[] outputArr = new String[size];
+  Random random = new Random();
+
+  for (int i = 0; i < size; i++) {
+   int wordLength = random.nextInt(length)+1;
+   String word = "";
+   for (int j = 0; j < wordLength; j++) {
+    word += (char) (random.nextInt(24) + 'a');
+   }
+   outputArr[i]= word; 
+  }
+
+  return outputArr;
  }
 
 

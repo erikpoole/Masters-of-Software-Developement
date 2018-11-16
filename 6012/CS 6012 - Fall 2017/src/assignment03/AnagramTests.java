@@ -15,6 +15,9 @@ class AnagramTests<T> {
  String[] mismatchedArr;
  Comparator<Character> comparator;
 
+ /*
+  * Constructs arrays for testing
+  */
  @BeforeEach
  void setUp() throws Exception {
 
@@ -31,9 +34,11 @@ class AnagramTests<T> {
   mismatchedArr = new String[] {"Hi", "how", "are", "you"};
  }
 
-
+/*
+ * Tests methods in AnagramUtil
+ */
  @Test
- void test() throws FileNotFoundException {
+ void AnagramUtil() throws FileNotFoundException {
 
   AnagramUtil.insertionSort(charArr, comparator);
   assertTrue(charArr[0] == 't');
@@ -54,11 +59,11 @@ class AnagramTests<T> {
   assertTrue(Arrays.asList((AnagramUtil.getLargestAnagramGroup("moderate_word_list.txt"))).contains("act"));
   assertTrue(AnagramUtil.getLargestAnagramGroup("moderate_word_list.txt").length == 2);
   
-  
-  
  }
 
- // testing my custom sort pattern
+ /*
+  * Tests custom sort pattern (not required for assignment)
+  */
  @Test
  void customGetLargestTest() {
    assertTrue(AnagramUtil.customGetLargestAnagramGroup(stringArr1).length == 2);

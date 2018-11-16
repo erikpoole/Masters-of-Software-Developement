@@ -2,6 +2,9 @@ package assignment03;
 
 import java.util.ArrayList;
 
+/*
+ * Not necessary for assignment
+ */
 public class AnagramGroup {
  
  public ArrayList<String> words;
