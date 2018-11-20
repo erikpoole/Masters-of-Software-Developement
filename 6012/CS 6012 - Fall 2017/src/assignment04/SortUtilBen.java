@@ -1,14 +1,11 @@
 package assignment04;
 
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import lab05.SortedSet;
 
-public class SortUtil {
-//  private static int threshold = 40;
+public class SortUtilBen {
+  private static int threshold = 100;
 
   /**
    * This method performs a mergesort on the generic ArrayList given as input.
@@ -19,7 +16,7 @@ public class SortUtil {
    * @param <T>
    */
   //Ben
-  public static <T> void mergesort(ArrayList<T> arrayList, Comparator<? super T> comparator, int threshold) {
+  public static <T> void mergesort(ArrayList<T> arrayList, Comparator<? super T> comparator) {
 
     // arrays of size 1 are already sorted
     if (arrayList.size() == 1) {
@@ -32,19 +29,19 @@ public class SortUtil {
       tempList.add(null);
     }
 
-    split(arrayList, tempList, comparator, 0, arrayList.size() - 1, threshold);
+    split(arrayList, tempList, comparator, 0, arrayList.size() - 1);
   }
 
-  private static <T> void split(ArrayList<T> list, ArrayList<T> temp, Comparator<? super T> comparator, int start, int end, int threshold) {
+  private static <T> void split(ArrayList<T> list, ArrayList<T> temp, Comparator<? super T> comparator, int start, int end) {
     if (start < end) {
       int mid = start + (end - start) / 2;
 
       if (end - start < threshold) {
-        SortUtil.insertionSortMerge(list, start, mid, comparator);
-        SortUtil.insertionSortMerge(list, mid + 1, end, comparator);
+        SortUtilBen.insertionSortMerge(list, start, mid, comparator);
+        SortUtilBen.insertionSortMerge(list, mid + 1, end, comparator);
       } else {
-        split(list, temp, comparator, start, mid, threshold);
-        split(list, temp, comparator, mid + 1, end, threshold);
+        split(list, temp, comparator, start, mid);
+        split(list, temp, comparator, mid + 1, end);
       }
       merge(list, temp, comparator, start, mid, end);
     }
