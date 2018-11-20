@@ -3,6 +3,8 @@ package assignment04;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 public class QuickSortTiming<E> {
 
@@ -11,6 +13,10 @@ public class QuickSortTiming<E> {
  private static int size = 512;
 
  private static ArrayList<Integer> sampleSet;
+ private static HashMap<Integer, Long> firstIndexMap = new HashMap<>();
+ private static HashMap<Integer, Long> middleIndexMap = new HashMap<>();
+ private static HashMap<Integer, Long> samplingMap = new HashMap<>();
+ 
  private static Comparator<Integer> comparator = new Comparator<Integer>() {
 
   @Override
@@ -50,6 +56,17 @@ public class QuickSortTiming<E> {
     }
    }
   }
+  
+//  System.out.println("Pivot based on First Index:");
+//  printMap(firstIndexMap);
+//  System.out.println();
+//  System.out.println("Pivot based on Middle Index:");
+//  printMap(middleIndexMap);
+//  System.out.println();
+//  System.out.println("Pivot based on Sampling:");
+//  printMap(samplingMap);
+//  System.out.println();
+  
  }
 
  // ********************************************************************************
@@ -72,7 +89,27 @@ public class QuickSortTiming<E> {
    totalTime += (endTime - startTime);
   }
   
+  if (pivotMethod == "firstIndex") {
+   firstIndexMap.put(size, totalTime);
+  } else if (pivotMethod == "middleIndex") {
+   middleIndexMap.put(size, totalTime);
+  } else {
+   samplingMap.put(size, totalTime);
+  }
+  
   System.out.println(size + "\t" + totalTime / sampleSize / 10e6 + "\t"
     + new Timestamp(System.currentTimeMillis()));
  }
+ 
+ // ********************************************************************************
+ // ********************************************************************************
+ 
+ private static void printMap(HashMap<Integer, Long> inputMap) {
+  for (Map.Entry<Integer, Long> entry: inputMap.entrySet()) {
+   System.out.println(entry.getKey() + "\t" + entry.getValue() / sampleSize /10e6);
+   
+  }
+  
+ }
+ 
 }

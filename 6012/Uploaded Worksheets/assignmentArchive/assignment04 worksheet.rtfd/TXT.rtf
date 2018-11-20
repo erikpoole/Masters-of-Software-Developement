@@ -1,0 +1,62 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf600
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red164\green8\blue3;\red164\green8\blue3;}
+{\*\expandedcolortbl;;\cssrgb\c71055\c10387\c0;\cssrgb\c71055\c10387\c0;}
+\margl1440\margr1440\vieww12800\viewh10080\viewkind1
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 1. Who are your team members?\cf2 \
+Ben Trueman & Erik Poole (Me)\cf0 \
+\
+2. Mergesort Threshold Experiment: Determine the best threshold value for which\
+mergesort switches over to insertion sort. Your list sizes should cover a range\
+of input sizes to make meaningful plots, and should be large enough to capture\
+accurate running times. To ensure a fair comparison, use the same set of\
+permuted-order lists for each threshold value. Keep in mind that you can't\
+resort the same ArrayList over and over, as the second time the order will have\
+changed. Create an initial input and copy it to a temporary ArrayList for each\
+test (but make sure you subtract the copy time from your timing results!). Use\
+the timing techniques we already demonstrated, and be sure to choose a large\
+enough value of timesToLoop to get a reasonable average of running times. Note\
+that the best threshold value may be a constant value or a fraction of the list\
+size. Plot the running times of your threshold mergesort for five\
+different threshold values on permuted-order lists (one line for each threshold\
+value). In the five different threshold values, be sure to include the\
+threshold value that simulates a full mergesort, i.e., never switching to\
+insertion sort (and identify that line as such in your plot).\
+\
+3. Quicksort Pivot Experiment: Determine the best pivot-choosing strategy for\
+quicksort. (As in #2, use large list sizes, the same set of permuted-order lists\
+for each strategy, and the timing techniques demonstrated before.) Plot the\
+running times of your quicksort for three different pivot-choosing strategies\
+on permuted-order lists (one line for each strategy).\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf3 I (Erik Poole) compared three pivots - one based on the first index, one based on the middle index, and one based on the median value of the first, middle, and last index.  When comparing on a permuted-order (average case) list the sampling pivot strategy beat both of the others, but only narrowly.  A close second was choosing the middle index and then choosing the first index came in last.  See figure 2 for details.\cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \
+4. Mergesort vs. Quicksort Experiment: Determine the best sorting algorithm for\
+each of the three categories of lists (best-, average-, and worst-case). For\
+the mergesort, use the threshold value that you determined to be the best. For\
+the quicksort, use the pivot-choosing strategy that you determined to be the\
+best. Note that the best pivot strategy on permuted lists may lead to O(N^2)\
+performance on best/worst case lists. If this is the case, use a different\
+pivot for this part. As in #2, use large list sizes, the same list sizes for\
+each category and sort, and the timing techniques demonstrated before. Plot\
+the running times of your sorts for the three categories of lists. You may plot\
+all six lines at once or create three plots (one for each category of lists).\
+\
+5. Do the actual running times of your sorting methods exhibit the growth rates\
+you expected to see? Why or why not? Please be thorough in this explanation.\
+\
+Team members are encouraged to collaborate on the answers to these questions\
+and generate graphs together. However, each member must write and submit\
+his/her own solutions.\
+\
+Upload your solution (.pdf only) through Canvas.\
+\
+
+\b Figure 2 -\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\b0 \cf0 {{\NeXTGraphic Pasted Graphic.pdf \width9380 \height5720 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}}
