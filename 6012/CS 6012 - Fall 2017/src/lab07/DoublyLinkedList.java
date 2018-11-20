@@ -75,7 +75,7 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
 
    nodeAfter.setPrevious(addedNode);
    nodeBefore.setNext(nodeAfter);
-   
+
    size++;
   }
  }
@@ -134,10 +134,15 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
 
   E output = head.getElement();
 
-  Node<E> nextNode = head.getNext();
-  nextNode.setPrevious(null);
-  head.setNext(null);
-  head = nextNode;
+  if (size == 1) {
+   head = null;
+   tail = null;
+  } else {
+   Node<E> nextNode = head.getNext();
+   nextNode.setPrevious(null);
+   head.setNext(null);
+   head = nextNode;
+  }
 
   size--;
   return output;
@@ -194,10 +199,10 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
    doomedNode.setPrevious(null);
    nodeAfter.setPrevious(nodeBefore);
    nodeBefore.setNext(nodeAfter);
-   
+
    size--;
   }
-  
+
   return output;
  }
 
@@ -228,7 +233,7 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
  @Override
  public int lastIndexOf(E element) {
   Node<E> currentNode = tail;
-  for (int i = size-1; i >= 0; i--) {
+  for (int i = size - 1; i >= 0; i--) {
    if (currentNode.getElement().equals(element)) {
     return i;
    }
@@ -290,8 +295,40 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
 
  @Override
  public Iterator<E> iterator() {
-  // TODO Auto-generated method stub
-  return null;
+  return new LinkedListIterator<>(this);
+ }
+
+ public class LinkedListIterator<F> implements Iterator<F> {
+  private int location = 0;
+  private Node<E> currentNode = head;
+  private DoublyLinkedList<E> list;
+
+  public LinkedListIterator(DoublyLinkedList<E> input) {
+   list = input;
+  }
+
+  @Override
+  public boolean hasNext() {
+   if (location >= size) {
+    return false;
+   }
+   return true;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public F next() {
+   F output = (F) currentNode.getElement();
+   currentNode = currentNode.getNext();
+   location++;
+   return output;
+  }
+
+  @Override
+  public void remove() {
+   location--;
+   list.remove(location);
+  }
  }
 
  // ********************************************************************************
