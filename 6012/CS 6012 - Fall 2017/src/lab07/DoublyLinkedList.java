@@ -9,6 +9,9 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
  private Node<E> tail;
  private int size;
 
+ /*
+  * Default Constructor
+  */
  public DoublyLinkedList() {
   head = null;
   tail = null;
@@ -18,8 +21,8 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
  // ********************************************************************************
  // ********************************************************************************
 
- /**
-  * Inserts the specified element at the beginning of the list. O(1) for a doubly-linked list.
+ /*
+  * adds passed element to the beginning of the list
   */
  @Override
  public void addFirst(E element) {
@@ -35,8 +38,8 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
   size++;
  }
 
- /**
-  * Inserts the specified element at the end of the list. O(1) for a doubly-linked list.
+ /*
+  * adds passed element to the end of the list
   */
  @Override
  public void addLast(E o) {
@@ -52,10 +55,9 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
   size++;
  }
 
- /**
-  * Inserts the specified element at the specified position in the list. Throws
-  * IndexOutOfBoundsException if index is out of range (index < 0 || index > size()) O(N) for a
-  * doubly-linked list.
+ /*
+  * add passed element to the passed index in the list will throw exception if passed index is
+  * outside range of list
   */
  @Override
  public void add(int index, E element) throws IndexOutOfBoundsException {
@@ -83,9 +85,8 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
  // ********************************************************************************
  // ********************************************************************************
 
- /**
-  * Returns the first element in the list. Throws NoSuchElementException if the list is empty. O(1)
-  * for a doubly-linked list.
+ /*
+  * returns first element in the linked list
   */
  @Override
  public E getFirst() throws NoSuchElementException {
@@ -95,9 +96,8 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
   return head.getElement();
  }
 
- /**
-  * Returns the last element in the list. Throws NoSuchElementException if the list is empty. O(1)
-  * for a doubly-linked list.
+ /*
+  * returns last element in the linked list
   */
  @Override
  public E getLast() throws NoSuchElementException {
@@ -107,9 +107,9 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
   return tail.getElement();
  }
 
- /**
-  * Returns the element at the specified position in the list. Throws IndexOutOfBoundsException if
-  * index is out of range (index < 0 || index >= size()) O(N) for a doubly-linked list.
+ /*
+  * returns element at passed index in the linked list will throw exception if the passed index is
+  * outside of range of the list
   */
  @Override
  public E get(int index) throws IndexOutOfBoundsException {
@@ -122,9 +122,8 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
  // ********************************************************************************
  // ********************************************************************************
 
- /**
-  * Removes and returns the first element from the list. Throws NoSuchElementException if the list
-  * is empty. O(1) for a doubly-linked list.
+ /*
+  * removes and returns the first element of the list
   */
  @Override
  public E removeFirst() throws NoSuchElementException {
@@ -148,9 +147,8 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
   return output;
  }
 
- /**
-  * Removes and returns the last element from the list. Throws NoSuchElementException if the list is
-  * empty. O(1) for a doubly-linked list.
+ /*
+  * removes and returns the last element of the list
   */
  @Override
  public E removeLast() throws NoSuchElementException {
@@ -169,10 +167,9 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
   return output;
  }
 
- /**
-  * Removes and returns the element at the specified position in the list. Throws
-  * IndexOutOfBoundsException if index is out of range (index < 0 || index >= size()) O(N) for a
-  * doubly-linked list.
+ /*
+  * removes and returns the element at the passed index will throw exception if the passed index is
+  * outside of range of the list
   */
  @Override
  public E remove(int index) throws IndexOutOfBoundsException {
@@ -210,9 +207,8 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
  // ********************************************************************************
 
 
- /**
-  * Returns the index of the first occurrence of the specified element in the list, or -1 if this
-  * list does not contain the element. O(N) for a doubly-linked list.
+ /*
+  * returns the index of the first occurrence of the passed element in the list
   */
  @Override
  public int indexOf(E element) {
@@ -226,9 +222,8 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
   return -1;
  }
 
- /**
-  * Returns the index of the last occurrence of the specified element in this list, or -1 if this
-  * list does not contain the element. O(N) for a doubly-linked list.
+ /*
+  * returns the index of the last occurrence of the passed element in the list
   */
  @Override
  public int lastIndexOf(E element) {
@@ -245,16 +240,16 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
  // ********************************************************************************
  // ********************************************************************************
 
- /**
-  * Returns the number of elements in this list. O(1) for a doubly-linked list.
+ /*
+  * Returns the number of elements in the list
   */
  @Override
  public int size() {
   return size;
  }
 
- /**
-  * Returns true if this collection contains no elements. O(1) for a doubly-linked list.
+ /*
+  * Returns true if the list contains no elements, false otherwise
   */
  @Override
  public boolean isEmpty() {
@@ -264,8 +259,8 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
   return false;
  }
 
- /**
-  * Removes all of the elements from this list. O(1) for a doubly-linked list.
+ /*
+  * Removes all of the elements from the list
   */
  @Override
  public void clear() {
@@ -274,9 +269,8 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
   size = 0;
  }
 
- /**
-  * Returns an array containing all of the elements in this list in proper sequence (from first to
-  * last element). O(N) for a doubly-linked list.
+ /*
+  * Returns an array containing all of the elements in this list
   */
  @Override
  public Object[] toArray() {
@@ -293,20 +287,33 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
  // ********************************************************************************
  // ********************************************************************************
 
+ /*
+  * returns specific LinkedListIterator for iterating through loops
+  */
  @Override
  public Iterator<E> iterator() {
   return new LinkedListIterator<>(this);
  }
 
+ /*
+  * internal class for defining LinkedListIterator
+  */
  public class LinkedListIterator<F> implements Iterator<F> {
   private int location = 0;
   private Node<E> currentNode = head;
   private DoublyLinkedList<E> list;
 
+  /*
+   * default constructor
+   * passes list into Iterator
+   */
   public LinkedListIterator(DoublyLinkedList<E> input) {
    list = input;
   }
 
+  /*
+   * returns false if iterator has reached end of list, true otherwise
+   */
   @Override
   public boolean hasNext() {
    if (location >= size) {
@@ -315,6 +322,9 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
    return true;
   }
 
+  /*
+   * moves to the next location in the list
+   */
   @SuppressWarnings("unchecked")
   @Override
   public F next() {
@@ -324,6 +334,9 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
    return output;
   }
 
+  /*
+   * removes element at current location
+   */
   @Override
   public void remove() {
    location--;
@@ -334,6 +347,9 @@ public class DoublyLinkedList<E> implements List<E>, Iterable<E> {
  // ********************************************************************************
  // ********************************************************************************
 
+ /*
+  * finds node at the passed index in the list
+  */
  private Node<E> findIndex(int index) {
   Node<E> currentNode;
   if (index < size / 2) {

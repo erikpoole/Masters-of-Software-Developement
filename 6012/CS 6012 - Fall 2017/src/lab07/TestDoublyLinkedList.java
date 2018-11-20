@@ -1,23 +1,27 @@
 package lab07;
 
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.Arrays;
 import java.util.Iterator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import junit.framework.TestListener;
 
 class TestDoublyLinkedList {
 
  DoublyLinkedList<Integer> testList;
 
+ /*
+  * prepares for testing
+  */
  @BeforeEach
  void setUp() throws Exception {
   testList = new DoublyLinkedList<>();
  }
 
-
+/*
+ * Tests all methods of DoublyLinkedList
+ * Includes testing on iterator (bottom)
+ */
  @Test
  void test() {
   assertTrue(testList.size() == 0);
@@ -68,6 +72,7 @@ class TestDoublyLinkedList {
    testList.get(0);
   });
 
+  
   for (int i = 0; i < 5; i++) {
    testList.add(i, i);
   }
