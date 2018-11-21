@@ -9,7 +9,7 @@ import java.util.Map;
 public class QuickSortTiming<E> {
 
  private static int numDoubles = 11;
- private static int sampleSize = 100;
+ private static int sampleSize = 1000;
  private static int size = 512;
 
  private static ArrayList<Integer> sampleSet;
