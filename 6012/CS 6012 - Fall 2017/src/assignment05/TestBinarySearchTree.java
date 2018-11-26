@@ -84,6 +84,10 @@ class TestBinarySearchTree {
   assertTrue(testTree.size() == 0);
   assertFalse(testTree.contains("vile"));
   
+  assertTrue(testTree.addAll(sampleList));
+  assertTrue(testTree.toArrayList().get(0) == "a");
+  assertTrue(testTree.toArrayList().get(testTree.size()-1) == "testing");
+  
  }
 
 }

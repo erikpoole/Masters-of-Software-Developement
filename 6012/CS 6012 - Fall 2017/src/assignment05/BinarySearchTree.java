@@ -44,7 +44,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
   * @param inputNode
   * @return
   */
- public boolean addRecursion(T inputElement, Node<T> inputNode) {
+ private boolean addRecursion(T inputElement, Node<T> inputNode) {
   if (inputElement.compareTo(inputNode.getElement()) < 0) {
    if (inputNode.getLeft() == null) {
     inputNode.setLeft(new Node<T>(inputElement));
@@ -111,7 +111,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
   return containsRecursion(item, root);
  }
 
- public boolean containsRecursion(T inputElement, Node<T> inputNode) {
+ private boolean containsRecursion(T inputElement, Node<T> inputNode) {
   if (inputNode == null) {
    return false;
   }
@@ -207,7 +207,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
   return removeRecursion(item, root, root);
  }
 
- public boolean removeRecursion(T inputElement, Node<T> childNode, Node<T> parentNode ) {
+ private boolean removeRecursion(T inputElement, Node<T> childNode, Node<T> parentNode ) {
   if (childNode == null) {
    return false;
   }
@@ -303,8 +303,22 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
   */
  @Override
  public ArrayList<T> toArrayList() {
-  // TODO Auto-generated method stub
-  return null;
+  ArrayList<T> output = new ArrayList<>();
+  toArrayListRecursion(root, output);
+  
+  return output;
+ }
+ 
+ private ArrayList<T> toArrayListRecursion(Node<T> inputNode, ArrayList<T> inputList) {
+  if (inputNode == null) {
+   return inputList;
+  }
+  
+  toArrayListRecursion(inputNode.getLeft(), inputList);
+  inputList.add(inputNode.getElement());
+  toArrayListRecursion(inputNode.getRight(), inputList);
+  
+  return inputList;
  }
 
 }
