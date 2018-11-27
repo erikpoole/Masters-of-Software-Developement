@@ -1,5 +1,7 @@
 package assignment05;
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.NoSuchElementException;
@@ -9,7 +11,9 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
  private Node<T> root;
  private int size;
 
- // create empty
+/**
+ * constructor - produces empty tree 
+ */
  public BinarySearchTree() {
   root = null;
   size = 0;
@@ -38,11 +42,12 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
  }
 
  /**
-  * My method
+  * recursive inner class associated with the "add" method
+  * navigates through BinarySearchTree and places new element correctly
   * 
-  * @param inputElement
-  * @param inputNode
-  * @return
+  * @param inputElement element to be added
+  * @param inputNode current working node at specific level of the recursion - starts with "root"
+  * @returns true if element was added (not previously present in the tree)
   */
  private boolean addRecursion(T inputElement, Node<T> inputNode) {
   if (inputElement.compareTo(inputNode.getElement()) < 0) {
@@ -68,7 +73,8 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
  }
 
  /**
-  * Ensures that this set contains all items in the specified collection.
+  * ensures that this set contains all items in the specified collection.
+  * utilizes .add() method
   * 
   * @param items - the collection of items whose presence is ensured in this set
   * @return true if this set changed as a result of this method call (that is, if any item in the
@@ -111,6 +117,14 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
   return containsRecursion(item, root);
  }
 
+ /**
+  * recursive inner class associated with the "contains" method
+  * navigates through BinarySearchTree and determines if element is present
+  * 
+  * @param inputElement element to be found
+  * @param inputNode node at this point in the recursion, starts with "root"
+  * @return true if element is present, false otherwise
+  */
  private boolean containsRecursion(T inputElement, Node<T> inputNode) {
   if (inputNode == null) {
    return false;
@@ -129,6 +143,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
  /**
   * Determines if for each item in the specified collection, there is an item in this set that is
   * equal to it.
+  * utilizes .contains() method
   * 
   * @param items - the collection of items sought in this set
   * @return true if for each item in the specified collection, there is an item in this set that is
@@ -207,19 +222,28 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
   return removeRecursion(item, root, root);
  }
 
+ /**
+  * recursive inner method associated with .remove() method
+  * navigates through BinarySearchTree and removes input element correctly
+  * 
+  * @param inputElement element to be removed
+  * @param childNode current node at level in recursion
+  * @param parentNode previous nede at level in recursion
+  * @return true if element was found and removed, else return false
+  */
  private boolean removeRecursion(T inputElement, Node<T> childNode, Node<T> parentNode ) {
   if (childNode == null) {
    return false;
   }
 
-  //searches to find element - Working
+  //searches to find element
   if (inputElement.compareTo(childNode.getElement()) < 0) {
    return removeRecursion(inputElement, childNode.getLeft(), childNode);
   } else if (inputElement.compareTo(childNode.getElement()) > 0) {
    return removeRecursion(inputElement, childNode.getRight(), childNode);
   } else {
    
-   //handles no children removal - Working
+   //handles no children removal
    if (childNode.getLeft() == null && childNode.getRight() == null) {
     if (parentNode.getLeft() == childNode) {
      parentNode.setLeft(null);
@@ -227,7 +251,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
      parentNode.setRight(null);
     }
     
-    //handles two children removal - Working (?)
+    //handles two children removal
    } else if (childNode.getLeft() != null && childNode.getRight() != null) {
     Node<T> workingParent = childNode;
     Node<T> workingChild = childNode.getRight();
@@ -235,12 +259,11 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
      workingParent = workingChild;
      workingChild = workingChild.getLeft();
     }
-
+    
     childNode.setElement(workingChild.getElement());
-    if (workingChild.getRight() == null) {
+    if (workingParent.getRight() == null) {
     workingParent.setLeft(null);
     } else {
-     //setRight/setLeft is problem (Believed to be working)
      if (workingParent.getRight() == workingChild) {
       workingParent.setRight(workingChild.getRight());
      }
@@ -249,7 +272,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
      }
     }
     
-    //handles one child removal - Working
+    //handles one child removal
    } else {
     if (parentNode.getLeft() == childNode) {
      if (childNode.getLeft() != null) {
@@ -273,6 +296,8 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
 
  /**
   * Ensures that this set does not contain any of the items in the specified collection.
+  * Utilizes .remove() method
+  * Commented code will allow for easy viewing of tree after each element is removed via Graphviz
   * 
   * @param items - the collection of items whose absence is ensured in this set
   * @return true if this set changed as a result of this method call (that is, if any item in the
@@ -282,7 +307,10 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
  @Override
  public boolean removeAll(Collection<? extends T> items) {
   boolean itemRemoved = false;
+//  int counter = 0;
   for (T item : items) {
+//   counter++;
+//   this.writeDot(counter + "expressionTree.dot");
    if (remove(item) == true) {
     itemRemoved = true;
    }
@@ -309,6 +337,14 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
   return output;
  }
  
+ /**
+  * recursive inner method associated with "toArrayList" 
+  * Navigates through BinarySearchTree and returns elements in order via in-order depth-first traversal
+  * 
+  * @param inputNode node at this level of the recursion, starts with "root"
+  * @param inputList list to add elements to
+  * @return inputList with added element
+  */
  private ArrayList<T> toArrayListRecursion(Node<T> inputNode, ArrayList<T> inputList) {
   if (inputNode == null) {
    return inputList;
@@ -320,5 +356,49 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Sorted
   
   return inputList;
  }
+
+ /**
+  * Driver method
+  * generates a .dot file representing this tree
+  * uses each node's hashcode to uniquely identify it
+  * @param filename output filename
+  */
+ public void writeDot(String filename) {
+   try {
+     PrintWriter output = new PrintWriter(new FileWriter(filename));
+     output.println("graph g {");
+     if (root != null)
+       output.println(root.hashCode() + "[label=\"" + root.getElement() + "\"]");
+     writeDotRecursive(root, output);
+     output.println("}");
+     output.close();
+   } catch (Exception e) {
+     e.printStackTrace();
+   }
+ }
+  
+ /**
+  * Recursively traverse the tree, outputting each node to the .dot file
+  * 
+  * @param n node at this point in the recursion
+  * @param output printwriter with output information
+  * @throws Exception
+  */
+ private void writeDotRecursive(Node<T> n, PrintWriter output) throws Exception {
+   if (n == null)
+     return;
+   if (n.getLeft() != null) {
+     output.println(n.getLeft().hashCode() + "[label=\"" + n.getLeft().getElement() + "\"]");
+     output.println(n.hashCode() + " -- " + n.getLeft().hashCode());
+   }
+   if (n.getRight() != null) {
+     output.println(n.getRight().hashCode() + "[label=\"" + n.getRight().getElement() + "\"]");
+     output.println(n.hashCode() + " -- " + n.getRight().hashCode());
+   }
+
+   writeDotRecursive(n.getLeft(), output);
+   writeDotRecursive(n.getRight(), output);
+ }
+ 
 
 }

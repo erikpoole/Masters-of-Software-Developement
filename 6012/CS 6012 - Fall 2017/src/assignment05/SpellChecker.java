@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import org.junit.jupiter.api.Test;
 
 /**
  * Represents a "dictionary" of strings using a binary search tree and offers methods for

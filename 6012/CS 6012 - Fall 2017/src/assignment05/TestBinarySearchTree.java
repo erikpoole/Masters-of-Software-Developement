@@ -1,7 +1,9 @@
 package assignment05;
 
 import static org.junit.jupiter.api.Assertions.*;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,9 @@ class TestBinarySearchTree {
  BinarySearchTree<String> testTree;
  ArrayList<String> sampleList;
 
+ /**
+  * creates sample collection and BinarySearchTree testTree for use in testing
+  */
  @BeforeEach
  void setUp() throws Exception {
   testTree = new BinarySearchTree<String>();
@@ -21,6 +26,9 @@ class TestBinarySearchTree {
   sampleList.add("collection");
  }
 
+ /**
+  * tests all methods of BinarySerachTree
+  */
  @Test
  void test() {
   Assertions.assertThrows(NullPointerException.class, () -> {
@@ -89,5 +97,32 @@ class TestBinarySearchTree {
   assertTrue(testTree.toArrayList().get(testTree.size()-1) == "testing");
   
  }
+ 
+ /**
+  * used to test remove method with Graphviz by producing graphs on each level with commented code in .removeAll() method
+  */
+ @Test
+ void testRemoveAll() {
+  sampleList.add("these");
+  sampleList.add("are");
+  sampleList.add("extra");
+  sampleList.add("words");
+  
+  assertTrue(testTree.addAll(sampleList));
+  assertTrue(testTree.removeAll(sampleList));
+ }
 
+ /**
+  * verifies that testSpeller implementation was correct 
+  */
+ @Test
+ void testSpellChecker() {
+  SpellChecker testSpeller = new SpellChecker(sampleList);
+  testSpeller.addToDictionary("words");
+  testSpeller.removeFromDictionary("collection");
+  List<String> wrongWords = testSpeller.spellCheck(new File("sampleText.txt"));
+  System.out.println("Mispelled Words: " + wrongWords);
+ }
+ 
+ 
 }

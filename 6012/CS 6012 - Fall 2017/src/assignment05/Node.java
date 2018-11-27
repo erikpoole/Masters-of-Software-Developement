@@ -1,8 +1,11 @@
 package assignment05;
 
-/*
- * Wrapper class around each element in the DoublyLinkedList
- * Stores next and previous nodes and the element itself
+/**
+ *  @author epoole
+ * 
+ * wrapper class around each element in the BinarySearchTree
+ * stores left and right child nodes and the housed element
+ * @param <T> generic element to be stored
  */
 public class Node<T> {
 
@@ -10,8 +13,9 @@ public class Node<T> {
  private Node<T> right;
  private T element;
 
- /*
-  * Constructor
+ /**
+  * constructor
+  * @param inputElement to be stored
   */
  public Node(T inputElement) {
   element = inputElement;
@@ -19,41 +23,48 @@ public class Node<T> {
   right = null;
  }
 
- /*
-  * returns Node before this one in Linked List
+
+ /**
+  * @return left child node
   */
  public Node<T> getLeft() {
   return left;
  }
 
- /*
-  * returns Node after this one in Linked List
-  */
+/**
+ * @return right child node
+ */
  public Node<T> getRight() {
   return right;
  }
 
- /*
-  * returns stored element
+ /**
+  * @return stored element
   */
  public T getElement() {
   return element;
  }
  
+ /**
+  * changes element associated with node
+  * @param input new element to be stored
+  */
  public void setElement(T input) {
   element = input;
  }
 
- /*
-  * changes node previous to this one to another node
+ /**
+  * Changes left child node
+  * @param input new node
   */
  public void setLeft(Node<T> input) {
   left = input;
  }
 
- /*
-  * changes node after this one to another node
-  */
+/**
+ * changes right child node 
+ * @param input new node
+ */
  public void setRight(Node<T> input) {
   right = input;
  }
