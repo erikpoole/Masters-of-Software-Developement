@@ -124,5 +124,20 @@ class TestBinarySearchTree {
   System.out.println("Mispelled Words: " + wrongWords);
  }
  
+ /**
+  * Additional Testing for specific cases where root is removed with one or zero children
+  */
+ @Test
+ void testRootRemoval() {
+  assertTrue(testTree.add("test"));
+  assertTrue(testTree.remove("test"));
+  assertTrue(testTree.getRoot() == null);
+  
+  assertTrue(testTree.add("test"));
+  assertTrue(testTree.add("test2"));
+  assertTrue(testTree.remove("test"));
+  assertTrue(testTree.getRoot().getElement() == "test2");
+ }
+ 
  
 }
