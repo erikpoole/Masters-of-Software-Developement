@@ -1,0 +1,76 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf600
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red164\green8\blue3;}
+{\*\expandedcolortbl;;\cssrgb\c71055\c10387\c0;}
+\margl1440\margr1440\vieww12680\viewh14780\viewkind1
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 1. Explain the hashing function you used for BadHashFunctor. Be sure to discuss\
+why you expected it to perform badly (i.e., result in many collisions).\
+\cf2 My \'93BadHashFunctor\'94 returned the size of the word as it\'92s hash.  This is like to perform poorly and cause many collisions because the size of words don\'92t vary all that much, especially compared to potentially very large arrays.  For example: if we utilize an array of 1,000 linked-lists it\'92s unlikely that any after the first twenty or so will store any words at all.  It\'92s also worth noting that using this hashing method will cause some overlap between words, which is less than ideal.  Using this scheme \'93in\'94 and \'93as\'94 will return the same hash, for example.\cf0 \
+\
+2. Explain the hashing function you used for MediocreHashFunctor. Be sure to\
+discuss why you expected it to perform moderately (i.e., result in some\
+collisions).\
+\cf2 My \'93MediocreHashFunctor\'94 returns the sum of the ASCII values of all of the characters in the word.  This is certainly better than just returning the size of the word, but will still have the same problems as the \'93BadHashFunctor\'94 did, just less frequently.  This will result in larger and more disparate values for words, but they are still relatively small as the size of the array increases.  It\'92s reasonable to think that this method might return a hashed value of 2,000 but it\'92s unlikely that it will ever reach 20,000, for instance.  This also will cause some overlap - anagrams like \'93aft\'94 and \'93fat\'94 will produce the same value.\cf0 \
+\
+3. Explain the hashing function you used for GoodHashFunctor. Be sure to\
+discuss why you expected it to perform well (i.e., result in few or no\
+collisions).\
+\cf2 My \'93GoodHashFunctor\'94 takes an initial value of 3 and then multiplies it by 7 before adding the ASCII value of the first character.  This value is then again multiplied by 7 and added to the ASCII value of the second character and this process is continued until the end of the string is reached.  This is highly unlikely to produce identical Hashes because the value is dependent both on the value of each character and the order that they are in.  The values will also grow very large very quickly and are more likely to outpace the size of the array which will also help ensure an even distribution.  I expect no overlap and a reasonably good disruption throughout the HashTable.\cf0 \
+\
+4. Design and conduct an experiment to assess the quality and efficiency of\
+each of your three hash functions. Briefly explain the design of your\
+experiment.  Plot the results of your experiment. Since the organization of\
+your plot(s) is not specified here, the labels and titles of your plot(s), as\
+well as, your interpretation of the plots is important. A recommendation for\
+this experiment is to create two plots: one that shows the number of collisions\
+incurred by each hash function for a variety of hash table sizes, and one that\
+shows the actual running time required by various operations using each hash\
+function for a variety of hash table sizes.\
+\cf2 I ran two experiments similar to what was recommended here.  \
+\
+The first (figure 1) shows the proportion of lists (buckets) that contain at least one element for a number of different hash table sizes.  A greater incidence of collisions would result in fewer buckets containing an element and our different hash functions perform as we would expect.  The \'93best\'94 function has a relatively large number of filled buckets as the hash table grows, the \'93mediocre\'94 function still does a decent job of filling buckets for relatively small numbers (up until ~1024 it matches the behavior of the \'93best function\'94), and our \'93worst\'94 function falls off very quickly.\
+\
+The second (figure 2) shows the time in nanoseconds required to run a .contains() method on hash tables of varying sizes.  Both the \'93mediocre\'94 and \'93best\'94 hash functions are comparable there but they both dramatically outcompete our \'93bad\'94 hash function.  As we would expect the cost to run a .contains() method lessens as out Hash Table grows in size.\cf0 \
+\
+5. What is the cost of each of your three hash functions (in Big-O notation)?\
+Note that the problem size (N) for your hash functions is the length of the\
+String, and has nothing to do with the hash table itself. Did each of your hash\
+functions perform as you expected (i.e., do they result in the expected number\
+of collisions)?\
+\cf2 Recall that our \'93bad\'94 Hash Function simply returns the size of the input string, therefore we expect the cost to be O( 1 ), or the constant cost required to call the \'93.size()\'94 method.  Both our \'93mediocre\'94 and \'93good\'94 Hash Functions have to iterate over the size of the String and run mathematical operations on them.  Subsequently, would expect them to be O( N ).\
+\
+Overall, each of the functions ran as I expected.  I was a little bit surprised that our .contains() plot didn\'92t show more dramatic improvement when comparing the \'93mediocre\'94 and \'93good\'94 functions, but it\'92s possible that a larger number of input words would have made that difference more apparent.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\b \cf0 \
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+Figure 1 -
+\b0 {{\NeXTGraphic Pasted Graphic.pdf \width9380 \height5720 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+
+\b \
+\
+\
+Figure 2 -\
+
+\b0 {{\NeXTGraphic Pasted Graphic 1.pdf \width9380 \height5720 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}}

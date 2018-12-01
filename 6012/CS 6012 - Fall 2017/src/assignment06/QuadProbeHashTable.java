@@ -1,33 +1,59 @@
 package assignment06;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 
-public class ChainingHashTable implements Set<String> {
+public class QuadProbeHashTable implements Set<String> {
 
- private LinkedList<String>[] storage;
+ private String[] storage;
+ private boolean[] storageArtifacts;
  private HashFunctor hasher;
  private int size;
 
  
- /**
-  * Constructor for an empty Chaining Hash Table 
-  * @param capacity - number of linked list "buckets" in the hash table
-  * @param functor - hash functor to be used for sorting inputs
-  */
- @SuppressWarnings("unchecked")
- public ChainingHashTable(int capacity, HashFunctor functor) {
-  storage = (LinkedList<String>[]) new LinkedList[capacity];
-  for (int i = 0; i < storage.length; i++) {
-   storage[i] = new LinkedList<>();
+
+/**
+ * Constructor that produces a hash table of the size of the nearest prime
+ * number greater than the input capacity 
+ * @param capacity - input size requested (actual size will often be slightly larger)
+ * @param functor - hash functor for sorting inputs
+ */
+ public QuadProbeHashTable(int capacity, HashFunctor functor) {
+
+  // resize table to nearest prime number above capacity
+  if (capacity <= 1) {
+   capacity = 2;
+  }
+  while (!isPrime(capacity)) {
+   capacity++;
   }
 
+  storage = new String[capacity];
+  storageArtifacts = new boolean[capacity];
   hasher = functor;
   size = 0;
  }
 
+
  
- 
+/**
+ * If the input number is prime returns true, else returns false 
+ * @param input - number to be tested
+ */
+ public static boolean isPrime(int input) {
+
+  boolean isPrime = true;
+  for (int i = 2; i <= input / 2; i++) {
+   if (input % i == 0) {
+    isPrime = false;
+    break;
+   }
+  }
+  return isPrime;
+ }
+
+
+
  /**
   * Ensures that this set contains the specified item.
   * 
@@ -37,18 +63,58 @@ public class ChainingHashTable implements Set<String> {
   */
  @Override
  public boolean add(String item) {
+  // check if item is present
   if (item == null || contains(item)) {
    return false;
   }
+  
+  //resize and rehash if size is too large
+  if (size >= storage.length / 2) {
+   rehash();
+  }
 
+  // compute hash
   int hashValue = Math.abs(hasher.hash(item)) % storage.length;
-  storage[hashValue].add(item);
+
+  // if hash position is filled - check next position
+  int quadraticIncrementor = 0;
+  while (storage[(int) (hashValue + Math.pow(quadraticIncrementor, 2))] != null) {
+   quadraticIncrementor++;
+  }
+
+  // add value at appropriate position
+  storage[(int) (hashValue + Math.pow(quadraticIncrementor, 2))] = item;
+  storageArtifacts[(int) (hashValue + Math.pow(quadraticIncrementor, 2))] = true;
+
   size++;
   return true;
  }
 
  
  
+ /**
+  * resizes current hash table to one of at least twice the size
+  * while ensuring that the resulting size is still prime 
+  */
+ private void rehash() {
+  int newCapacity = storage.length*2;
+  while (!isPrime(newCapacity)) {
+   newCapacity++;
+  }
+  
+  String[] storageTemp = storage;
+  storage  = new String[newCapacity];
+  storageArtifacts = new boolean[newCapacity];
+  size = 0;
+  
+  for (int i = 0; i < storageTemp.length; i++) {
+   add(storageTemp[i]); 
+  }
+  
+ }
+ 
+
+
  /**
   * Ensures that this set contains all items in the specified collection.
   * 
@@ -67,21 +133,22 @@ public class ChainingHashTable implements Set<String> {
   return itemAdded;
  }
 
- 
- 
+
+
  /**
   * Removes all items from this set. The set will be empty after this method call.
   */
  @Override
  public void clear() {
-  for (LinkedList<String> list : storage) {
-   list.clear();
+  for (int i = 0; i < storage.length; i++) {
+   storage[i] = null;
   }
+  Arrays.fill(storageArtifacts, false);
   size = 0;
  }
 
- 
- 
+
+
  /**
   * Determines if there is an item in this set that is equal to the specified item.
   * 
@@ -94,16 +161,24 @@ public class ChainingHashTable implements Set<String> {
   if (item == null) {
    return false;
   }
-  
+
+  // compute hash
   int hashValue = Math.abs(hasher.hash(item)) % storage.length;
-  if (storage[hashValue].contains(item)) {
-   return true;
+
+  // if hash position has a storage artifact - compare to item
+  int quadraticIncrementor = 0;
+  while (storageArtifacts[(int) (hashValue + Math.pow(quadraticIncrementor, 2))] == true) {
+   if (storage[(int) (hashValue + Math.pow(quadraticIncrementor, 2))] == item) {
+    return true;
+   }
+   quadraticIncrementor++;
   }
+
   return false;
  }
 
- 
- 
+
+
  /**
   * Determines if for each item in the specified collection, there is an item in this set that is
   * equal to it.
@@ -123,8 +198,8 @@ public class ChainingHashTable implements Set<String> {
   return allPresent;
  }
 
- 
- 
+
+
  /**
   * Returns true if this set contains no items.
   */
@@ -136,8 +211,8 @@ public class ChainingHashTable implements Set<String> {
   return false;
  }
 
- 
- 
+
+
  /**
   * Ensures that this set does not contain the specified item.
   * 
@@ -150,15 +225,25 @@ public class ChainingHashTable implements Set<String> {
   if (item == null || !contains(item)) {
    return false;
   }
-  
+  // compute hash
   int hashValue = Math.abs(hasher.hash(item)) % storage.length;
-  storage[hashValue].remove(item);
-  size--;
-  return true;
+
+  // if hash position has a storage artifact - compare to item
+  int quadraticIncrementor = 0;
+  while (storageArtifacts[(int) (hashValue + Math.pow(quadraticIncrementor, 2))] == true) {
+   if (storage[(int) (hashValue + Math.pow(quadraticIncrementor, 2))] == item) {
+    storage[(int) (hashValue + Math.pow(quadraticIncrementor, 2))] = null;
+    size--;
+    return true;
+   }
+   quadraticIncrementor++;
+  }
+
+  return false;
  }
 
- 
- 
+
+
  /**
   * Ensures that this set does not contain any of the items in the specified collection.
   * 
@@ -177,29 +262,14 @@ public class ChainingHashTable implements Set<String> {
   return itemRemoved;
  }
 
- 
- 
+
+
  /**
   * Returns the number of items in this set.
   */
  @Override
  public int size() {
   return size;
- }
- 
- 
- /**
-  * returns number of linked lists that have at least one element stored in them
-  * (used for collision comparison between hash functors)
-  */
- public int countFilledLists() {
-  int output = 0;
-  for (int i = 0; i < storage.length; i++) {
-   if (!storage[i].isEmpty()) {
-    output++;
-   }
-  }
-  return output;
  }
 
 }
