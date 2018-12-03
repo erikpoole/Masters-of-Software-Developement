@@ -1,0 +1,25 @@
+Pacman -
+
+Classes - 
+	Node
+	+	Constructor - set Value
+	+	Value - get Value
+	+	Get Up/Down/Left/Right Methods
+	+	Visited Flag - get/set
+	+	Parent variable - get/set
+	//Changed to track width/height for use in Up/Down/Right/Left
+		
+	Graph
+	+	Height/Width
+	+	Constructor - set up nodes for area in Height/Width
+	//Changed to be done statically
+	
+	PathFinder
+		SolveMaze - breadth first search until location is found
+			Read in File -
+				Call graph constructor based on input
+			Output File -
+			
+			Utilize Queue - add unvisited Up/Down/Left/Right in clockwise order
+			Mark new Nodes as visited
+			Nodes remember nodes who first marked them
