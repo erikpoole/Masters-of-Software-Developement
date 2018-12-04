@@ -2,7 +2,7 @@ package assignment07;
 
 public class Node {
 
- private char type;
+ private char element;
  private int row;
  private int col;
  private Node parent;
@@ -10,7 +10,7 @@ public class Node {
  public boolean wasVisited;
 
  public Node(char inputType, int inputRow, int inputCol) {
-  type = inputType;
+  element = inputType;
   row = inputRow;
   col = inputCol;
   wasVisited = false;
@@ -23,17 +23,32 @@ public class Node {
 
 
 
- public char getNodeType() {
-  return type;
+ public char getElement() {
+  return element;
+ }
+ 
+ public void setElement(char input) {
+  element = input;
  }
 
  public Node getParent() {
   return parent;
  }
-
- public void setParent(Node parent) {
-  this.parent = parent;
+ 
+ public void setParent(Node parentNode) {
+  parent = parentNode;
  }
+ 
+ public boolean isUnvisited() {
+  return (!wasVisited && element != 'X');
+ }
+
+ public void visitNode(Node receivingNode) {
+  receivingNode.wasVisited = true;
+  receivingNode.setParent(this);
+ }
+ 
+
 
 
 

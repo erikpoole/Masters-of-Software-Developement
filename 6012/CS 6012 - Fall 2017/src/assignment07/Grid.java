@@ -3,6 +3,7 @@ package assignment07;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Grid {
@@ -10,9 +11,11 @@ public class Grid {
  public static int height;
  public static int width;
  public static Node[][] nodeGrid;
- 
- 
- 
+ public static Node startNode;
+ public static Node endNode;
+
+
+
  // **************************************************
  // **************************************************
 
@@ -28,12 +31,63 @@ public class Grid {
   for (int i = 0; i < gridArr.length; i++) {
    int row = i / width;
    int col = i % width;
-   nodeGrid[row][col] = new Node(gridArr[i], row, col);
+
+   Node newNode = new Node(gridArr[i], row, col);
+   nodeGrid[row][col] = newNode;
+   if (newNode.getElement() == 'S') {
+    startNode = newNode;
+   }
+   if (newNode.getElement() == 'G') {
+    endNode = newNode;
+   }
+
   }
  }
 
+
+
+ public static void findPath() {
+  LinkedList<Node> list = new LinkedList<>();
+  list.addLast(startNode);
+
+  while (!list.isEmpty() && !endNode.wasVisited) {
+   Node currentNode = list.removeFirst();
+   
+   Node upNode = currentNode.getUp();
+   Node rightNode = currentNode.getRight();
+   Node downNode = currentNode.getDown();
+   Node leftNode = currentNode.getLeft();
+   
+   if (upNode.isUnvisited()) {
+    list.addLast(upNode);
+    currentNode.visitNode(upNode);
+   }
+   if (rightNode.isUnvisited()) {
+    list.addLast(rightNode);
+    currentNode.visitNode(rightNode);
+   }
+   if (downNode.isUnvisited()) {
+    list.addLast(downNode);
+    currentNode.visitNode(downNode);
+   }
+   if (leftNode.isUnvisited()) {
+    list.addLast(leftNode);
+    currentNode.visitNode(leftNode);
+   }
+
+   System.out.println(list.size());
+  }
+  
+  Node nodeInPath = endNode.getParent();
+  while (nodeInPath != startNode) {
+   nodeInPath.setElement('.');
+   nodeInPath = nodeInPath.getParent();
+  }
+ }
  
- 
+
+
+
  // **************************************************
  // **************************************************
 
@@ -50,35 +104,35 @@ public class Grid {
   while (scanner.hasNextLine()) {
    gridString += scanner.nextLine();
   }
-  
+
   scanner.close();
   return gridString;
  }
- 
- 
- 
+
+
+
  public static void printToFile(String outputFile) throws FileNotFoundException {
   char[] gridArr = getGridArray();
-  
+
   File output = new File(outputFile);
   PrintWriter writer = new PrintWriter(output);
-  
+
   writer.println(width + " " + height);
   for (int i = 0; i < height; i++) {
-   String line = new String(gridArr, i*width, width);
+   String line = new String(gridArr, i * width, width);
    writer.println(line);
   }
 
   writer.close();
  }
- 
- 
- 
+
+
+
  public static char[] getGridArray() {
-  char[] output = new char[height*width];
+  char[] output = new char[height * width];
   for (int i = 0; i < height; i++) {
    for (int j = 0; j < width; j++) {
-    output[i*width+j] = nodeGrid[i][j].getNodeType();
+    output[i * width + j] = nodeGrid[i][j].getElement();
    }
   }
   return output;

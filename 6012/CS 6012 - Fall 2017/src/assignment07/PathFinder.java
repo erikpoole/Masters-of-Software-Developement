@@ -9,7 +9,7 @@ public class PathFinder {
   try {
    String gridString = Grid.readFileToString(inputFile);
    Grid.setUp(gridString);
-   
+   Grid.findPath();
    Grid.printToFile(outputFile);
 
   } catch (FileNotFoundException e) {
