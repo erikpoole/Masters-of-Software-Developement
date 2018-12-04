@@ -8,11 +8,11 @@ import java.util.Scanner;
 
 public class Grid {
 
- public static int height;
- public static int width;
- public static Node[][] nodeGrid;
- public static Node startNode = null;
- public static Node endNode = null;
+ public int height;
+ public int width;
+ public Node[][] nodeGrid;
+ public Node startNode = null;
+ public Node endNode = null;
 
 
 
@@ -21,12 +21,13 @@ public class Grid {
 
 
 
-/**
- * Sets up grid based on gridString input and specified static width and height
- * height & width will have been set by Grid.readFileToString()
- * @param gridString - linear representation of the input file (maze)
- */
- public static void setUp(String gridString) {
+ /**
+  * Sets up grid based on gridString input and specified static width and height height & width will
+  * have been set by Grid.readFileToString()
+  * 
+  * @param gridString - linear representation of the input file (maze)
+  */
+ public void setUp(String gridString) {
   char[] gridArr = gridString.toCharArray();
 
   nodeGrid = new Node[height][width];
@@ -49,24 +50,24 @@ public class Grid {
 
 
  /**
-  * modifies grid node elements to represent fastest path
-  * path found via breadth-first search 
+  * modifies grid node elements to represent fastest path path found via breadth-first search
   */
- public static void findPath() {
+ public void findPath() {
   if (startNode == null || endNode == null) {
    return;
   }
-  
+
   LinkedList<Node> list = new LinkedList<>();
   list.addLast(startNode);
 
   while (!list.isEmpty() && endNode.isUnvisited()) {
    Node currentNode = list.removeFirst();
 
-   Node upNode = currentNode.getUp();
-   Node rightNode = currentNode.getRight();
-   Node downNode = currentNode.getDown();
-   Node leftNode = currentNode.getLeft();
+   // TODO fix me
+   Node upNode = nodeGrid[currentNode.getRow()][currentNode.getCol() - 1];
+   Node rightNode = nodeGrid[currentNode.getRow() + 1][currentNode.getCol()];
+   Node downNode = nodeGrid[currentNode.getRow()][currentNode.getCol() + 1];
+   Node leftNode = nodeGrid[currentNode.getRow() - 1][currentNode.getCol()];
 
    if (upNode.isUnvisited()) {
     list.addLast(upNode);
@@ -100,15 +101,16 @@ public class Grid {
  // **************************************************
  // **************************************************
 
- 
 
-/**
- * reads in file based on inputFile pathname
- * @param inputFile - file pathname to be read
- * @return - linear string representation of file
- * @throws FileNotFoundException
- */
- public static String readFileToString(String inputFile) throws FileNotFoundException {
+
+ /**
+  * reads in file based on inputFile pathname
+  * 
+  * @param inputFile - file pathname to be read
+  * @return - linear string representation of file
+  * @throws FileNotFoundException
+  */
+ public String readFileToString(String inputFile) throws FileNotFoundException {
   File input = new File(inputFile);
   Scanner scanner = new Scanner(input);
 
@@ -125,13 +127,14 @@ public class Grid {
  }
 
 
- 
-/**
- * prints out visual representation of the grid to the chosen path
- * @param outputFile - pathname to print to
- * @throws FileNotFoundException
- */
- public static void printToFile(String outputFile) throws FileNotFoundException {
+
+ /**
+  * prints out visual representation of the grid to the chosen path
+  * 
+  * @param outputFile - pathname to print to
+  * @throws FileNotFoundException
+  */
+ public void printToFile(String outputFile) throws FileNotFoundException {
   char[] gridArr = getGridArray();
 
   File output = new File(outputFile);
@@ -147,11 +150,11 @@ public class Grid {
  }
 
 
- 
-/**
- * @return character array representation of the grid
- */
- public static char[] getGridArray() {
+
+ /**
+  * @return character array representation of the grid
+  */
+ public char[] getGridArray() {
   char[] output = new char[height * width];
   for (int i = 0; i < height; i++) {
    for (int j = 0; j < width; j++) {

@@ -2,18 +2,18 @@ package assignment07;
 
 public class Node {
 
- private char element;
  private int row;
  private int col;
+ private char element;
  private Node parent;
- public boolean wasVisited;
+ private boolean wasVisited;
 
  
  
  /**
   * Constructor - sets default parent to null and wasVisited flag to false 
   * @param inputType - character to be stored, represents location in grid
-  *   possible values: 'X', ' ', 'S', 'G', '.' 
+  *   possible values: 'X' | ' ' | 'S' | 'G' | '.' 
   * @param inputRow - row location of node in grid
   * @param inputCol - col location of node in grid
   */
@@ -31,6 +31,20 @@ public class Node {
  // **************************************************
 
  
+ 
+ /**
+  * @return row
+  */
+public int getRow() {
+ return row;
+}
+
+ /**
+  * @return col (column)
+  */
+ public int getCol() {
+  return col;
+ }
 
 /**
  * @returns stored element
@@ -62,6 +76,13 @@ public class Node {
   parent = parentNode;
  }
  
+ 
+ 
+ // **************************************************
+ // **************************************************
+ 
+ 
+ 
  /**
   * @return true if element hasn't been visited and isn't a wall ('X')
   */
@@ -78,39 +99,4 @@ public class Node {
   receivingNode.setParent(this);
  }
  
-
-
- // **************************************************
- // **************************************************
-
-
- 
-/**
- * @return the node above this one based on position in the grid
- */
- public Node getUp() {
-  return Grid.nodeGrid[row][col - 1];
- }
-
- /**
-  * @return the node below this one based on position in the grid
-  */
- public Node getDown() {
-  return Grid.nodeGrid[row][col + 1];
- }
-
- /**
-  * @return the node right of this one based on position in the grid
-  */
- public Node getRight() {
-  return Grid.nodeGrid[row + 1][col];
- }
-
- /**
-  * @return the node left of this one based on position in the grid
-  */
- public Node getLeft() {
-  return Grid.nodeGrid[row - 1][col];
- }
-
 }

@@ -12,10 +12,11 @@ public class PathFinder {
   */
  public static void solveMaze(String inputFile, String outputFile) {
   try {
-   String gridString = Grid.readFileToString(inputFile);
-   Grid.setUp(gridString);
-   Grid.findPath();
-   Grid.printToFile(outputFile);
+   Grid grid = new Grid();
+   String gridString = grid.readFileToString(inputFile);
+   grid.setUp(gridString);
+   grid.findPath();
+   grid.printToFile(outputFile);
 
   } catch (FileNotFoundException e) {
    e.printStackTrace();
