@@ -1,6 +1,5 @@
 100 100
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-XS                                                                                                 X
 X                                                                                                  X
 X                                                                                                  X
 X                                                                                                  X
@@ -98,4 +97,6 @@ X                                                                               
 X                                                                                                  X
 X                                                                                                  X
 X                                                                                                  X
+X                                                                                                 GX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+

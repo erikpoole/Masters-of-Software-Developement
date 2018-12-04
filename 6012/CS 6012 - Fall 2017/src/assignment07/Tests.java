@@ -1,17 +1,21 @@
 package assignment07;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
+import java.io.FileNotFoundException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class Tests {
 
- @BeforeEach
- void setUp() throws Exception {}
-
  @Test
- void test() {
-  fail("Not yet implemented");
+ void test() throws FileNotFoundException {
+  Assertions.assertThrows(FileNotFoundException.class, () -> {
+   Grid.readFileToString("poop");
+  });
+  
+  Grid.readFileToString("pacman/testMaze8.txt");
+  
+  Grid.readFileToString("pacman/classic.txt");
  }
 
 }

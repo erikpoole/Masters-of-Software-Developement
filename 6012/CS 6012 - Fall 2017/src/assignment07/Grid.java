@@ -11,8 +11,8 @@ public class Grid {
  public static int height;
  public static int width;
  public static Node[][] nodeGrid;
- public static Node startNode;
- public static Node endNode;
+ public static Node startNode = null;
+ public static Node endNode = null;
 
 
 
@@ -21,9 +21,11 @@ public class Grid {
 
 
 
- /*
-  * assumes input format is width, then height e.g.3x2 means three columns, 2 rows
-  */
+/**
+ * Sets up grid based on gridString input and specified static width and height
+ * height & width will have been set by Grid.readFileToString()
+ * @param gridString - linear representation of the input file (maze)
+ */
  public static void setUp(String gridString) {
   char[] gridArr = gridString.toCharArray();
 
@@ -46,11 +48,19 @@ public class Grid {
 
 
 
+ /**
+  * modifies grid node elements to represent fastest path
+  * path found via breadth-first search 
+  */
  public static void findPath() {
+  if (startNode == null || endNode == null) {
+   return;
+  }
+  
   LinkedList<Node> list = new LinkedList<>();
   list.addLast(startNode);
 
-  while (!list.isEmpty() && !endNode.wasVisited) {
+  while (!list.isEmpty() && endNode.isUnvisited()) {
    Node currentNode = list.removeFirst();
 
    Node upNode = currentNode.getUp();
@@ -90,8 +100,14 @@ public class Grid {
  // **************************************************
  // **************************************************
 
+ 
 
-
+/**
+ * reads in file based on inputFile pathname
+ * @param inputFile - file pathname to be read
+ * @return - linear string representation of file
+ * @throws FileNotFoundException
+ */
  public static String readFileToString(String inputFile) throws FileNotFoundException {
   File input = new File(inputFile);
   Scanner scanner = new Scanner(input);
@@ -109,7 +125,12 @@ public class Grid {
  }
 
 
-
+ 
+/**
+ * prints out visual representation of the grid to the chosen path
+ * @param outputFile - pathname to print to
+ * @throws FileNotFoundException
+ */
  public static void printToFile(String outputFile) throws FileNotFoundException {
   char[] gridArr = getGridArray();
 
@@ -126,7 +147,10 @@ public class Grid {
  }
 
 
-
+ 
+/**
+ * @return character array representation of the grid
+ */
  public static char[] getGridArray() {
   char[] output = new char[height * width];
   for (int i = 0; i < height; i++) {
@@ -136,6 +160,4 @@ public class Grid {
   }
   return output;
  }
-
-
 }
