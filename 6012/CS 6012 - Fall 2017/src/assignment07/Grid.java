@@ -27,7 +27,7 @@ public class Grid {
  public static void setUp(String gridString) {
   char[] gridArr = gridString.toCharArray();
 
-  nodeGrid = new Node[width][height];
+  nodeGrid = new Node[height][width];
   for (int i = 0; i < gridArr.length; i++) {
    int row = i / width;
    int col = i % width;
@@ -52,12 +52,12 @@ public class Grid {
 
   while (!list.isEmpty() && !endNode.wasVisited) {
    Node currentNode = list.removeFirst();
-   
+
    Node upNode = currentNode.getUp();
    Node rightNode = currentNode.getRight();
    Node downNode = currentNode.getDown();
    Node leftNode = currentNode.getLeft();
-   
+
    if (upNode.isUnvisited()) {
     list.addLast(upNode);
     currentNode.visitNode(upNode);
@@ -74,17 +74,16 @@ public class Grid {
     list.addLast(leftNode);
     currentNode.visitNode(leftNode);
    }
-
-   System.out.println(list.size());
   }
-  
-  Node nodeInPath = endNode.getParent();
-  while (nodeInPath != startNode) {
-   nodeInPath.setElement('.');
-   nodeInPath = nodeInPath.getParent();
+
+  if (endNode.getParent() != null) {
+   Node nodeInPath = endNode.getParent();
+   while (nodeInPath != startNode) {
+    nodeInPath.setElement('.');
+    nodeInPath = nodeInPath.getParent();
+   }
   }
  }
- 
 
 
 
@@ -97,8 +96,8 @@ public class Grid {
   File input = new File(inputFile);
   Scanner scanner = new Scanner(input);
 
-  width = Integer.parseInt(scanner.next());
   height = Integer.parseInt(scanner.next());
+  width = Integer.parseInt(scanner.next());
 
   String gridString = "";
   while (scanner.hasNextLine()) {
@@ -117,7 +116,7 @@ public class Grid {
   File output = new File(outputFile);
   PrintWriter writer = new PrintWriter(output);
 
-  writer.println(width + " " + height);
+  writer.println(height + " " + width);
   for (int i = 0; i < height; i++) {
    String line = new String(gridArr, i * width, width);
    writer.println(line);

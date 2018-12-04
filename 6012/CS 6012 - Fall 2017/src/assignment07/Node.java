@@ -6,13 +6,13 @@ public class Node {
  private int row;
  private int col;
  private Node parent;
-
  public boolean wasVisited;
 
  public Node(char inputType, int inputRow, int inputCol) {
   element = inputType;
   row = inputRow;
   col = inputCol;
+  parent = null;
   wasVisited = false;
  }
 
