@@ -7,7 +7,7 @@ public class Main {
   */
  public static void main(String[] args) {
 
-  String inputFile = "pacman/testMaze1.txt";
+  String inputFile = "pacman/testMaze5.txt";
   String outputFile = "pacman/00mySolution.txt";
 
   PathFinder.solveMaze(inputFile, outputFile);

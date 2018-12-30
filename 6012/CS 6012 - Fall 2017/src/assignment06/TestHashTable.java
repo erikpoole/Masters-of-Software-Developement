@@ -27,7 +27,7 @@ class TestHashTable {
   goodHash = new GoodHashFunctor();
   
   chainingTable = new ChainingHashTable(6, goodHash);
-  quadTable = new QuadProbeHashTable(6, goodHash);
+  quadTable = new QuadProbeHashTable(3, goodHash);
   
   testList = new ArrayList<>();
   testList.add("these");
@@ -127,4 +127,10 @@ class TestHashTable {
   
  }
 
+ 
+ @Test
+ void additionalTests() {
+  quadTable.addAll(testList);
+  quadTable.containsAll(testList);
+ }
 }
