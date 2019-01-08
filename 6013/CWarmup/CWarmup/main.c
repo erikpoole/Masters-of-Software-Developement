@@ -11,5 +11,7 @@
 #include "functions.h"
 
 int main(int argc, const char * argv[]) {
-    byte_sort(0xAABBCCDDEEFF0011);
+    
+    //0xefdebead04030201
+    printf("%lx\n", byte_sort(0x0403deadbeef0201));
 }

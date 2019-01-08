@@ -51,62 +51,30 @@
 
 
 /*
- & - location of: creates pointer to object
- *int - declares pointer to int, or dereferences a currently declared pointer
- 0xAABBCCDDEEFF0011
+ &int - location of: creates pointer to object
+ int* - declares pointer to int, or dereferences a currently declared pointer
  */
 
 unsigned long byte_sort (unsigned long arg)
 {
-    printf("%lx\n", sizeof(arg));
-    
+    //create one byte pointer pointing to beginning of arg
     uint8_t* argPointer = (uint8_t*) &arg;
     
+    //insertion sort by comparing one byte sections
+    for (int i = 0; i < sizeof(arg); i++) {
+        int smallestLocation = i;
+        uint8_t smallestValue = argPointer[i];
+        for (int j = i; j < sizeof(arg); j++) {
+            if (argPointer[j] < smallestValue) {
+                smallestLocation = j;
+                smallestValue = argPointer[j];
+            }
+        }
+        swap(&argPointer[i], &argPointer[smallestLocation]);
+    }
     
-    
-    
-    printf("%hhx\n", argPointer[7]);
-    
-    swap(&argPointer[0], &argPointer[7]);
-    
-    printf("%hhx\n", argPointer[7]);
-        
-//    int numBytes;
-//    int numDigits = count_hex_digits(arg);
-//    if (numDigits % 2 == 0) {
-//        numBytes = numDigits / 2;
-//    } else {
-//        numBytes = numDigits / 2 + 1;
-//    }
-//
-//
-//    uint8_t unsortedArr[numBytes];
-//    uint8_t sortedArr[numBytes];
-//
-//    for (int i = 0; i < numBytes; i++) {
-//        uint8_t byte = arg >> 8*i;
-//        unsortedArr[i] = byte;
-//    }
-//
-//    for (int i = 0; i < numBytes; i++) {
-//        uint8_t smallestByte = unsortedArr[i];
-//        for (int j = i; j < numBytes; j++) {
-//            if (unsortedArr[j] < smallestByte) {
-//                printf("swapped\n");
-//                swap(unsortedArr, i, j);
-//            }
-//        }
-//        sortedArr[i] = smallestByte;
-//    }
-//
-//    for (int i = 0; i < numBytes; i++) {
-//        printf("%hhx\n", sortedArr[i]);
-//    }
-//
     return arg;
 }
-
-
 
 
 void swap(uint8_t* location1, uint8_t* location2) {
@@ -114,9 +82,6 @@ void swap(uint8_t* location1, uint8_t* location2) {
     *location1 = *location2;
     *location2 = temp;
 }
-
-
-//compare & swap
 
 /*********************************************************************
  *
@@ -203,6 +168,7 @@ void free_list(struct elt* head){
 void draw_me (void)
 {
 }
+
 
 
 
