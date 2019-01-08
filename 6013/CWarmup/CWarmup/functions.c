@@ -34,6 +34,17 @@
  *********************************************************************/
 
 /*********************************************************************
+ * Helper functions -
+ *********************************************************************/
+
+void swap(uint8_t* location1, uint8_t* location2) {
+    uint8_t temp = *location1;
+    *location1 = *location2;
+    *location2 = temp;
+}
+
+
+/*********************************************************************
  *
  * byte_sort()
  *
@@ -77,12 +88,6 @@ unsigned long byte_sort (unsigned long arg)
 }
 
 
-void swap(uint8_t* location1, uint8_t* location2) {
-    uint8_t temp = *location1;
-    *location1 = *location2;
-    *location2 = temp;
-}
-
 /*********************************************************************
  *
  * nibble_sort()
@@ -101,7 +106,40 @@ void swap(uint8_t* location1, uint8_t* location2) {
 
 unsigned long nibble_sort (unsigned long arg)
 {
-    return 0;
+    //create one byte pointer pointing to beginning of arg
+    uint8_t* argPointer = (uint8_t*) &arg;
+    
+    //insertion sort by comparing one nibble sections
+    for (int i = 0; i < sizeof(arg)*2; i++) {
+        int smallestLocation = i/2;
+        uint8_t smallestValue = argPointer[i/2];
+        int isFirstNibble;
+        if (i % 2 == 0) {
+            isFirstNibble = 0;
+        } else {
+            isFirstNibble = 1;
+        }
+
+        if (isFirstNibble) {
+            smallestValue = smallestValue >> 4;
+        } else {
+            smallestValue = smallestValue << 4;
+            smallestValue = smallestValue >> 4;
+        }
+
+        printf("%hhx\n", smallestValue);
+//
+//        for (int j = i; j < sizeof(arg); j++) {
+//            if (argPointer[j] < smallestValue) {
+//                smallestLocation = j;
+//                smallestValue = argPointer[j];
+//            }
+//        }
+//        swap(&argPointer[i], &argPointer[smallestLocation]);
+//    }
+    }
+    
+    return arg;
 }
 
 /*********************************************************************
