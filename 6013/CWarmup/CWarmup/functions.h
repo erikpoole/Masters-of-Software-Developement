@@ -13,8 +13,7 @@
 
 #endif /* functions_h */
 
-int count_hex_digits(unsigned long arg);
-void swap(uint8_t arr[], int location1, int location2) ;
+void swap(uint8_t* location1, uint8_t* location2);
 
 unsigned long byte_sort (unsigned long arg);
 

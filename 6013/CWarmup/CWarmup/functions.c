@@ -52,80 +52,68 @@
 
 /*
  & - location of: creates pointer to object
- *int - declares point to int, or
+ *int - declares pointer to int, or dereferences a currently declared pointer
+ 0xAABBCCDDEEFF0011
  */
+
 unsigned long byte_sort (unsigned long arg)
 {
-    printf("%lx\n", arg);
+    printf("%lx\n", sizeof(arg));
     
-    int numBytes;
-    int numDigits = count_hex_digits(arg);
-    if (numDigits % 2 == 0) {
-        numBytes = numDigits / 2;
-    } else {
-        numBytes = numDigits / 2 + 1;
-    }
+    uint8_t* argPointer = (uint8_t*) &arg;
     
     
-    uint8_t unsortedArr[numBytes];
-    uint8_t sortedArr[numBytes];
     
-    for (int i = 0; i < numBytes; i++) {
-        uint8_t byte = arg >> 8*i;
-        unsortedArr[i] = byte;
-    }
     
-    for (int i = 0; i < numBytes; i++) {
-        uint8_t smallestByte = unsortedArr[i];
-        for (int j = i; j < numBytes; j++) {
-            if (unsortedArr[j] < smallestByte) {
-                printf("swapped\n");
-                swap(unsortedArr, i, j);
-            }
-        }
-        sortedArr[i] = smallestByte;
-    }
+    printf("%hhx\n", argPointer[7]);
     
-    for (int i = 0; i < numBytes; i++) {
-        printf("%hhx\n", sortedArr[i]);
-    }
+    swap(&argPointer[0], &argPointer[7]);
     
+    printf("%hhx\n", argPointer[7]);
+        
+//    int numBytes;
+//    int numDigits = count_hex_digits(arg);
+//    if (numDigits % 2 == 0) {
+//        numBytes = numDigits / 2;
+//    } else {
+//        numBytes = numDigits / 2 + 1;
+//    }
+//
+//
+//    uint8_t unsortedArr[numBytes];
+//    uint8_t sortedArr[numBytes];
+//
+//    for (int i = 0; i < numBytes; i++) {
+//        uint8_t byte = arg >> 8*i;
+//        unsortedArr[i] = byte;
+//    }
+//
+//    for (int i = 0; i < numBytes; i++) {
+//        uint8_t smallestByte = unsortedArr[i];
+//        for (int j = i; j < numBytes; j++) {
+//            if (unsortedArr[j] < smallestByte) {
+//                printf("swapped\n");
+//                swap(unsortedArr, i, j);
+//            }
+//        }
+//        sortedArr[i] = smallestByte;
+//    }
+//
+//    for (int i = 0; i < numBytes; i++) {
+//        printf("%hhx\n", sortedArr[i]);
+//    }
+//
     return arg;
 }
 
 
 
-int count_hex_digits(unsigned long arg) {
-    int count = 0;
-    while (arg != 0) {
-        arg /= 16;
-        count += 1;
-    }
-    return count;
+
+void swap(uint8_t* location1, uint8_t* location2) {
+    uint8_t temp = *location1;
+    *location1 = *location2;
+    *location2 = temp;
 }
-
-void swap(uint8_t arr[], int location1, int location2) {
-//    printf("%hhx\n", arr[location1]);
-//    printf("%hhx\n", arr[location2]);
-    
-    uint8_t temp = arr[location1];
-    arr[location1] = arr[location2];
-    arr[location2] = temp;
-           
-//    printf("%hhx\n", arr[location1]);
-//    printf("%hhx\n", arr[location2]);
-}
-
-
-//void swap(int *a, int *b)
-//{
-//    int t;
-//
-//    t  = *b;
-//    *b = *a;
-//    *a = t;
-//}
-
 
 
 //compare & swap

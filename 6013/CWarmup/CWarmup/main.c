@@ -11,5 +11,5 @@
 #include "functions.h"
 
 int main(int argc, const char * argv[]) {
-    byte_sort(0xEE11EE);
+    byte_sort(0xAABBCCDDEEFF0011);
 }
