@@ -13,7 +13,7 @@
 
 #endif /* functions_h */
 
-void swap(uint8_t* location1, uint8_t* location2);
+void swapByte(uint8_t* location1, uint8_t* location2);
 
 unsigned long byte_sort (unsigned long arg);
 unsigned long nibble_sort (unsigned long arg);

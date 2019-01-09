@@ -37,10 +37,27 @@
  * Helper functions -
  *********************************************************************/
 
-void swap(uint8_t* location1, uint8_t* location2) {
+void swapByte(uint8_t* location1, uint8_t* location2) {
     uint8_t temp = *location1;
     *location1 = *location2;
     *location2 = temp;
+}
+
+unsigned long mask(unsigned long arg, int location) {
+    unsigned long value = arg << ((sizeof(arg) * 8) - (location * 4));
+    value = value >> ((sizeof(arg) * 8) - 4);
+    return value;
+}
+
+int compare(unsigned long arg, int location1, int location2) {
+    unsigned long value1 = mask(arg, location1);
+    unsigned long value2 = mask(arg, location2);
+    if (value1 > value2) {
+        return 1;
+    }
+    printf("value1: %lx\n", value1);
+    printf("value2: %lx\n", value2);
+    return 0;
 }
 
 
@@ -74,14 +91,12 @@ unsigned long byte_sort (unsigned long arg)
     //insertion sort by comparing one byte sections
     for (int i = 0; i < sizeof(arg); i++) {
         int smallestLocation = i;
-        uint8_t smallestValue = argPointer[i];
         for (int j = i; j < sizeof(arg); j++) {
-            if (argPointer[j] < smallestValue) {
+            if (argPointer[j] < argPointer[smallestLocation]) {
                 smallestLocation = j;
-                smallestValue = argPointer[j];
             }
         }
-        swap(&argPointer[i], &argPointer[smallestLocation]);
+        swapByte(&argPointer[i], &argPointer[smallestLocation]);
     }
     
     return arg;
@@ -104,41 +119,61 @@ unsigned long byte_sort (unsigned long arg)
  *
  *********************************************************************/
 
+
+// first mask specific nibble locations and then compare
+// swap if necessary into original arg (original arg must first be cleared)
+// compare and swap always needed for sort
 unsigned long nibble_sort (unsigned long arg)
 {
-    //create one byte pointer pointing to beginning of arg
-    uint8_t* argPointer = (uint8_t*) &arg;
-    
-    //insertion sort by comparing one nibble sections
-    for (int i = 0; i < sizeof(arg)*2; i++) {
-        int smallestLocation = i/2;
-        uint8_t smallestValue = argPointer[i/2];
-        int isFirstNibble;
-        if (i % 2 == 0) {
-            isFirstNibble = 0;
-        } else {
-            isFirstNibble = 1;
+    for (int i = 1; i <= sizeof(arg)*2; i++) {
+        for (int j = 1; j <= sizeof(arg)*2; j++) {
+            if (compare(arg, i, j)) {
+                
+            }
         }
-
-        if (isFirstNibble) {
-            smallestValue = smallestValue >> 4;
-        } else {
-            smallestValue = smallestValue << 4;
-            smallestValue = smallestValue >> 4;
-        }
-
-        printf("%hhx\n", smallestValue);
-//
-//        for (int j = i; j < sizeof(arg); j++) {
-//            if (argPointer[j] < smallestValue) {
-//                smallestLocation = j;
-//                smallestValue = argPointer[j];
-//            }
-//        }
-//        swap(&argPointer[i], &argPointer[smallestLocation]);
-//    }
+        printf("Cycle Complete\n");
     }
     
+//    //create one byte pointer pointing to beginning of arg
+//    uint8_t* argPointer = (uint8_t*) &arg;
+//
+//    //insertion sort by comparing one nibble sections
+//    for (int i = 0; i < sizeof(arg)*2; i++) {
+//        int smallestLocation = i/2;
+//        uint8_t smallestValue = argPointer[i/2];
+//        int isFirstNibble;
+//        if (i % 2 == 0) {
+//            isFirstNibble = 0;
+//            smallestValue = smallestValue << 4;
+//            smallestValue = smallestValue >> 4;
+//        } else {
+//            isFirstNibble = 1;
+//            smallestValue = smallestValue >> 4;
+//        }
+//
+//        printf("%hhx\n", smallestValue);
+//
+//        for (int j = i; j < sizeof(arg)*2; j++) {
+//            uint8_t checkingValue = argPointer[j/2];
+//            int checkingFirstNibble;
+//            if (j % 2 == 0) {
+//                checkingFirstNibble = 0;
+//                checkingValue = checkingValue << 4;
+//                checkingValue = checkingValue >> 4;
+//            } else {
+//                checkingFirstNibble = 1;
+//                checkingValue = checkingValue >> 4;
+//            }
+//
+//            if (checkingValue < smallestValue) {
+//                smallestLocation = j;
+//                smallestValue = checkingValue;
+//            }
+//        }
+//        swapByte(&argPointer[i], &argPointer[smallestLocation]);
+//
+//    }
+//
     return arg;
 }
 
