@@ -48,22 +48,22 @@ void swapNibble(unsigned long* arg, int location1, int location2) {
     unsigned long value2 = mask(*arg, location2);
     
     unsigned long mask = 0xf;
-    mask = mask << (location1 * 4 - 4);
-    value2 = value2 << (location1 * 4 - 4);
+    mask = mask << (location1 * 4);
+    value2 = value2 << (location1 * 4);
     mask = ~mask;
     *arg = *arg & mask;
     *arg = *arg | value2;
     
     mask = 0xf;
-    mask = mask << (location2 * 4 - 4);
-    value1 = value1 << (location2 * 4 - 4);
+    mask = mask << (location2 * 4);
+    value1 = value1 << (location2 * 4);
     mask = ~mask;
     *arg = *arg & mask;
     *arg = *arg | value1;
 }
 
 unsigned long mask(unsigned long arg, int location) {
-    unsigned long value = arg << ((sizeof(arg) * 8) - (location * 4));
+    unsigned long value = arg << ((sizeof(arg) * 8) - (location * 4) - 4);
     value = value >> ((sizeof(arg) * 8) - 4);
     return value;
 }
@@ -143,8 +143,8 @@ unsigned long byte_sort (unsigned long arg)
 // compare and swap always needed for sort
 unsigned long nibble_sort (unsigned long arg)
 {
-    for (int i = 1; i <= sizeof(arg)*2; i++) {
-        for (int j = i; j <= sizeof(arg)*2; j++) {
+    for (int i = 0; i < sizeof(arg)*2; i++) {
+        for (int j = i; j < sizeof(arg)*2; j++) {
             if (compare(arg, i, j)) {
                 swapNibble(&arg, i, j);
             }
@@ -182,23 +182,49 @@ unsigned long nibble_sort (unsigned long arg)
  * Note: free_list might be useful for error handling for name_list...
  *********************************************************************/
 
-struct elt {
-    char val;
-    struct elt *link;
-};
-
-void free_list(struct elt* head); /*so you can call free_list in name_list if you'd like*/
-struct elt *name_list (void)
-{
-    return NULL;
+struct elt *name_list (void) {
+    char name[4] = {'E', 'R', 'I', 'K'};
+    int arrSize = sizeof(name)/sizeof(name[0]);
+    
+    struct elt *headElt = malloc(sizeof(struct elt));
+    struct elt *workingElt = headElt;
+    for (int i = 0; i < arrSize; i++) {
+        struct elt *nextElt = malloc(sizeof(struct elt));
+        if (nextElt == NULL) {
+            free_list(headElt);
+        }
+        
+        workingElt->val = name[i];
+        workingElt->link = nextElt;
+        workingElt = nextElt;
+    }
+    
+    workingElt->link = NULL;
+    workingElt = NULL;
+    
+    return headElt;
 }
 
 void print_list(struct elt* head){
+    while(head->link != NULL) {
+        printf("%c", head->val);
+        head = head->link;
+    }
+    printf("\n");
     
 }
 
 void free_list(struct elt* head){
+    struct elt* currentElt = head;
+    struct elt* nextElt;
+    while (currentElt->link != NULL) {
+        nextElt = currentElt->link;
+        free(currentElt);
+        currentElt = nextElt;
+    }
     
+    currentElt = NULL;
+    nextElt = NULL;
 }
 
 
@@ -218,6 +244,7 @@ void free_list(struct elt* head){
 void draw_me (void)
 {
 }
+
 
 
 

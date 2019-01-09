@@ -22,3 +22,13 @@ int compare(unsigned long arg, int location1, int location2);
 unsigned long byte_sort (unsigned long arg);
 unsigned long nibble_sort (unsigned long arg);
 
+
+struct elt {
+    char val;
+    struct elt *link;
+};
+
+struct elt *name_list (void);
+void print_list(struct elt* head);
+void free_list(struct elt* head);
+
