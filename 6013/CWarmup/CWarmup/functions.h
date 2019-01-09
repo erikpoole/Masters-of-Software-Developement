@@ -14,6 +14,10 @@
 #endif /* functions_h */
 
 void swapByte(uint8_t* location1, uint8_t* location2);
+void swapNibble(unsigned long* arg, int location1, int location2);
+
+unsigned long mask(unsigned long arg, int location);
+int compare(unsigned long arg, int location1, int location2);
 
 unsigned long byte_sort (unsigned long arg);
 unsigned long nibble_sort (unsigned long arg);
