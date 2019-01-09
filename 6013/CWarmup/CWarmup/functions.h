@@ -32,3 +32,5 @@ struct elt *name_list (void);
 void print_list(struct elt* head);
 void free_list(struct elt* head);
 
+void draw_me (void);
+

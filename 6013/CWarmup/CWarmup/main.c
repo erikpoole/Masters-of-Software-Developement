@@ -38,7 +38,13 @@ int main(int argc, const char * argv[]) {
     
     //free_list
     free_list(testElt);
-    assert(testElt->link == NULL);
+//    assert(testElt->link == NULL);
     
     printf("name_list Testing Complete\n");
+    
+    draw_me();
+    
+    printf("draw_me Testing Complete\n");
 }
+
+

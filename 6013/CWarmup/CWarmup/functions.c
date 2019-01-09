@@ -205,7 +205,7 @@ struct elt *name_list (void) {
     return headElt;
 }
 
-void print_list(struct elt* head){
+void print_list(struct elt* head) {
     while(head->link != NULL) {
         printf("%c", head->val);
         head = head->link;
@@ -214,7 +214,7 @@ void print_list(struct elt* head){
     
 }
 
-void free_list(struct elt* head){
+void free_list(struct elt* head) {
     struct elt* currentElt = head;
     struct elt* nextElt;
     while (currentElt->link != NULL) {
@@ -241,8 +241,14 @@ void free_list(struct elt* head){
  *
  *********************************************************************/
 
-void draw_me (void)
-{
+void draw_me (void) {
+    FILE *file = fopen("drawing.txt", "w+");
+    fprintf(file, "     // // //\n");
+    fprintf(file, "   /\n");
+    fprintf(file, "  [    *  *\n");
+    fprintf(file, "   \\     >\n");
+    fprintf(file, "    \\_____\n");
+    fclose(file);
 }
 
 
