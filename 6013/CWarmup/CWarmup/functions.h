@@ -34,3 +34,5 @@ void free_list(struct elt* head);
 
 void draw_me (void);
 
+void test(void);
+

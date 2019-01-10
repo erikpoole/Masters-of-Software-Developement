@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <assert.h>
 
 /*********************************************************************
  *
@@ -186,32 +187,27 @@ struct elt *name_list (void) {
     char name[4] = {'E', 'R', 'I', 'K'};
     int arrSize = sizeof(name)/sizeof(name[0]);
     
-    struct elt *headElt = malloc(sizeof(struct elt));
-    struct elt *workingElt = headElt;
+    struct elt *headElt = NULL;
+    struct elt *nextElt = NULL;
     for (int i = 0; i < arrSize; i++) {
-        struct elt *nextElt = malloc(sizeof(struct elt));
-        if (nextElt == NULL) {
+        headElt = malloc(sizeof(struct elt));
+        if (headElt == NULL) {
             free_list(headElt);
         }
         
-        workingElt->val = name[i];
-        workingElt->link = nextElt;
-        workingElt = nextElt;
+        headElt->val = name[arrSize-1-i];
+        headElt->link = nextElt;
+        nextElt = headElt;
     }
-    
-    workingElt->link = NULL;
-    workingElt = NULL;
-    
     return headElt;
 }
 
 void print_list(struct elt* head) {
-    while(head->link != NULL) {
+    while(head != NULL) {
         printf("%c", head->val);
         head = head->link;
     }
     printf("\n");
-    
 }
 
 void free_list(struct elt* head) {
@@ -251,7 +247,48 @@ void draw_me (void) {
     fclose(file);
 }
 
+/*********************************************************************
+ Testing
+ *********************************************************************/
 
+void test() {
+    //byte_sort testing
+    assert(byte_sort(0x0403deadbeef0201ul) == 0xefdebead04030201ul);
+    assert(byte_sort(0x0000000000000000ul) == 0x0000000000000000ul);
+    assert(byte_sort(0xFFFFFFFFFFFFFFFFul) == 0xFFFFFFFFFFFFFFFFul);
+    assert(byte_sort(0x0ul) == 0x0000000000000000ul);
+    assert(byte_sort(0xFul) == 0x0F00000000000000ul);
+    
+    printf("byte_sort Testing Complete\n");
+    
+    //nibble_sort testing
+    assert(nibble_sort(0x0403deadbeef0201ul) == 0xfeeeddba43210000ul);
+    assert(nibble_sort(0x0000000000000000ul) == 0x0000000000000000ul);
+    assert(nibble_sort(0xFFFFFFFFFFFFFFFFul) == 0xFFFFFFFFFFFFFFFFul);
+    assert(nibble_sort(0x0ul) == 0x0000000000000000ul);
+    assert(nibble_sort(0xFul) == 0xF000000000000000ul);
 
-
+    printf("nibble_sort Testing Complete\n");
+    
+    //name_list testing
+    struct elt* testElt = name_list();
+    
+    assert(testElt->val == 'E');
+    assert(testElt->link->link->link->val == 'K');
+    assert(testElt->link->link->link != NULL);
+    assert(testElt->link->link->link->link == NULL);
+    
+    //print_list
+    print_list(testElt);
+    
+    //free_list
+    free_list(testElt);
+    //    assert(testElt->link == NULL);
+    
+    printf("name_list Testing Complete\n");
+    
+    draw_me();
+    
+    printf("draw_me Testing Complete\n");
+}
 
