@@ -13,7 +13,7 @@
 /*
  * takes argument character and counts number of occurances in argument string
  */
-int countOccurances(std::string inputWord, char inputChar) {
+int countOccurances(std::string const &inputWord, char const &inputChar) {
     int count = 0;
     for (char c : inputWord) {
         if (c == inputChar) {
@@ -28,7 +28,7 @@ int countOccurances(std::string inputWord, char inputChar) {
  * takes integer argument and checks to see if the number is autobiographical
  * e.g. 1210
  */
-bool isAutobiographical(int input) {
+bool isAutobiographical(int const &input) {
     std::string stringInput = std::to_string(input);
     
     for (int i = 0; i < stringInput.length(); i++) {
