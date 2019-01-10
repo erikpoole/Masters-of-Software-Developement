@@ -44,14 +44,16 @@ bool isAutobiographical(int const &input) {
 
 
 int main(int argc, const char * argv[]) {
+    clock_t startTime = clock();
+    
     for (int i = 0; i < 1e9; i++) {
         if (isAutobiographical(i)) {
             std::cout << i << std::endl;
         }
     }
+    
+    clock_t endTime = clock();
+    std::cout << "Seconds Taken: " << (endTime - startTime) / CLOCKS_PER_SEC << std::endl;
 }
-
-
-
 
 
