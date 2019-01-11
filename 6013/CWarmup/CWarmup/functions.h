@@ -10,6 +10,7 @@
 #define functions_h
 
 #include <stdio.h>
+#include <stdint.h>
 
 #endif /* functions_h */
 
