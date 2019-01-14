@@ -10,16 +10,22 @@ class IPNode:
 
     def add_line(self, input_string):
         split_string = input_string.split()
+        self.verify_input(split_string)
 
         if self.address is None:
             self.address = split_string[2][1:-1]
         else:
-            self.address = "Multiple IP Addresses"
+            self.address = "Multiple_IP_Addresses"
 
         self.add_latency_values(split_string)
         if len(self.latencies) == 3:
             self.latencyAverage = (self.latencies[0] + self.latencies[1] + self.latencies[2])/3
             self.complete = True
+
+    def verify_input(self, input_list):
+        if len(input_list) > 9 or len(input_list) < 4:
+            print("Invalid Input of length " + str(len(input_list)) + "! Closing...")
+            assert False
 
     def add_latency_values(self, input_list):
         if len(input_list) % 2 == 1:
