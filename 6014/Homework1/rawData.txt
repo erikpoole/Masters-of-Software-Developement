@@ -1,0 +1,22 @@
+traceroute to cephalofair.com (208.113.139.241), 64 hops max, 52 byte packets
+ 1  10.0.0.1 (10.0.0.1)  3.727 ms  1.860 ms  1.844 ms
+ 2  96.120.96.157 (96.120.96.157)  9.609 ms  9.100 ms  8.793 ms
+ 3  po-120-rur201.saltlakecity.ut.utah.comcast.net (68.87.171.25)  9.939 ms  11.187 ms  9.780 ms
+ 4  be-2-ar01.saltlakecity.ut.utah.comcast.net (69.139.231.85)  10.466 ms  13.964 ms  21.101 ms
+ 5  be-33660-cr01.champa.co.ibone.comcast.net (68.86.90.225)  24.254 ms  22.998 ms  23.382 ms
+ 6  be-12021-cr02.1601milehigh.co.ibone.comcast.net (68.86.84.226)  24.212 ms  27.176 ms  25.548 ms
+ 7  be-12176-pe02.910fifteenth.co.ibone.comcast.net (68.86.83.94)  21.068 ms  22.695 ms  26.485 ms
+ 8  50.248.116.214 (50.248.116.214)  21.817 ms  21.743 ms  24.905 ms
+ 9  ae11.mpr2.den1.us.zip.zayo.com (64.125.31.154)  21.473 ms  20.984 ms  21.514 ms
+10  64.125.30.116 (64.125.30.116)  70.100 ms  69.858 ms  69.794 ms
+11  ae5.cs2.ord2.us.eth.zayo.com (64.125.29.217)  72.148 ms  74.129 ms  74.098 ms
+12  ae3.cs2.lga5.us.eth.zayo.com (64.125.29.212)  69.521 ms  70.990 ms  69.200 ms
+13  ae4.cs2.dca2.us.eth.zayo.com (64.125.29.31)  70.676 ms  72.559 ms  95.559 ms
+14  ae27.cr2.dca2.us.zip.zayo.com (64.125.30.249)  72.247 ms  73.813 ms  68.548 ms
+15  ae15.er5.iad10.us.zip.zayo.com (64.125.31.42)  72.378 ms  70.853 ms  73.074 ms
+16  208.185.23.134.t00867-03.above.net (208.185.23.134)  68.641 ms  68.759 ms  73.532 ms
+17  ip-208-113-156-4.dreamhost.com (208.113.156.4)  71.606 ms  72.161 ms  70.234 ms
+18  ip-208-113-156-91.dreamhost.com (208.113.156.91)  67.044 ms
+    ip-208-113-156-89.dreamhost.com (208.113.156.89)  69.812 ms
+    ip-208-113-156-91.dreamhost.com (208.113.156.91)  71.549 ms
+19  wp571772.dreamhost.com (208.113.139.241)  71.286 ms  70.325 ms  71.240 ms
