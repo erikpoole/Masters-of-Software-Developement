@@ -6,33 +6,29 @@ class IPNode:
 
     def __init__(self, input_string):
         self.latencies = []
-        input_string = input_string.split()
-        self.address = input_string[2][1:-1]
-
-        self.add_latency_values(input_string)
-
-        if len(self.latencies) == 3:
-            self.latencyAverage = (self.latencies[0] + self.latencies[1] + self.latencies[2])/3
-            self.complete = True
+        self.add_line(input_string)
 
     def add_line(self, input_string):
-        self.address = "Multiple IP Addresses"
+        split_string = input_string.split()
 
-        input_string = input_string.split()
-        self.add_latency_values(input_string)
+        if self.address is None:
+            self.address = split_string[2][1:-1]
+        else:
+            self.address = "Multiple IP Addresses"
 
+        self.add_latency_values(split_string)
         if len(self.latencies) == 3:
             self.latencyAverage = (self.latencies[0] + self.latencies[1] + self.latencies[2])/3
             self.complete = True
 
-    def add_latency_values(self, input_string):
-        if len(input_string) % 2 == 1:
-            input_string = input_string[3:]
+    def add_latency_values(self, input_list):
+        if len(input_list) % 2 == 1:
+            input_list = input_list[3:]
         else:
-            input_string = input_string[2:]
+            input_list = input_list[2:]
 
-        for i in range(0, len(input_string), 2):
-            self.latencies.append(float(input_string[i]))
+        for i in range(0, len(input_list), 2):
+            self.latencies.append(float(input_list[i]))
 
 
 ipList = []
