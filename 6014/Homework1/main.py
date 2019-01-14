@@ -1,11 +1,11 @@
 class IPNode:
-    latencies = None
-    latencyAverage = None
-    address = None
-    complete = False
 
     def __init__(self, input_string):
+        self.address = None
+        self.complete = False
         self.latencies = []
+        self.latencyAverage = None
+
         self.add_line(input_string)
 
     def add_line(self, input_string):
