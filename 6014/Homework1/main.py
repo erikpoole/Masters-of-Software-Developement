@@ -1,43 +1,41 @@
 class IPNode:
+    string_list = None
+
     latencies = None
     latencyAverage = None
     address = None
     complete = False
 
-    def __init__(self, input_list):
+    def __init__(self, input_string):
         self.latencies = []
+        self.string_list = input_string.split()
+        self.address = self.string_list[2][1:-1]
 
-        if len(input_list) == 9:
-            self.handle_single_address(input_list)
-        else:
-            self.handle_multiple_address(input_list)
+        self.shorten_string_list()
+        self.add_latency_values()
 
-    def handle_single_address(self, input_list):
-        self.latencies.append(float(input_list[3]))
-        self.latencies.append(float(input_list[5]))
-        self.latencies.append(float(input_list[7]))
+        if len(self.latencies) == 3:
+            self.latencyAverage = (self.latencies[0] + self.latencies[1] + self.latencies[2])/3
+            self.complete = True
 
-        self.latencyAverage = (self.latencies[0] + self.latencies[1] + self.latencies[2])/3
-        self.address = input_list[2][1:-1]
-        self.complete = True
-
-    def handle_multiple_address(self, input_list):
-        if len(input_list) > 7 or len(input_list) < 4:
-            print("Invalid Input of length " + str(len(input_list)) + "! Closing...")
-            assert False
-
-        if len(input_list) % 2 == 1:
-            input_list = input_list[3:]
-        else:
-            input_list = input_list[2:]
-
-        for i in range(0, len(input_list), 2):
-            self.latencies.append(float(input_list[i]))
+    def add_line(self, input_string):
+        self.shorten_string_list()
+        self.add_latency_values()
 
         if len(self.latencies) == 3:
             self.latencyAverage = (self.latencies[0] + self.latencies[1] + self.latencies[2])/3
             self.address = "Multiple IP Addresses"
             self.complete = True
+
+    def shorten_string_list(self):
+        if len(self.string_list) % 2 == 1:
+            self.string_list = self.string_list[3:]
+        else:
+            self.string_list = self.string_list[2:]
+
+    def add_latency_values(self):
+        for i in range(0, len(self.string_list), 2):
+            self.latencies.append(float(self.string_list[i]))
 
 
 ipList = []
@@ -47,13 +45,13 @@ inputFile = open("rawData.txt")
 inputFile.readline()
 line = inputFile.readline()
 while line:
-    split_string = line.split()
-    currentIPNode = IPNode(split_string)
+    currentIPNode = IPNode(line)
 
     while not currentIPNode.complete:
         line = inputFile.readline()
         split_string = line.split()
-        currentIPNode.handle_multiple_address(split_string)
+        currentIPNode.string_list = split_string;
+        currentIPNode.add_line(line)
 
     ipList.append(currentIPNode)
     line = inputFile.readline()
