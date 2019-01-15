@@ -1,0 +1,1 @@
+Average Round-Trip Queuing Delay: 47.2548833333
