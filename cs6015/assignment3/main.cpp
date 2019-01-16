@@ -9,18 +9,18 @@
 #include <iostream>
 #include <sstream>
 
-class point{
+class Point{
 private:
     int x;
     int y;
     
 public:
-    point() {
+    Point() {
         x = NULL;
         y = NULL;
     }
     
-    point(const int& xInput, const int& yInput) {
+    Point(const int& xInput, const int& yInput) {
         x = xInput;
         y = yInput;
     }
@@ -29,17 +29,20 @@ public:
     int getY() {return y;}
 };
 
-class shape{
+class Shape{
 private:
-    point pointArr[4];
+    Point pointArr[4];
     
 public:
-    shape(const point& inputPoint1, const point& inputPoint2, const point& inputPoint3) {
-        pointArr[0] = point(0, 0);
-        pointArr[1] = point(inputPoint1);
-        pointArr[2] = point(inputPoint2);
-        pointArr[3] = point(inputPoint3);
+    Shape(const Point& inputPoint1, const Point& inputPoint2, const Point& inputPoint3) {
+        pointArr[0] = Point(0, 0);
+        pointArr[1] = Point(inputPoint1);
+        pointArr[2] = Point(inputPoint2);
+        pointArr[3] = Point(inputPoint3);
     }
+    
+    Point getPoint(int pointNumber) {return pointArr[pointNumber];}
+
 };
 
 //****************************************************************************************************
@@ -52,9 +55,26 @@ int main(int argc, const char * argv[]) {
         std::stringstream stringStream(inputString);
         
         std::string singleInput;
+        int inputValueArray[6];
+        int *inputValuePointer = inputValueArray;
         while (std::getline(stringStream, singleInput, ' ')){
-            std::cout << singleInput << std::endl;
+            *inputValuePointer++ = std::stof(singleInput);
         }
+        
+        Point point1(inputValueArray[0], inputValueArray[1]);
+        Point point2(inputValueArray[2], inputValueArray[3]);
+        Point point3(inputValueArray[4], inputValueArray[5]);
+        
+        Shape shape(point1, point2, point3);
+        
+        std::cout << shape.getPoint(0).getX() << std::endl;
+        std::cout << shape.getPoint(0).getY() << std::endl;
+        std::cout << shape.getPoint(1).getX() << std::endl;
+        std::cout << shape.getPoint(1).getY() << std::endl;
+        std::cout << shape.getPoint(2).getX() << std::endl;
+        std::cout << shape.getPoint(2).getY() << std::endl;
+        std::cout << shape.getPoint(3).getX() << std::endl;
+        std::cout << shape.getPoint(3).getY() << std::endl;
     }
 }
 
