@@ -12,6 +12,13 @@ Rhombus
 Rhombus
 
 //unsure
+Order: square
+rectangle
+rhombi
+parallelogram
+trapezoid
+kite
+quadrilateral
 
 4 0 4 4 0 4
 10 0 10 5 0 5

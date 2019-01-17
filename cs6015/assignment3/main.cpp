@@ -18,8 +18,6 @@ private:
     
 public:
     Point() {
-        x = NULL;
-        y = NULL;
     }
     
     Point(const float& xInput, const float& yInput) {
@@ -38,8 +36,6 @@ private:
     
 public:
     Line() {
-        xOffset = NULL;
-        yOffset = NULL;
     }
     
     Line(const Point& point1, const Point& point2) {
@@ -169,29 +165,55 @@ bool isSquare(const Shape& inputShape) {
     return true;
 }
 
+bool isKite(const Shape& inputShape) {
+    if (abs(inputShape.getSide(0).getLength() -  inputShape.getSide(1).getLength()) < .0001) {
+        if (abs(inputShape.getSide(2).getLength() - inputShape.getSide(3).getLength()) < .0001) {
+            return true;
+        }
+    }
+    if (abs(inputShape.getSide(1).getLength() - inputShape.getSide(2).getLength()) < .0001) {
+        if (abs(inputShape.getSide(3).getLength() - inputShape.getSide(0).getLength()) < .0001) {
+            return true;
+        }
+    }
+    return false;
+}
+
+//is defining Kites, and other generic quadrilaterals too...
 bool isTrapezoid(const Shape& inputShape) {
+//    if (abs(inputShape.getSlopeofSide(0) - inputShape.getSlopeofSide(2)) < .0001) {
+//        if (abs(inputShape.getSlopeofSide(1) - inputShape.getSlopeofSide(3)) < .0001) {
+//            std::cout << "Rea" << std::endl;
+//            return false;
+//        }
+//    }
+//    if (abs(inputShape.getSlopeofSide(1) - inputShape.getSlopeofSide(3)) < .0001) {
+//        if (abs(inputShape.getSlopeofSide(0) - inputShape.getSlopeofSide(2)) < .0001) {
+//            std::cout << "Rea" << std::endl;
+//            return false;
+//        }
+//    }
+    
     if (abs(inputShape.getSlopeofSide(0) - inputShape.getSlopeofSide(2)) < .0001) {
-        if (abs(inputShape.getSlopeofSide(1) - inputShape.getSlopeofSide(3)) < .0001) {
-            std::cout << "Rea" << std::endl;
-            return false;
+        if (abs(inputShape.getSlopeofSide(1) - inputShape.getSlopeofSide(3)) > .0001) {
+            return true;
         }
     }
     if (abs(inputShape.getSlopeofSide(1) - inputShape.getSlopeofSide(3)) < .0001) {
-        if (abs(inputShape.getSlopeofSide(0) - inputShape.getSlopeofSide(2)) < .0001) {
-            std::cout << "Rea" << std::endl;
-            return false;
+        if (abs(inputShape.getSlopeofSide(0) - inputShape.getSlopeofSide(2)) > .0001) {
+            return true;
         }
     }
+
     
-    return true;
+    return false;
 }
 
 
 //****************************************************************************************************
 //****************************************************************************************************
 
-int main(int argc, const char * argv[]) {
-
+int main(int argc, const char * argv[]) {    
     std::string inputString;
     while(std::getline(std::cin, inputString)) {
         std::stringstream stringStream(inputString);
@@ -209,7 +231,7 @@ int main(int argc, const char * argv[]) {
         
         Shape shape(point1, point2, point3);
         
-        std::string outputString = "something else ...";
+        std::string outputString = "error...";
         if (isParallelogram(shape)) {
             outputString = "parallelogram";
             if (isRhombus(shape)) {
@@ -221,11 +243,16 @@ int main(int argc, const char * argv[]) {
                     outputString = "square";
                 }
             }
+        } else if (isKite(shape)) {
+            outputString = "kite";
         } else if (isTrapezoid(shape)) {
             outputString = "trapezoid";
+        } else {
+            outputString = "quadrilateral";
         }
         std::cout << outputString << std::endl;
     }
 }
+
 
 
