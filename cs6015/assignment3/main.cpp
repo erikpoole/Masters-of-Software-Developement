@@ -13,8 +13,8 @@
 
 class Point{
 private:
-    int x;
-    int y;
+    float x;
+    float y;
     
 public:
     Point() {
@@ -22,13 +22,13 @@ public:
         y = NULL;
     }
     
-    Point(const int& xInput, const int& yInput) {
+    Point(const float& xInput, const float& yInput) {
         x = xInput;
         y = yInput;
     }
     
-    int getX() const {return x;}
-    int getY() const {return y;}
+    float getX() const {return x;}
+    float getY() const {return y;}
 };
 
 class Line{
@@ -43,8 +43,8 @@ public:
     }
     
     Line(const Point& point1, const Point& point2) {
-        xOffset = point1.getX() - point2.getX();
-        yOffset = point1.getY() - point2.getY();
+        xOffset = abs(point1.getX() - point2.getX());
+        yOffset = abs(point1.getY() - point2.getY());
     }
     
     int getXOffset() const {return xOffset;}
@@ -91,10 +91,39 @@ public:
         return Point(middleX, middleY);
     }
     int getDiagonalManhattanDistance(int diagonalNumber) const {
-        return abs(diagonalArr[diagonalNumber].getXOffset()) + abs(diagonalArr[diagonalNumber].getYOffset());
+        return diagonalArr[diagonalNumber].getXOffset() + diagonalArr[diagonalNumber].getYOffset();
     }
     int getSideManhattanDistance(int sideNumber) const {
-        return abs(sideArr[sideNumber].getXOffset()) + abs(sideArr[sideNumber].getYOffset());
+        return sideArr[sideNumber].getXOffset() + sideArr[sideNumber].getYOffset();
+    }
+    
+    double getSlopeofSide(int sideNumber) const {
+        //avoids division by zero error because doubles aren't precise, but check just to make sure
+        if (sideArr[sideNumber].getXOffset() == 0 || sideArr[sideNumber].getYOffset() == 0) {
+            return 0;
+        }
+        
+        double slope = (double) sideArr[sideNumber].getYOffset() / (double) sideArr[sideNumber].getXOffset();
+        
+        Point point1;
+        Point point2;
+        if (sideNumber == 3) {
+            point1 = pointArr[3];
+            point2 = pointArr[0];
+        } else {
+            point1 = pointArr[sideNumber];
+            point2 = pointArr[sideNumber+1];
+        }
+        
+        if (point1.getX() > point2.getX() && point1.getY() < point2.getY()) {
+            slope *= -1;
+        }
+        
+        if (point1.getX() < point2.getX() && point1.getY() > point2.getY()) {
+            slope *= -1;
+        }
+        
+        return slope;
     }
 };
 
@@ -120,7 +149,7 @@ bool isRectangle(const Shape& inputShape) {
     return false;
 }
 
-//forced to use floats..?
+//forced to use doubles..?
 bool isRhombus(const Shape& inputShape) {
     for (int i = 0; i < 3; i++) {
         if (inputShape.getSide(i).getLength() - inputShape.getSide(i+1).getLength() > .0001) {
@@ -130,7 +159,7 @@ bool isRhombus(const Shape& inputShape) {
     return true;
 }
 
-//assumes isParallelogram == ture
+//assumes isParallelogram == true
 bool isSquare(const Shape& inputShape) {
     for (int i = 0; i < 3; i++) {
         if (inputShape.getSideManhattanDistance(i) != inputShape.getSideManhattanDistance(i+1)) {
@@ -140,24 +169,38 @@ bool isSquare(const Shape& inputShape) {
     return true;
 }
 
+bool isTrapezoid(const Shape& inputShape) {
+    if (abs(inputShape.getSlopeofSide(0) - inputShape.getSlopeofSide(2)) < .0001) {
+        if (abs(inputShape.getSlopeofSide(1) - inputShape.getSlopeofSide(3)) < .0001) {
+            std::cout << "Rea" << std::endl;
+            return false;
+        }
+    }
+    if (abs(inputShape.getSlopeofSide(1) - inputShape.getSlopeofSide(3)) < .0001) {
+        if (abs(inputShape.getSlopeofSide(0) - inputShape.getSlopeofSide(2)) < .0001) {
+            std::cout << "Rea" << std::endl;
+            return false;
+        }
+    }
+    
+    return true;
+}
 
 
 //****************************************************************************************************
 //****************************************************************************************************
 
 int main(int argc, const char * argv[]) {
-    std::cout << "Hello!" << std::endl;
-    
-    while(true) {
-        std::string inputString;
-        std::getline(std::cin, inputString);
+
+    std::string inputString;
+    while(std::getline(std::cin, inputString)) {
         std::stringstream stringStream(inputString);
         
         std::string singleInput;
         int inputValueArray[6];
         int *inputValuePointer = inputValueArray;
         while (std::getline(stringStream, singleInput, ' ')){
-            *inputValuePointer++ = std::stof(singleInput);
+            *inputValuePointer++ = std::stoi(singleInput);
         }
         
         Point point1(inputValueArray[0], inputValueArray[1]);
@@ -165,18 +208,6 @@ int main(int argc, const char * argv[]) {
         Point point3(inputValueArray[4], inputValueArray[5]);
         
         Shape shape(point1, point2, point3);
-        
-        //        std::cout << "Points: " << std::endl;
-        //        std::cout << shape.getPoint(0).getX() << std::endl;
-        //        std::cout << shape.getPoint(0).getY() << std::endl;
-        //        std::cout << shape.getPoint(1).getX() << std::endl;
-        //        std::cout << shape.getPoint(1).getY() << std::endl;
-        //        std::cout << shape.getPoint(2).getX() << std::endl;
-        //        std::cout << shape.getPoint(2).getY() << std::endl;
-        //        std::cout << shape.getPoint(3).getX() << std::endl;
-        //        std::cout << shape.getPoint(3).getY() << std::endl;
-        //
-        //        std::cout << "Sides :" << std::endl;
         
         std::string outputString = "something else ...";
         if (isParallelogram(shape)) {
@@ -190,7 +221,8 @@ int main(int argc, const char * argv[]) {
                     outputString = "square";
                 }
             }
-
+        } else if (isTrapezoid(shape)) {
+            outputString = "trapezoid";
         }
         std::cout << outputString << std::endl;
     }
