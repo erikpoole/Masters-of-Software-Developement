@@ -9,6 +9,8 @@
 #include <iostream>
 #include <sstream>
 
+#include <cmath>
+
 class Point{
 private:
     int x;
@@ -47,6 +49,10 @@ public:
     
     int getXOffset() const {return xOffset;}
     int getYOffset() const {return yOffset;}
+    
+    double getLength() {
+        return sqrt((double) xOffset*xOffset + (double) yOffset*yOffset);
+    }
 };
 
 
@@ -114,6 +120,16 @@ bool isRectangle(const Shape& inputShape) {
     return false;
 }
 
+//forced to use floats..?
+bool isRhombus(const Shape& inputShape) {
+    for (int i = 0; i < 3; i++) {
+        if (inputShape.getSide(i).getLength() - inputShape.getSide(i+1).getLength() > .0001) {
+            return false;
+        }
+    }
+    return true;
+}
+
 //assumes isParallelogram == ture
 bool isSquare(const Shape& inputShape) {
     for (int i = 0; i < 3; i++) {
@@ -123,6 +139,7 @@ bool isSquare(const Shape& inputShape) {
     }
     return true;
 }
+
 
 
 //****************************************************************************************************
@@ -164,6 +181,9 @@ int main(int argc, const char * argv[]) {
         std::string outputString = "something else ...";
         if (isParallelogram(shape)) {
             outputString = "parallelogram";
+            if (isRhombus(shape)) {
+                outputString = "rhombus";
+            }
             if (isRectangle(shape)) {
                 outputString = "rectangle";
                 if (isSquare(shape)) {
