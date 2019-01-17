@@ -84,6 +84,9 @@ public:
         float middleY = (float) (pointArr[diagonalNumber].getY() + pointArr[diagonalNumber+2].getY()) / 2;
         return Point(middleX, middleY);
     }
+    int getDiagonalManhattanDistance(int diagonalNumber) const {
+        return abs(diagonalArr[diagonalNumber].getXOffset()) + abs(diagonalArr[diagonalNumber].getYOffset());
+    }
 };
 
 
@@ -100,18 +103,13 @@ bool isParallelogram(const Shape& inputShape) {
     return false;
 }
 
-////assumes isParallelogram == true
-//bool isRectangle(const Shape& inputShape) {
-//    float Diagonal1CenterX = (float) (inputShape.getPoint(0).getX() + inputShape.getPoint(2).getX())/2;
-//    float Diagonal1CenterY = (float) (inputShape.getPoint(0).getY() + inputShape.getPoint(2).getY())/2;
-//    float Diagonal2CenterX = (float) (inputShape.getPoint(1).getX() + inputShape.getPoint(3).getX())/2;
-//    float Diagonal2CenterY = (float) (inputShape.getPoint(1).getY() + inputShape.getPoint(3).getY())/2;
-//
-//    if(Diagonal1CenterX == Diagonal2CenterX && Diagonal1CenterY == Diagonal2CenterY) {
-//        return true;
-//    }
-//    return false;
-//}
+//assumes isParallelogram == true
+bool isRectangle(const Shape& inputShape) {
+    if (inputShape.getDiagonalManhattanDistance(0) == inputShape.getDiagonalManhattanDistance(1)) {
+        return true;
+    }
+    return false;
+}
 
 
 //****************************************************************************************************
@@ -153,10 +151,9 @@ int main(int argc, const char * argv[]) {
         std::string outputString = "something else ...";
         if (isParallelogram(shape)) {
             outputString = "parallelogram";
-            
-//            if (isRectangle(shape)) {
-//                outputString = "rectangle";
-//            }
+            if (isRectangle(shape)) {
+                outputString = "rectangle";
+            }
         }
         std::cout << outputString << std::endl;
     }

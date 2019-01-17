@@ -1,0 +1,14 @@
+Square
+Square
+Rectangle
+Rectangle
+Trapezoid
+Trapezoid
+Kite
+Kite 
+Parallelogram
+Parallelogram 
+Rhombus
+Rhombus
+
+//unsure
