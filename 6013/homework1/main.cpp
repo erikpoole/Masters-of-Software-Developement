@@ -10,8 +10,13 @@
 
 extern "C" {
     void sayHello();
+    void myPuts(const char* inputString, int inputLength);
 }
 
 int main(int argc, const char * argv[]) {
     sayHello();
+    myPuts("poop", 4);
+
+
+
 }

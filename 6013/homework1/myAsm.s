@@ -6,16 +6,31 @@
 ;  Copyright © 2019 ErikPoole. All rights reserved.
 ;
 
-    global  _sayHello
-    extern _puts
+;first argument - rdi,
+;second argument - rsi,
+;third argument - rdx,
 
-    section .text
+
+global  _sayHello
+extern _puts
+extern _myPuts
+
+section .text
 _sayHello:
     push rbp
-    mov rsp, rbp
+    mov rbp, rsp
     mov rdi, helloString
     call _puts
-    leave
+    pop rbp
+    ret
+
+
+_myPuts:
+    mov rax, 0x2000004
+    mov rdx, rsi
+    mov rsi, rdi
+    mov rdi, 1
+    syscall
     ret
 
 section .rodata
