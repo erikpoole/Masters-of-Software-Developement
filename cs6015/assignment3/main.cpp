@@ -87,6 +87,9 @@ public:
     int getDiagonalManhattanDistance(int diagonalNumber) const {
         return abs(diagonalArr[diagonalNumber].getXOffset()) + abs(diagonalArr[diagonalNumber].getYOffset());
     }
+    int getSideManhattanDistance(int sideNumber) const {
+        return abs(sideArr[sideNumber].getXOffset()) + abs(sideArr[sideNumber].getYOffset());
+    }
 };
 
 
@@ -109,6 +112,16 @@ bool isRectangle(const Shape& inputShape) {
         return true;
     }
     return false;
+}
+
+//assumes isParallelogram == ture
+bool isSquare(const Shape& inputShape) {
+    for (int i = 0; i < 3; i++) {
+        if (inputShape.getSideManhattanDistance(i) != inputShape.getSideManhattanDistance(i+1)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 
@@ -153,7 +166,11 @@ int main(int argc, const char * argv[]) {
             outputString = "parallelogram";
             if (isRectangle(shape)) {
                 outputString = "rectangle";
+                if (isSquare(shape)) {
+                    outputString = "square";
+                }
             }
+
         }
         std::cout << outputString << std::endl;
     }
