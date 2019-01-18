@@ -7,16 +7,23 @@
 //
 
 #include <iostream>
+#include <sys/time.h>
 
 extern "C" {
     void sayHello();
     void myPuts(const char* inputString, int inputLength);
+    timeval myGTOD();
 }
 
 int main(int argc, const char * argv[]) {
     sayHello();
     myPuts("poop", 4);
-
-
-
+    
+    timeval myTime;
+    timeval theirTime;
+    
+    myTime = myGTOD();
+    gettimeofday(&theirTime, NULL);
+    
+    std::cout << myTime.tv_sec - theirTime.tv_sec << std::endl;
 }
