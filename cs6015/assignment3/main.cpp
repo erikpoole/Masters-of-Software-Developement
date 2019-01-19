@@ -8,7 +8,6 @@
 
 #include <iostream>
 #include <sstream>
-
 #include <cmath>
 
 class Point{
@@ -109,33 +108,45 @@ public:
     
 };
 
+//****************************************************************************************************
+//****************************************************************************************************
+
+
+bool areEquivalent(double double1, double double2) {
+    return abs(double1 - double2) < .0001;
+}
 
 //****************************************************************************************************
 //****************************************************************************************************
+
 
 bool isParallelogram(const Shape& inputShape) {
-    if (abs(inputShape.getSide(0).getSlope() - inputShape.getSide(2).getSlope()) < .0001) {
-        if (abs(inputShape.getSide(1).getSlope() - inputShape.getSide(3).getSlope()) < .0001) {
+    if (areEquivalent(inputShape.getSide(0).getSlope(), inputShape.getSide(2).getSlope())) {
+        if (areEquivalent(inputShape.getSide(1).getSlope(), inputShape.getSide(3).getSlope())) {
             return true;
         }
     }
     return false;
 }
 
-//assumes isParallelogram == true
 bool isRectangle(const Shape& inputShape) {
-    if (abs(inputShape.getDiagonal(0).getLength() - inputShape.getDiagonal(1).getLength()) < .0001) {
-        return true;
+    if (isParallelogram(inputShape)) {
+        if (areEquivalent(inputShape.getDiagonal(0).getLength(), inputShape.getDiagonal(1).getLength())) {
+            return true;
+        }
     }
     return false;
 }
 
 bool isRhombus(const Shape& inputShape) {
+    if (!isParallelogram(inputShape)) {
+        return false;
+    }
     for (int i = 0; i < 3; i++) {
-        if (abs(inputShape.getSide(i).getLength() - inputShape.getSide(i+1).getLength()) > .0001) {
+        if (!areEquivalent(inputShape.getSide(i).getLength(), inputShape.getSide(i+1).getLength())) {
             return false;
         }
-        if (abs(inputShape.getSide(0).getLength() - inputShape.getSide(3).getLength()) > .0001) {
+        if (!areEquivalent(inputShape.getSide(0).getLength(), inputShape.getSide(3).getLength())) {
             return false;
         }
     }
@@ -147,37 +158,36 @@ bool isSquare(const Shape& inputShape) {
 }
 
 bool isKite(const Shape& inputShape) {
-    if (abs(inputShape.getSide(0).getLength() -  inputShape.getSide(1).getLength()) < .0001) {
-        if (abs(inputShape.getSide(2).getLength() - inputShape.getSide(3).getLength()) < .0001) {
+    if (areEquivalent(inputShape.getSide(0).getLength(), inputShape.getSide(1).getLength())) {
+        if (areEquivalent(inputShape.getSide(2).getLength(), inputShape.getSide(3).getLength())) {
             return true;
         }
     }
-    if (abs(inputShape.getSide(1).getLength() - inputShape.getSide(2).getLength()) < .0001) {
-        if (abs(inputShape.getSide(3).getLength() - inputShape.getSide(0).getLength()) < .0001) {
+    if (areEquivalent(inputShape.getSide(1).getLength(), inputShape.getSide(2).getLength())) {
+        if (areEquivalent(inputShape.getSide(3).getLength(), inputShape.getSide(0).getLength())) {
             return true;
         }
     }
     return false;
 }
 
-//is defining Kites, and other generic quadrilaterals too...
 bool isTrapezoid(const Shape& inputShape) {
-    if (abs(inputShape.getSide(0).getSlope() - inputShape.getSide(2).getSlope()) < .0001) {
-        if (abs(inputShape.getSide(1).getSlope() - inputShape.getSide(3).getSlope()) > .0001) {
+    if (areEquivalent(inputShape.getSide(0).getSlope(), inputShape.getSide(2).getSlope())) {
+        if (!areEquivalent(inputShape.getSide(1).getSlope(), inputShape.getSide(3).getSlope())) {
             return true;
         }
     }
-    if (abs(inputShape.getSide(1).getSlope() - inputShape.getSide(3).getSlope()) < .0001) {
-        if (abs(inputShape.getSide(0).getSlope() - inputShape.getSide(2).getSlope()) > .0001) {
+    if (areEquivalent(inputShape.getSide(1).getSlope(), inputShape.getSide(3).getSlope())) {
+        if (!areEquivalent(inputShape.getSide(0).getSlope(), inputShape.getSide(2).getSlope())) {
             return true;
         }
     }
     return false;
 }
 
+//****************************************************************************************************
+//****************************************************************************************************
 
-//****************************************************************************************************
-//****************************************************************************************************
 
 int main(int argc, const char * argv[]) {
     std::string inputString;
@@ -194,21 +204,17 @@ int main(int argc, const char * argv[]) {
         Point point1(inputValueArray[0], inputValueArray[1]);
         Point point2(inputValueArray[2], inputValueArray[3]);
         Point point3(inputValueArray[4], inputValueArray[5]);
-        
         Shape shape(point1, point2, point3);
         
-        std::string outputString = "error...";
-        if (isParallelogram(shape)) {
+        std::string outputString;
+        if (isSquare(shape)) {
+            outputString = "square";
+        } else if (isRhombus(shape)) {
+            outputString = "rhombus";
+        } else if (isRectangle(shape)) {
+            outputString = "rectangle";
+        } else if (isParallelogram(shape)) {
             outputString = "parallelogram";
-            if (isRhombus(shape)) {
-                outputString = "rhombus";
-            }
-            if (isRectangle(shape)) {
-                outputString = "rectangle";
-                if (isSquare(shape)) {
-                    outputString = "square";
-                }
-            }
         } else if (isKite(shape)) {
             outputString = "kite";
         } else if (isTrapezoid(shape)) {
@@ -219,7 +225,3 @@ int main(int argc, const char * argv[]) {
         std::cout << outputString << std::endl;
     }
 }
-
-
-
-
