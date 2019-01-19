@@ -1,36 +1,26 @@
-Square
-Square
-Rectangle
-Rectangle
-Trapezoid
-Trapezoid
-Kite
-Kite 
-Parallelogram
-Parallelogram 
-Rhombus
-Rhombus
-
-//unsure
-Order: square
+square
+square
 rectangle
-rhombi
+rectangle
+trapezoid
+trapezoid
+kite
+kite
+parallelogram
+parallelogram
+rhombus
+rhombus
+square
+rectangle
+rhombus
 parallelogram
 trapezoid
 kite
 quadrilateral
-
-4 0 4 4 0 4
-10 0 10 5 0 5
-3 4 0 8 -3 4
-4 0 6 2 2 2
-10 0 8 5 2 5
-10 -4 12 0 10 4
-10 84 25 3 4 8
--4 0 -4 -4 0 -4
--10 0 -10 -5 0 -5
--3 -4 0 -8 3 -4
--4 0 -6 -2 -2 -2
--10 0 -8 -5 -2 -5
--10 4 -12 0 -10 -4
--10 -84 -25 -3 -4 -8
+square
+rectangle
+rhombus
+parallelogram
+trapezoid
+kite
+quadrilateral

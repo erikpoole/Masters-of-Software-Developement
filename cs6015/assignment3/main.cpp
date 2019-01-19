@@ -29,25 +29,51 @@ public:
     float getY() const {return y;}
 };
 
+
 class Line{
 private:
     int xOffset;
     int yOffset;
+    Point pointArr[2];
     
 public:
     Line() {
     }
     
     Line(const Point& point1, const Point& point2) {
+        pointArr[0] = point1;
+        pointArr[1] = point2;
         xOffset = abs(point1.getX() - point2.getX());
         yOffset = abs(point1.getY() - point2.getY());
+        
     }
     
+    Point getPoint(const int& pointNumber) const {return pointArr[pointNumber];}
     int getXOffset() const {return xOffset;}
     int getYOffset() const {return yOffset;}
     
     double getLength() {
         return sqrt((double) xOffset*xOffset + (double) yOffset*yOffset);
+    }
+    
+    double getSlope() {
+        //handles 0 slope without division
+        if (yOffset == 0) {
+            return 0;
+        }
+        //handles infinite slope without division
+        if(xOffset == 0) {
+            return INT_MAX;
+        }
+        
+        double slope = (double) yOffset / (double) xOffset;
+        if (pointArr[0].getX() > pointArr[1].getX() && pointArr[0].getY() < pointArr[1].getY()) {
+            slope *= -1;
+        }
+        if (pointArr[0].getX() < pointArr[1].getX() && pointArr[0].getY() > pointArr[1].getY()) {
+            slope *= -1;
+        }
+        return slope;
     }
 };
 
@@ -79,48 +105,8 @@ public:
     
     Point getPoint(const int& pointNumber) const {return pointArr[pointNumber];}
     Line getSide(const int& sideNumber) const {return sideArr[sideNumber];}
-    
     Line getDiagonal(int diagonalNumber) const {return diagonalArr[diagonalNumber];}
-    Point getDiagonalCenter(int diagonalNumber) const {
-        float middleX = (float) (pointArr[diagonalNumber].getX() + pointArr[diagonalNumber+2].getX()) / 2;
-        float middleY = (float) (pointArr[diagonalNumber].getY() + pointArr[diagonalNumber+2].getY()) / 2;
-        return Point(middleX, middleY);
-    }
-    int getDiagonalManhattanDistance(int diagonalNumber) const {
-        return diagonalArr[diagonalNumber].getXOffset() + diagonalArr[diagonalNumber].getYOffset();
-    }
-    int getSideManhattanDistance(int sideNumber) const {
-        return sideArr[sideNumber].getXOffset() + sideArr[sideNumber].getYOffset();
-    }
     
-    double getSlopeofSide(int sideNumber) const {
-        //avoids division by zero error because doubles aren't precise, but check just to make sure
-        if (sideArr[sideNumber].getXOffset() == 0 || sideArr[sideNumber].getYOffset() == 0) {
-            return 0;
-        }
-        
-        double slope = (double) sideArr[sideNumber].getYOffset() / (double) sideArr[sideNumber].getXOffset();
-        
-        Point point1;
-        Point point2;
-        if (sideNumber == 3) {
-            point1 = pointArr[3];
-            point2 = pointArr[0];
-        } else {
-            point1 = pointArr[sideNumber];
-            point2 = pointArr[sideNumber+1];
-        }
-        
-        if (point1.getX() > point2.getX() && point1.getY() < point2.getY()) {
-            slope *= -1;
-        }
-        
-        if (point1.getX() < point2.getX() && point1.getY() > point2.getY()) {
-            slope *= -1;
-        }
-        
-        return slope;
-    }
 };
 
 
@@ -128,9 +114,8 @@ public:
 //****************************************************************************************************
 
 bool isParallelogram(const Shape& inputShape) {
-    //overload '==' to make more readable
-    if (inputShape.getDiagonalCenter(0).getX() == inputShape.getDiagonalCenter(1).getX()) {
-        if (inputShape.getDiagonalCenter(0).getY() == inputShape.getDiagonalCenter(1).getY()) {
+    if (abs(inputShape.getSide(0).getSlope() - inputShape.getSide(2).getSlope()) < .0001) {
+        if (abs(inputShape.getSide(1).getSlope() - inputShape.getSide(3).getSlope()) < .0001) {
             return true;
         }
     }
@@ -139,30 +124,26 @@ bool isParallelogram(const Shape& inputShape) {
 
 //assumes isParallelogram == true
 bool isRectangle(const Shape& inputShape) {
-    if (inputShape.getDiagonalManhattanDistance(0) == inputShape.getDiagonalManhattanDistance(1)) {
+    if (abs(inputShape.getDiagonal(0).getLength() - inputShape.getDiagonal(1).getLength()) < .0001) {
         return true;
     }
     return false;
 }
 
-//forced to use doubles..?
 bool isRhombus(const Shape& inputShape) {
     for (int i = 0; i < 3; i++) {
-        if (inputShape.getSide(i).getLength() - inputShape.getSide(i+1).getLength() > .0001) {
+        if (abs(inputShape.getSide(i).getLength() - inputShape.getSide(i+1).getLength()) > .0001) {
+            return false;
+        }
+        if (abs(inputShape.getSide(0).getLength() - inputShape.getSide(3).getLength()) > .0001) {
             return false;
         }
     }
     return true;
 }
 
-//assumes isParallelogram == true
 bool isSquare(const Shape& inputShape) {
-    for (int i = 0; i < 3; i++) {
-        if (inputShape.getSideManhattanDistance(i) != inputShape.getSideManhattanDistance(i+1)) {
-            return false;
-        }
-    }
-    return true;
+    return isRhombus(inputShape) && isRectangle(inputShape);
 }
 
 bool isKite(const Shape& inputShape) {
@@ -181,31 +162,16 @@ bool isKite(const Shape& inputShape) {
 
 //is defining Kites, and other generic quadrilaterals too...
 bool isTrapezoid(const Shape& inputShape) {
-//    if (abs(inputShape.getSlopeofSide(0) - inputShape.getSlopeofSide(2)) < .0001) {
-//        if (abs(inputShape.getSlopeofSide(1) - inputShape.getSlopeofSide(3)) < .0001) {
-//            std::cout << "Rea" << std::endl;
-//            return false;
-//        }
-//    }
-//    if (abs(inputShape.getSlopeofSide(1) - inputShape.getSlopeofSide(3)) < .0001) {
-//        if (abs(inputShape.getSlopeofSide(0) - inputShape.getSlopeofSide(2)) < .0001) {
-//            std::cout << "Rea" << std::endl;
-//            return false;
-//        }
-//    }
-    
-    if (abs(inputShape.getSlopeofSide(0) - inputShape.getSlopeofSide(2)) < .0001) {
-        if (abs(inputShape.getSlopeofSide(1) - inputShape.getSlopeofSide(3)) > .0001) {
+    if (abs(inputShape.getSide(0).getSlope() - inputShape.getSide(2).getSlope()) < .0001) {
+        if (abs(inputShape.getSide(1).getSlope() - inputShape.getSide(3).getSlope()) > .0001) {
             return true;
         }
     }
-    if (abs(inputShape.getSlopeofSide(1) - inputShape.getSlopeofSide(3)) < .0001) {
-        if (abs(inputShape.getSlopeofSide(0) - inputShape.getSlopeofSide(2)) > .0001) {
+    if (abs(inputShape.getSide(1).getSlope() - inputShape.getSide(3).getSlope()) < .0001) {
+        if (abs(inputShape.getSide(0).getSlope() - inputShape.getSide(2).getSlope()) > .0001) {
             return true;
         }
     }
-
-    
     return false;
 }
 
@@ -213,7 +179,7 @@ bool isTrapezoid(const Shape& inputShape) {
 //****************************************************************************************************
 //****************************************************************************************************
 
-int main(int argc, const char * argv[]) {    
+int main(int argc, const char * argv[]) {
     std::string inputString;
     while(std::getline(std::cin, inputString)) {
         std::stringstream stringStream(inputString);
@@ -253,6 +219,7 @@ int main(int argc, const char * argv[]) {
         std::cout << outputString << std::endl;
     }
 }
+
 
 
 
