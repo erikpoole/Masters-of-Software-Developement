@@ -22,6 +22,7 @@ public class Main {
 			
 			ByteArrayInputStream inStream = new ByteArrayInputStream(inPacket.getData());
 			DNSHeader.decodeHeader(inStream);
+			DNSQuestion.decodeQuestion(inStream);
 			
 
 		}

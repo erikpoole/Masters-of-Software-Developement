@@ -25,10 +25,15 @@ public class DNSHeader {
 		
 	}
 	
+	@Override
 	public String toString() {
-		return null;
+		return "DNSHeader [id=" + id + ", qr=" + qr + ", opcode=" + opcode + ", aa=" + aa + ", tc=" + tc + ", rd=" + rd
+				+ ", ra=" + ra + ", z=" + z + ", ad=" + ad + ", cd=" + cd + ", rcode=" + rcode + ", qdcount=" + qdcount
+				+ ", ancount=" + ancount + ", nscount=" + nscount + ", arcount=" + arcount + "]";
 	}
-	
+
+
+
 	//most significant bit on left
 	//byte to int is causing promotion problems
 	public static DNSHeader decodeHeader(final ByteArrayInputStream inStream) throws IOException {
