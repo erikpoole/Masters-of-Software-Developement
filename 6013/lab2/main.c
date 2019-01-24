@@ -14,22 +14,6 @@
 
 
 int main(int argc, const char * argv[]) {
-    /*
-     int fds[2]
-     
-     Pipe(fds)
-     
-     int secret = 0xBEEF
-     
-     Write(fds[1], &secret, sizeof(secret))
-     
-     int received;
-     
-     Read(fds[0], &received, sizeof(received));
-     
-     assert(received == 0xBeef);
-*/
-    
     int fds[2];
     
     if (pipe(fds) == -1) {
