@@ -57,6 +57,7 @@ int main(int argc, const char * argv[]) {
         //wait is returning an interrupted system call error - unsure why...?
 //        if (wait(NULL) == -1) {
 //            perror("Wait Error!");
+//            exit(1)
 //        }
     printf("Parent\n");
     }
