@@ -10,6 +10,7 @@
 #include<stdlib.h>
 #include<unistd.h>
 #include<sys/wait.h>
+#include<errno.h>
 #include<string.h>
 
 
@@ -17,32 +18,34 @@ int main(int argc, const char * argv[]) {
     int fds[2];
     
     if (pipe(fds) == -1) {
-        perror("Piping Error!");
+        perror("Piping Error!\n");
         exit(1);
     }
     
     pid_t id = fork();
     if (id < 0) {
-        perror("Forking Error!");
+        perror("Forking Error!\n");
         exit(1);
     } else if (id == 0) {
-        printf("Child\n");
+        printf("Child %d\n", getpid());
         long size;
         read(fds[0], &size, sizeof(size));
-        char output[sizeof(size)];
+        char output[size+1];
         read(fds[0], output, size);
         printf("%s\n", output);
-        exit(0);
+        exit(1);
     } else {
         long size = strlen(argv[1]);
         write(fds[1], &size, sizeof(size));
         write(fds[1], argv[1], size);
-        wait(NULL);
-        //wait is returning an interrupted system call error - unsure why...?
-//        if (wait(NULL) == -1) {
-//            perror("Wait Error!");
-//            exit(1)
-//        }
-    printf("Parent\n");
+        int result;
+        do {
+            result = wait(NULL);
+            if(result < 0 && errno != EINTR) {
+                printf("Wait Error!\n");
+            }
+        } while (result < 0);
+        
+    printf("Parent %d\n", getpid());
     }
 }
