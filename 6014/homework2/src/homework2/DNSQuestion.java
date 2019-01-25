@@ -5,12 +5,29 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Vector;
 
+
+/* 
+This class represents a client request. It should have the following public methods:
+
+static DNSQuestion decodeQuestion(InputStream, DNSMessage) -- 
+read a question from the input stream. 
+Due to compression, the parent may actually needed to read some of the fields.
+
+void writeBytes(ByteArrayOutputStream, HashMap<String,Integer> domainNameLocations) -- 
+Write the question bytes which will be sent to the client. 
+The hash map is used for us to compess the message, see the DNSMessage class below.
+
+toString(), equals(), and hashCode() -- 
+Let your IDE generate these. 
+They're needed to use a question as a HashMap key, and to get a human readable string.
+ */
+
 public class DNSQuestion {
 	private Vector<String> labels = new Vector<>();
 	//has character zero, not byte zero at end, maybe problematic
-	private String qName = "";
-	private int qType = 0;
-	private int qClass = 0;
+	private String qName;
+	private int qType;
+	private int qClass;
 
 	//, DNSMessage inputMessage
 	static DNSQuestion decodeQuestion(ByteArrayInputStream inStream) {
@@ -19,6 +36,7 @@ public class DNSQuestion {
 		while (true) {
 			Byte labelSize = (byte) inStream.read();
 			if (labelSize == 0) {
+				question.labels.add(labelSize.toString());
 				break;
 			}
 			String label = "";
@@ -28,10 +46,10 @@ public class DNSQuestion {
 			question.labels.add(label);	
 		}
 		
+		question.qName = "";
 		for(String label : question.labels) {
 			question.qName += label;
 		}
-		question.qName += 00;
 		
 		
 		question.qType |= inStream.read() << 8;
@@ -40,9 +58,9 @@ public class DNSQuestion {
 		question.qClass |= inStream.read() << 8;
 		question.qClass |= inStream.read();
 		
-		System.out.println(question.qName);
-		System.out.println(question.qType);
-		System.err.println(question.qClass);
+//		System.out.println(question.qName);
+//		System.out.println(question.qType);
+//		System.out.println(question.qClass);
 		
 		return question;
 	}

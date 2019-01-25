@@ -2,27 +2,18 @@ package homework2;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 
 public class Main {
 
 	public static void main(String[] args) throws IOException {
-		
-		System.out.println("Listening...");
-		DatagramSocket server = new DatagramSocket(8053);
+		DNSServer server = new DNSServer();
 		
 		while (true) {
+			ByteArrayInputStream packetStream = server.Listen();
 			
-			byte[] inputBuffer = new byte[1024];
-			
-
-			DatagramPacket inPacket = new DatagramPacket(inputBuffer, inputBuffer.length);
-			server.receive(inPacket);
-			
-			ByteArrayInputStream inStream = new ByteArrayInputStream(inPacket.getData());
-			DNSHeader.decodeHeader(inStream);
-			DNSQuestion.decodeQuestion(inStream);
+			DNSHeader.decodeHeader(packetStream);
+			DNSQuestion.decodeQuestion(packetStream);
+			DNSRecord.decodeRecord(packetStream);
 			
 
 		}
