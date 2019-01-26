@@ -106,10 +106,10 @@ public class DNSHeader {
 //		System.out.println("3: " + Integer.toBinaryString(header.ad));
 //		System.out.println("3: " + Integer.toBinaryString(header.cd));
 //		System.out.println("3: " + Integer.toBinaryString(header.rcode));
-//		System.out.println("4 & 5: " + Integer.toBinaryString(header.qdcount));
-//		System.out.println("6 & 7: " + Integer.toBinaryString(header.ancount));
-//		System.out.println("8 & 9: " + Integer.toBinaryString(header.nscount));
-//		System.out.println("10 & 11: " + Integer.toBinaryString(header.arcount));
+//		System.out.println("4 & 5: " + Integer.toBinaryString(header.qdCount));
+//		System.out.println("6 & 7: " + Integer.toBinaryString(header.anCount));
+//		System.out.println("8 & 9: " + Integer.toBinaryString(header.nsCount));
+//		System.out.println("10 & 11: " + Integer.toBinaryString(header.arCount));
 		
 		
 		return header;

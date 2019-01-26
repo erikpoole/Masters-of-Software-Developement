@@ -1,6 +1,5 @@
 package homework2;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 public class Main {
@@ -9,11 +8,10 @@ public class Main {
 		DNSServer server = new DNSServer();
 		
 		while (true) {
-			ByteArrayInputStream packetStream = server.Listen();
+			byte[] messageBytes = server.Listen();
+			DNSMessage.decodeMessage(messageBytes);
 			
-			DNSHeader.decodeHeader(packetStream);
-			DNSQuestion.decodeQuestion(packetStream);
-			DNSRecord.decodeRecord(packetStream);
+
 			
 
 		}

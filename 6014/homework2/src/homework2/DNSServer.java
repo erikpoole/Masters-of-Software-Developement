@@ -25,14 +25,18 @@ public class DNSServer {
 		mySocket = new DatagramSocket(8053);
 	}
 
-	public ByteArrayInputStream Listen() throws IOException {
+	public byte[] Listen() throws IOException {
 		System.out.println("Listening...");
 		
 		byte[] inputBuffer = new byte[1024];
-
 		DatagramPacket inPacket = new DatagramPacket(inputBuffer, inputBuffer.length);
 		mySocket.receive(inPacket);
+		
+		byte [] packetBytes = new byte[inPacket.getLength()];
+		for (int i = 0; i < packetBytes.length; i++) {
+			packetBytes[i] = inputBuffer[i]; 
+		}
 
-		return new ByteArrayInputStream(inPacket.getData());
+		return packetBytes;
 	}
 }

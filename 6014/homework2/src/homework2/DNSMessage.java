@@ -1,5 +1,8 @@
 package homework2;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
 /*
 This corresponds to an entire DNS Message. It should contain:
 
@@ -41,5 +44,24 @@ String toString()
  */
 
 public class DNSMessage {
+	DNSHeader header;
+	DNSQuestion questions[];
+	DNSRecord answers[];
+	DNSRecord authorityRecords[];
+	DNSRecord additionalRecords[];
+	byte byteMessage[];
+	
+	static DNSMessage decodeMessage(byte[] inputBytes) throws IOException {
+		DNSMessage message = new DNSMessage();
+		
+		message.byteMessage = inputBytes;
+		ByteArrayInputStream byteStream = new ByteArrayInputStream(inputBytes);
+		
+		message.header = DNSHeader.decodeHeader(byteStream);
+		DNSQuestion.decodeQuestion(byteStream);
+		DNSRecord.decodeRecord(byteStream);
+		
+		return message;
+	}
 
 }

@@ -24,7 +24,6 @@ They're needed to use a question as a HashMap key, and to get a human readable s
 
 public class DNSQuestion {
 	private Vector<String> labels = new Vector<>();
-	//has character zero, not byte zero at end, maybe problematic
 	private String qName;
 	private int qType;
 	private int qClass;
@@ -58,9 +57,9 @@ public class DNSQuestion {
 		question.qClass |= inStream.read() << 8;
 		question.qClass |= inStream.read();
 		
-//		System.out.println(question.qName);
-//		System.out.println(question.qType);
-//		System.out.println(question.qClass);
+		System.out.println(question.qName);
+		System.out.println(question.qType);
+		System.out.println(question.qClass);
 		
 		return question;
 	}
