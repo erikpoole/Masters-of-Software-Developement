@@ -83,13 +83,14 @@ public class DNSRecord {
 
 		record.deathDate = LocalDate.now().plusDays(7);
 
-		System.out.println(record.name);
-		System.out.println(record.type);
-		System.out.println(record.class0);
-		System.out.println(record.ttl);
-		System.out.println(record.rdLength);
-		System.out.println(record.rData);
-		System.out.println(record.deathDate);
+//		System.out.println("Record:");
+//		System.out.println(record.name);
+//		System.out.println(record.type);
+//		System.out.println(record.class0);
+//		System.out.println(record.ttl);
+//		System.out.println(record.rdLength);
+//		System.out.println(record.rData);
+//		System.out.println(record.deathDate);
 
 		return record;
 	}

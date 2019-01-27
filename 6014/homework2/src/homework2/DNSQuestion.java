@@ -28,6 +28,15 @@ public class DNSQuestion {
 	private int qType;
 	private int qClass;
 
+	
+	public String getqName() {
+		return qName;
+	}
+	
+	void writeBytes(ByteArrayOutputStream outStream, HashMap<String, Integer> domainNameLocations) {
+		
+	}
+	
 	//, DNSMessage inputMessage
 	static DNSQuestion decodeQuestion(ByteArrayInputStream inStream) {
 		DNSQuestion question = new DNSQuestion();
@@ -57,17 +66,12 @@ public class DNSQuestion {
 		question.qClass |= inStream.read() << 8;
 		question.qClass |= inStream.read();
 		
-		System.out.println(question.qName);
-		System.out.println(question.qType);
-		System.out.println(question.qClass);
+//		System.out.println("Question:");
+//		System.out.println(question.qName);
+//		System.out.println(question.qType);
+//		System.out.println(question.qClass);
 		
 		return question;
 	}
-	
-	void writeBytes(ByteArrayOutputStream outStream, HashMap<String, Integer> domainNameLocations) {
 		
-	}
-	
-	
-	
 }

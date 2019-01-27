@@ -44,12 +44,13 @@ String toString()
  */
 
 public class DNSMessage {
+	byte byteMessage[];
 	DNSHeader header;
 	DNSQuestion questions[];
 	DNSRecord answers[];
 	DNSRecord authorityRecords[];
 	DNSRecord additionalRecords[];
-	byte byteMessage[];
+
 	
 	static DNSMessage decodeMessage(byte[] inputBytes) throws IOException {
 		DNSMessage message = new DNSMessage();
@@ -57,9 +58,39 @@ public class DNSMessage {
 		message.byteMessage = inputBytes;
 		ByteArrayInputStream byteStream = new ByteArrayInputStream(inputBytes);
 		
+		System.out.println(byteStream.available());
+		
 		message.header = DNSHeader.decodeHeader(byteStream);
-		DNSQuestion.decodeQuestion(byteStream);
-		DNSRecord.decodeRecord(byteStream);
+		
+		System.out.println(byteStream.available());
+		
+		message.questions = new DNSQuestion[message.header.getQdCount()];
+		for (int i = 0; i < message.questions.length; i++) {
+			message.questions[i] = DNSQuestion.decodeQuestion(byteStream);
+		}
+		
+		System.out.println(byteStream.available());
+		
+		message.answers = new DNSRecord[message.header.getAnCount()];
+		for (int i = 0; i < message.answers.length; i++) {
+			message.answers[i] = DNSRecord.decodeRecord(byteStream);
+		}
+		
+		System.out.println(byteStream.available());
+		
+		message.authorityRecords = new DNSRecord[message.header.getNsCount()];
+		for (int i = 0; i < message.authorityRecords.length; i++) {
+			message.authorityRecords[i] = DNSRecord.decodeRecord(byteStream);
+		}
+		
+		System.out.println(byteStream.available());
+		
+		message.additionalRecords = new DNSRecord[message.header.getArCount()];
+		for (int i = 0; i < message.additionalRecords.length; i++) {
+			message.additionalRecords[i] = DNSRecord.decodeRecord(byteStream);
+		}
+		
+		System.out.println(byteStream.available());
 		
 		return message;
 	}

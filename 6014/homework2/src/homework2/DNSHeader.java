@@ -52,6 +52,22 @@ public class DNSHeader {
 		
 	}
 	
+	public int getQdCount() {
+		return qdCount;
+	}
+	
+	public int getAnCount() {
+		return anCount;
+	}
+	
+	public int getNsCount() {
+		return nsCount;
+	}
+	
+	public int getArCount() {
+		return arCount;
+	}
+	
 	@Override
 	public String toString() {
 		return "DNSHeader [id=" + id + ", qr=" + qr + ", opcode=" + opcode + ", aa=" + aa + ", tc=" + tc + ", rd=" + rd
@@ -94,7 +110,7 @@ public class DNSHeader {
 		header.ad = handleSingleBitField(inBuffer, 3, 2);
 		header.cd = handleSingleBitField(inBuffer, 3, 3);
 		
-//		System.out.println();
+//		System.out.println("Header:");
 //		System.out.println("0 & 1: " + Integer.toBinaryString(header.id));
 //		System.out.println("2: " + Integer.toBinaryString(header.qr));
 //		System.out.println("2: " + Integer.toBinaryString(header.opcode));
@@ -111,10 +127,14 @@ public class DNSHeader {
 //		System.out.println("8 & 9: " + Integer.toBinaryString(header.nsCount));
 //		System.out.println("10 & 11: " + Integer.toBinaryString(header.arCount));
 		
-		
 		return header;
 		
 	}
+	
+	public static DNSHeader buildResponseHeader(DNSMessage request, DNSMessage response) {
+		return null;
+	}
+	
 	
 	private static int handleTwoByteField(final byte[] inBuffer, int firstBytePosition) {
 		int mask = 0xff;
@@ -139,8 +159,6 @@ public class DNSHeader {
 	}
 	
 	
-	public static DNSHeader buildResponseHeader(DNSMessage request, DNSMessage response) {
-		return null;
-	}
+
 
 }

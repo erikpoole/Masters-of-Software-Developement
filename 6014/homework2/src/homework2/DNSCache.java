@@ -13,6 +13,15 @@ When you look up an entry, if it is too old (its TTL has expired), remove it and
 public class DNSCache {
 	private HashMap<DNSQuestion, DNSRecord> map;
 	
+	public DNSCache() {
+		map = new HashMap<>();
+	}
+	
+	
+	public HashMap<DNSQuestion, DNSRecord> getMap() {
+		return map;
+	}
+	
 	public DNSRecord search(DNSQuestion inputQuestion) {
 		//check if entry is old
 		//return Record if in map

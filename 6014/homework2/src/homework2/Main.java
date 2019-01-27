@@ -8,12 +8,7 @@ public class Main {
 		DNSServer server = new DNSServer();
 		
 		while (true) {
-			byte[] messageBytes = server.Listen();
-			DNSMessage.decodeMessage(messageBytes);
-			
-
-			
-
+			server.Listen();
 		}
 	}
 }
