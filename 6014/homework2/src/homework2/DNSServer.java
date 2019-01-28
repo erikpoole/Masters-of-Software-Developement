@@ -1,6 +1,5 @@
 package homework2;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -47,7 +46,6 @@ public class DNSServer {
 				System.out.println("Never asked before!");
 				SendRequestToGoogle(clientMessage);
 				
-				//currently sending client request directly, doesn't seem to work...
 				System.out.println("Waiting for Google Response...");
 				byte[] googleBytes = RecieveMessage(googleSocket);
 				DNSMessage googleMessage = DNSMessage.decodeMessage(googleBytes);
@@ -56,10 +54,9 @@ public class DNSServer {
 		}
 	}
 
-	//google not responding
 	private void SendRequestToGoogle(DNSMessage message) throws UnknownHostException, IOException {
 		InetAddress googleIP = InetAddress.getByName("8.8.8.8");
-		DatagramPacket outpacket = new DatagramPacket(message.byteMessage, 0, googleIP, 8153);
+		DatagramPacket outpacket = new DatagramPacket(message.byteMessage, message.byteMessage.length, googleIP, 53);
 		googleSocket.send(outpacket);
 	}
 

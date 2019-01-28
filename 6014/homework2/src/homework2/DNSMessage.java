@@ -2,6 +2,7 @@ package homework2;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /*
 This corresponds to an entire DNS Message. It should contain:
@@ -66,33 +67,70 @@ public class DNSMessage {
 		
 		message.questions = new DNSQuestion[message.header.getQdCount()];
 		for (int i = 0; i < message.questions.length; i++) {
-			message.questions[i] = DNSQuestion.decodeQuestion(byteStream);
+			message.questions[i] = DNSQuestion.decodeQuestion(byteStream, message);
 		}
 		
 		System.out.println(byteStream.available());
 		
 		message.answers = new DNSRecord[message.header.getAnCount()];
 		for (int i = 0; i < message.answers.length; i++) {
-			message.answers[i] = DNSRecord.decodeRecord(byteStream);
+			message.answers[i] = DNSRecord.decodeRecord(byteStream, message);
 		}
 		
 		System.out.println(byteStream.available());
 		
 		message.authorityRecords = new DNSRecord[message.header.getNsCount()];
 		for (int i = 0; i < message.authorityRecords.length; i++) {
-			message.authorityRecords[i] = DNSRecord.decodeRecord(byteStream);
+			message.authorityRecords[i] = DNSRecord.decodeRecord(byteStream, message);
 		}
 		
 		System.out.println(byteStream.available());
 		
 		message.additionalRecords = new DNSRecord[message.header.getArCount()];
 		for (int i = 0; i < message.additionalRecords.length; i++) {
-			message.additionalRecords[i] = DNSRecord.decodeRecord(byteStream);
+			message.additionalRecords[i] = DNSRecord.decodeRecord(byteStream, message);
 		}
 		
 		System.out.println(byteStream.available());
 		
 		return message;
 	}
+	
+	public String[] readDomainName(ByteArrayInputStream inStream) {
+		ArrayList<String> labels = new ArrayList<>();
+		while (true) {
+			Byte labelSize = (byte) inStream.read();
+			if (labelSize == 0) {
+				labels.add(labelSize.toString());
+				break;
+			}
+			String label = "";
+			for (int i = 0; i < labelSize; i++) {
+				label += (char) inStream.read(); 
+			}
+			labels.add(label);	
+		}
+		
+		return labels.toArray(new String[labels.size()]);
+	}
+	
+//	String[] readDomainName(InputStream) --
+//	read the pieces of a domain name starting from the current position of the input stream
+//
+//	String[] readDomainName(int firstByte) --
+//	same, but used when there's compression and we need to find the domain from earlier in the message. 
+//	This method should make a ByteArrayInputStream that starts at the specified byte and 
+//	call the other version of this method
+	
+	
+	/*
+	 * decodeDomain(int) {
+	return decodeDomain(new byteStream(messageBytes, start, len- start)
+
+decodeDomain(input stream) {
+	int lengthofNext = readByte
+	if (top 2 bits are 1) {
+		check lower six bits to file the compression offset + next byte
+	 */
 
 }

@@ -3,7 +3,6 @@ package homework2;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
-import java.util.Vector;
 
 
 /* 
@@ -23,13 +22,12 @@ They're needed to use a question as a HashMap key, and to get a human readable s
  */
 
 public class DNSQuestion {
-	private Vector<String> labels = new Vector<>();
-	private String qName;
+	private String[] qName;
 	private int qType;
 	private int qClass;
 
 	
-	public String getqName() {
+	public String[] getqName() {
 		return qName;
 	}
 	
@@ -37,28 +35,10 @@ public class DNSQuestion {
 		
 	}
 	
-	//, DNSMessage inputMessage
-	static DNSQuestion decodeQuestion(ByteArrayInputStream inStream) {
+	static DNSQuestion decodeQuestion(ByteArrayInputStream inStream, DNSMessage inMessage) {
 		DNSQuestion question = new DNSQuestion();
 		
-		while (true) {
-			Byte labelSize = (byte) inStream.read();
-			if (labelSize == 0) {
-				question.labels.add(labelSize.toString());
-				break;
-			}
-			String label = "";
-			for (int i = 0; i < labelSize; i++) {
-				label += (char) inStream.read(); 
-			}
-			question.labels.add(label);	
-		}
-		
-		question.qName = "";
-		for(String label : question.labels) {
-			question.qName += label;
-		}
-		
+		question.qName = inMessage.readDomainName(inStream);
 		
 		question.qType |= inStream.read() << 8;
 		question.qType |= inStream.read();

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /*
  * Everything after the header and question parts of the DNS message are stored as records. 
@@ -42,8 +43,7 @@ return whether the creation date + the time to live is after the current time. T
  */
 
 public class DNSRecord {
-	private byte nameBytes[];
-	private int name;
+	private String[] name;
 	private int type;
 	private int class0;
 	private int ttl;
@@ -51,21 +51,12 @@ public class DNSRecord {
 	private int rData;
 	private LocalDate deathDate;
 
-	// DNSMessage as member variable
-	static DNSRecord decodeRecord(ByteArrayInputStream inStream) {
+	static DNSRecord decodeRecord(ByteArrayInputStream inStream, DNSMessage inMessage) {
 		DNSRecord record = new DNSRecord();
 
-		// TODO might be really bad or disfunctional...
-		Byte labelSize = (byte) inStream.read();
-		record.nameBytes = new byte[labelSize + 1];
-
-		for (int i = 0; i < labelSize; i++) {
-			record.nameBytes[i] = (byte) inStream.read();
-		}
-		record.nameBytes[record.nameBytes.length-1] = labelSize;
+		record.name = inMessage.readDomainName(inStream);
 		
 		
-
 		record.type |= inStream.read() << 8;
 		record.type |= inStream.read();
 
