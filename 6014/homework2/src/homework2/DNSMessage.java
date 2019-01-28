@@ -59,39 +59,29 @@ public class DNSMessage {
 		message.byteMessage = inputBytes;
 		ByteArrayInputStream byteStream = new ByteArrayInputStream(inputBytes);
 		
-		System.out.println(byteStream.available());
 		
 		message.header = DNSHeader.decodeHeader(byteStream);
 		
-		System.out.println(byteStream.available());
 		
 		message.questions = new DNSQuestion[message.header.getQdCount()];
 		for (int i = 0; i < message.questions.length; i++) {
 			message.questions[i] = DNSQuestion.decodeQuestion(byteStream, message);
 		}
 		
-		System.out.println(byteStream.available());
-		
 		message.answers = new DNSRecord[message.header.getAnCount()];
 		for (int i = 0; i < message.answers.length; i++) {
 			message.answers[i] = DNSRecord.decodeRecord(byteStream, message);
 		}
-		
-		System.out.println(byteStream.available());
 		
 		message.authorityRecords = new DNSRecord[message.header.getNsCount()];
 		for (int i = 0; i < message.authorityRecords.length; i++) {
 			message.authorityRecords[i] = DNSRecord.decodeRecord(byteStream, message);
 		}
 		
-		System.out.println(byteStream.available());
-		
 		message.additionalRecords = new DNSRecord[message.header.getArCount()];
 		for (int i = 0; i < message.additionalRecords.length; i++) {
 			message.additionalRecords[i] = DNSRecord.decodeRecord(byteStream, message);
 		}
-		
-		System.out.println(byteStream.available());
 		
 		return message;
 	}
@@ -99,9 +89,18 @@ public class DNSMessage {
 	public String[] readDomainName(ByteArrayInputStream inStream) {
 		ArrayList<String> labels = new ArrayList<>();
 		while (true) {
-			Byte labelSize = (byte) inStream.read();
+			byte labelSize = (byte) inStream.read();
+			//handling pointer to domain name
+			if (labelSize < 0) {
+				int mask = 0x3F;
+				labelSize &= mask;
+				labelSize <<= 8;
+				labelSize |= inStream.read();
+				System.out.println(labelSize);
+				return readDomainName(labelSize);
+			}
 			if (labelSize == 0) {
-				labels.add(labelSize.toString());
+				labels.add("0");
 				break;
 			}
 			String label = "";
@@ -112,6 +111,10 @@ public class DNSMessage {
 		}
 		
 		return labels.toArray(new String[labels.size()]);
+	}
+	
+	public String[] readDomainName(int firstByte) {
+		return readDomainName(new ByteArrayInputStream(byteMessage, firstByte, byteMessage.length-firstByte));
 	}
 	
 //	String[] readDomainName(InputStream) --

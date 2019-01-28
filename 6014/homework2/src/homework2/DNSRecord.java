@@ -63,6 +63,9 @@ public class DNSRecord {
 		record.class0 |= inStream.read() << 8;
 		record.class0 |= inStream.read();
 
+		//four bytes
+		record.ttl |= inStream.read() << 24;
+		record.ttl |= inStream.read() << 16;
 		record.ttl |= inStream.read() << 8;
 		record.ttl |= inStream.read();
 
