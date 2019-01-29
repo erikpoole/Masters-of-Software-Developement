@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 /*
-This corresponds to an entire DNS Message. It should contain:
-
+//This corresponds to an entire DNS Message. It should contain:
+//
 //the DNS Header
 //an array of questions
 //an array of answers
@@ -17,9 +17,9 @@ This corresponds to an entire DNS Message. It should contain:
 //an array of "additional records" which we'll almost ignore
 //You should also store the the byte array containing the complete message in this class. 
 //You'll need it to handle the compression technique described above
-
-It should have the following methods:
-
+//
+//It should have the following methods:
+//
 //static DNSMessage decodeMessage(byte[] bytes)
 
 //String[] readDomainName(InputStream) --
@@ -74,6 +74,14 @@ public class DNSMessage {
 	
 	public DNSRecord[] getAnswers() {
 		return answers;
+	}
+	
+	public DNSRecord[] getAuthorityRecords() {
+		return authorityRecords;
+	}
+	
+	public DNSRecord[] getAdditionalRecords() {
+		return additionalRecords;
 	}
 
 	@Override
@@ -157,6 +165,7 @@ public class DNSMessage {
 		
 		return message;
 	}
+	
 		
 	//maybe problematic
 	public static void writeDomainName(ByteArrayOutputStream outStream, HashMap<String,Integer> domainLocations, String[] domainPieces) {
@@ -173,11 +182,14 @@ public class DNSMessage {
 		}
 	}
 	
-	
-//	static DNSMessage buildResponse(DNSMessage request, DNSRecord[] answers) --
-//	build a response based on the request and the answers you intend to send back.
-	
-	public static DNSMessage buildResponse(DNSMessage request, DNSRecord[] answers) {
-		return null;
+	public static DNSMessage buildResponse(DNSMessage inputRequest, DNSRecord[] inputAnswers) {
+		DNSMessage response = new DNSMessage();
+		response.questions = inputRequest.getQuestions();
+		response.answers = inputAnswers;
+		response.authorityRecords = inputRequest.getAuthorityRecords();
+		response.authorityRecords = inputRequest.additionalRecords;
+		response.header = DNSHeader.buildResponseHeader(inputRequest, response);
+		
+		return response;
 	}
 }

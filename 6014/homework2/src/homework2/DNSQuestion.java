@@ -7,19 +7,19 @@ import java.util.HashMap;
 
 
 /* 
-This class represents a client request. It should have the following public methods:
-
-static DNSQuestion decodeQuestion(InputStream, DNSMessage) -- 
-read a question from the input stream. 
-Due to compression, the parent may actually needed to read some of the fields.
-
-void writeBytes(ByteArrayOutputStream, HashMap<String,Integer> domainNameLocations) -- 
-Write the question bytes which will be sent to the client. 
-The hash map is used for us to compess the message, see the DNSMessage class below.
-
-toString(), equals(), and hashCode() -- 
-Let your IDE generate these. 
-They're needed to use a question as a HashMap key, and to get a human readable string.
+//This class represents a client request. It should have the following public methods:
+//
+//static DNSQuestion decodeQuestion(InputStream, DNSMessage) -- 
+//read a question from the input stream. 
+//Due to compression, the parent may actually needed to read some of the fields.
+//
+//void writeBytes(ByteArrayOutputStream, HashMap<String,Integer> domainNameLocations) -- 
+//Write the question bytes which will be sent to the client. 
+//The hash map is used for us to compess the message, see the DNSMessage class below.
+//
+//toString(), equals(), and hashCode() -- 
+//Let your IDE generate these. 
+//They're needed to use a question as a HashMap key, and to get a human readable string.
  */
 
 public class DNSQuestion {

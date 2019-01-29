@@ -2,24 +2,23 @@ package homework2;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashMap;
 
 /*
- * Everything after the header and question parts of the DNS message are stored as records. 
- * This should have all the fields listed in the spec as well as a Date object storing when this record 
- * was created by your program. It should also have the following public methods:
-
-static DNSRecord decodeRecord(InputStream, DNSMessage)
-
-static writeBytes(ByteArrayOutputStream, HashMap<String, Integer>)
-
-String toString()
-
-boolean timestampValid() -- 
-return whether the creation date + the time to live is after the current time. The Date and Calendar classes will be useful for this.
+//Everything after the header and question parts of the DNS message are stored as records. 
+//This should have all the fields listed in the spec as well as a Date object storing when this record was created by your program. 
+//It should also have the following public methods:
+//
+//static DNSRecord decodeRecord(InputStream, DNSMessage)
+//
+//static writeBytes(ByteArrayOutputStream, HashMap<String, Integer>)
+//
+//String toString()
+//
+//boolean timestampValid() -- 
+//return whether the creation date + the time to live is after the current time. The Date and Calendar classes will be useful for this.
 
          0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
