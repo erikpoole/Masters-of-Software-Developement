@@ -1,7 +1,11 @@
 package homework2;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.HashMap;
 
 /*
  * Everything after the header and question parts of the DNS message are stored as records. 
@@ -46,7 +50,15 @@ public class DNSRecord {
 	private int ttl;
 	private int rdLength;
 	private byte rData[];
-	private LocalDate deathDate;
+	private LocalTime creationTime;
+	
+	
+
+	@Override
+	public String toString() {
+		return "DNSRecord [name=" + Arrays.toString(name) + ", type=" + type + ", class0=" + class0 + ", ttl=" + ttl
+				+ ", rdLength=" + rdLength + ", rData=" + Arrays.toString(rData) + ", deathDate=" + creationTime + "]";
+	}
 
 	static DNSRecord decodeRecord(ByteArrayInputStream inStream, DNSMessage inMessage) {
 		DNSRecord record = new DNSRecord();
@@ -73,7 +85,7 @@ public class DNSRecord {
 			record.rData[i] = (byte) inStream.read(); 
 		}
 		
-		record.deathDate = LocalDate.now().plusDays(7);
+		record.creationTime = LocalTime.now();
 
 //		System.out.println("Record:");
 //		System.out.println(record.name);
@@ -86,9 +98,46 @@ public class DNSRecord {
 
 		return record;
 	}
+	
+	private void writeBytes(ByteArrayOutputStream outStream, HashMap<String, Integer> domainNameLocations) {
+		DNSMessage.writeDomainName(outStream, domainNameLocations, name);
+		
+		int typeWorking = type;
+		byte secondByte = (byte) typeWorking;
+		typeWorking >>= typeWorking;
+		byte firstByte = (byte) typeWorking;
+		outStream.write(firstByte);
+		outStream.write(secondByte);
+		
+		int classWorking = class0;
+		secondByte = (byte) classWorking;
+		classWorking >>= classWorking;
+		firstByte = (byte) classWorking;
+		outStream.write(firstByte);
+		outStream.write(secondByte);
+		
+		int ttlWorking = ttl;
+		secondByte = (byte) ttlWorking;
+		ttlWorking >>= ttlWorking;
+		firstByte = (byte) ttlWorking;
+		outStream.write(firstByte);
+		outStream.write(secondByte);
+		
+		int rdLengthWorking = rdLength;
+		secondByte = (byte) rdLengthWorking;
+		rdLengthWorking >>= rdLengthWorking;
+		firstByte = (byte) rdLengthWorking;
+		outStream.write(firstByte);
+		outStream.write(secondByte);
+		
+		for (byte b : rData) {
+			outStream.write(b);
+		}
+	}
 
+	//TODO fix to match documentation
 	boolean isTimestampValid() {
-		if (deathDate.isAfter(LocalDate.now())) {
+		if (creationTime.plusSeconds(ttl).isAfter(LocalTime.now())) {
 			return true;
 		}
 		return false;

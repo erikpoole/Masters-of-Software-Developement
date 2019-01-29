@@ -17,7 +17,6 @@ public class DNSCache {
 		map = new HashMap<>();
 	}
 	
-	//TODO
 	public DNSRecord searchFor(DNSQuestion inputQuestion) {
 		if (map.containsKey(inputQuestion)) {
 			if (map.get(inputQuestion).isTimestampValid()) {

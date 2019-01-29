@@ -28,10 +28,6 @@ public class DNSQuestion {
 	private int qClass;
 
 	
-	public String[] getqName() {
-		return qName;
-	}
-	
 	@Override
 	public String toString() {
 		return "DNSQuestion [qName=" + Arrays.toString(qName) + ", qType=" + qType + ", qClass=" + qClass + "]";
@@ -67,8 +63,22 @@ public class DNSQuestion {
 
 
 
-	void writeBytes(ByteArrayOutputStream outStream, HashMap<String, Integer> domainNameLocations) {
+	private void writeBytes(ByteArrayOutputStream outStream, HashMap<String, Integer> domainNameLocations) {
+		DNSMessage.writeDomainName(outStream, domainNameLocations, qName);
 		
+		int qTypeWorking = qType;
+		byte secondByte = (byte) qTypeWorking;
+		qTypeWorking >>= qTypeWorking;
+		byte firstByte = (byte) qTypeWorking;
+		outStream.write(firstByte);
+		outStream.write(secondByte);
+		
+		int qClassWorking = qClass;
+		secondByte = (byte) qClassWorking;
+		qTypeWorking >>= qClassWorking;
+		firstByte = (byte) qClassWorking;
+		outStream.write(firstByte);
+		outStream.write(secondByte);
 	}
 	
 	static DNSQuestion decodeQuestion(ByteArrayInputStream inStream, DNSMessage inMessage) {
