@@ -17,20 +17,21 @@ public class DNSCache {
 		map = new HashMap<>();
 	}
 	
-	
-	public HashMap<DNSQuestion, DNSRecord> getMap() {
-		return map;
-	}
-	
-	public DNSRecord search(DNSQuestion inputQuestion) {
-		//check if entry is old
-		//return Record if in map
-		
+	//TODO
+	public DNSRecord searchFor(DNSQuestion inputQuestion) {
+		if (map.containsKey(inputQuestion)) {
+			if (map.get(inputQuestion).isTimestampValid()) {
+				return map.get(inputQuestion);
+			} else {
+				map.remove(inputQuestion);
+			}
+		}
 		return null;
 	}
 	
-	public void addRecord(DNSRecord inputRecord) {
-		
+	//TODO
+	public void addRecord(DNSQuestion inputQuestion, DNSRecord inputRecord) {
+		map.put(inputQuestion, inputRecord);
 	}
 
 }

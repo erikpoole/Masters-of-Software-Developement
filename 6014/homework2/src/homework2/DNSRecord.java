@@ -1,10 +1,7 @@
 package homework2;
 
 import java.io.ByteArrayInputStream;
-import java.nio.ByteBuffer;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Vector;
 
 /*
  * Everything after the header and question parts of the DNS message are stored as records. 
@@ -63,7 +60,6 @@ public class DNSRecord {
 		record.class0 |= inStream.read() << 8;
 		record.class0 |= inStream.read();
 
-		//four bytes
 		record.ttl |= inStream.read() << 24;
 		record.ttl |= inStream.read() << 16;
 		record.ttl |= inStream.read() << 8;

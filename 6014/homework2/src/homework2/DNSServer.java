@@ -37,8 +37,8 @@ public class DNSServer {
 		
 		
 		//TODO shouldn't use default .containsKey
-		for (DNSQuestion question : clientMessage.questions) {
-			if (cache.getMap().containsKey(question)) {
+		for (DNSQuestion question : clientMessage.getQuestions()) {
+			if (cache.searchFor(question) != null) {
 				System.out.println("Question already asked!");
 				//send record
 			}
@@ -49,14 +49,14 @@ public class DNSServer {
 				System.out.println("Waiting for Google Response...");
 				byte[] googleBytes = RecieveMessage(googleSocket);
 				DNSMessage googleMessage = DNSMessage.decodeMessage(googleBytes);
-				System.out.println(googleBytes);
+				cache.addRecord(question, googleMessage.getAnswers()[0]);
 			}
 		}
 	}
-
+	
 	private void SendRequestToGoogle(DNSMessage message) throws UnknownHostException, IOException {
 		InetAddress googleIP = InetAddress.getByName("8.8.8.8");
-		DatagramPacket outpacket = new DatagramPacket(message.byteMessage, message.byteMessage.length, googleIP, 53);
+		DatagramPacket outpacket = new DatagramPacket(message.getByteMessage(), message.getByteMessage().length, googleIP, 53);
 		googleSocket.send(outpacket);
 	}
 
