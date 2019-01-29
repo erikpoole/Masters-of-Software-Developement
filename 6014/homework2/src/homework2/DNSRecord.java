@@ -98,33 +98,33 @@ public class DNSRecord {
 		return record;
 	}
 	
-	private void writeBytes(ByteArrayOutputStream outStream, HashMap<String, Integer> domainNameLocations) {
+	public void writeBytes(ByteArrayOutputStream outStream, HashMap<String, Integer> domainNameLocations) {
 		DNSMessage.writeDomainName(outStream, domainNameLocations, name);
 		
 		int typeWorking = type;
 		byte secondByte = (byte) typeWorking;
-		typeWorking >>= typeWorking;
+		typeWorking >>= 8;
 		byte firstByte = (byte) typeWorking;
 		outStream.write(firstByte);
 		outStream.write(secondByte);
 		
 		int classWorking = class0;
 		secondByte = (byte) classWorking;
-		classWorking >>= classWorking;
+		classWorking >>= 8;
 		firstByte = (byte) classWorking;
 		outStream.write(firstByte);
 		outStream.write(secondByte);
 		
 		int ttlWorking = ttl;
 		secondByte = (byte) ttlWorking;
-		ttlWorking >>= ttlWorking;
+		ttlWorking >>= 8;
 		firstByte = (byte) ttlWorking;
 		outStream.write(firstByte);
 		outStream.write(secondByte);
 		
 		int rdLengthWorking = rdLength;
 		secondByte = (byte) rdLengthWorking;
-		rdLengthWorking >>= rdLengthWorking;
+		rdLengthWorking >>= 8;
 		firstByte = (byte) rdLengthWorking;
 		outStream.write(firstByte);
 		outStream.write(secondByte);
@@ -134,7 +134,6 @@ public class DNSRecord {
 		}
 	}
 
-	//TODO fix to match documentation
 	boolean isTimestampValid() {
 		if (creationTime.plusSeconds(ttl).isAfter(LocalTime.now())) {
 			return true;

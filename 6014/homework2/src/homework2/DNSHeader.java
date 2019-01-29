@@ -30,7 +30,7 @@ import java.io.IOException;
 
 
 public class DNSHeader {
-	private int id;
+	public int id;
 	private int qr;
 	private int opcode;
 	private int aa;
@@ -75,8 +75,10 @@ public class DNSHeader {
 	public void writeBytes(ByteArrayOutputStream outStream) {
 		int idWorking = id;
 		byte secondByte = (byte) idWorking;
-		idWorking >>= idWorking;
+		idWorking >>= 8;
 		byte firstByte = (byte) idWorking;
+		System.out.println(firstByte);
+		System.out.println(secondByte);
 		outStream.write(firstByte);
 		outStream.write(secondByte);
 		
@@ -114,6 +116,7 @@ public class DNSHeader {
 		cdByte <<= 4;
 		
 		byte rcodeByte = (byte) rcode;
+//		System.out.println(rcode);
 		
 		byte combinedByteTwo = raByte;
 		combinedByteTwo |= zByte;
@@ -124,28 +127,28 @@ public class DNSHeader {
 		
 		int qdCountWorking = qdCount;
 		secondByte = (byte) qdCountWorking;
-		qdCountWorking >>= qdCountWorking;
+		qdCountWorking >>= 8;
 		firstByte = (byte) qdCountWorking;
 		outStream.write(firstByte);
 		outStream.write(secondByte);
 		
 		int anCountWorking = anCount;
 		secondByte = (byte) anCountWorking;
-		qdCountWorking >>= anCountWorking;
+		qdCountWorking >>= 8;
 		firstByte = (byte) anCountWorking;
 		outStream.write(firstByte);
 		outStream.write(secondByte);
 		
 		int nsCountWorking = nsCount;
 		secondByte = (byte) nsCountWorking;
-		qdCountWorking >>= nsCountWorking;
+		qdCountWorking >>= 8;
 		firstByte = (byte) nsCountWorking;
 		outStream.write(firstByte);
 		outStream.write(secondByte);
 		
 		int arCountWorking = arCount;
 		secondByte = (byte) arCountWorking;
-		arCountWorking >>= arCountWorking;
+		arCountWorking >>= 8;
 		firstByte = (byte) arCountWorking;
 		outStream.write(firstByte);
 		outStream.write(secondByte);
@@ -153,7 +156,7 @@ public class DNSHeader {
 	
 	//most significant bit on left
 	//byte to int is causing promotion problems
-	public static DNSHeader decodeHeader(final ByteArrayInputStream inStream) throws IOException {
+	public static DNSHeader decodeHeader(ByteArrayInputStream inStream) throws IOException {
 		DNSHeader header = new DNSHeader();
 		byte[] inBuffer = new byte[12];
 		inStream.read(inBuffer);
@@ -196,10 +199,10 @@ public class DNSHeader {
 //		System.out.println("3: " + Integer.toBinaryString(header.ad));
 //		System.out.println("3: " + Integer.toBinaryString(header.cd));
 //		System.out.println("3: " + Integer.toBinaryString(header.rcode));
-		System.out.println("qdCount: " + Integer.toBinaryString(header.qdCount));
-		System.out.println("anCount: " + Integer.toBinaryString(header.anCount));
-		System.out.println("nsCount: " + Integer.toBinaryString(header.nsCount));
-		System.out.println("arCount: " + Integer.toBinaryString(header.arCount));
+//		System.out.println("qdCount: " + Integer.toBinaryString(header.qdCount));
+//		System.out.println("anCount: " + Integer.toBinaryString(header.anCount));
+//		System.out.println("nsCount: " + Integer.toBinaryString(header.nsCount));
+//		System.out.println("arCount: " + Integer.toBinaryString(header.arCount));
 		
 		return header;
 		
@@ -221,6 +224,7 @@ public class DNSHeader {
 		workingHeader.rcode = 0;
 		workingHeader.qdCount = response.getQuestions().length;
 		workingHeader.anCount = response.getAnswers().length;
+//		System.out.println(workingHeader.anCount);
 		workingHeader.nsCount = response.getAuthorityRecords().length;
 		workingHeader.arCount = response.getAdditionalRecords().length;
 

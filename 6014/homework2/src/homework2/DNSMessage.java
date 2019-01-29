@@ -30,11 +30,11 @@ import java.util.HashMap;
 //This method should make a ByteArrayInputStream that starts at the specified byte and 
 //call the other version of this method
 
-static DNSMessage buildResponse(DNSMessage request, DNSRecord[] answers) --
-build a response based on the request and the answers you intend to send back.
+//static DNSMessage buildResponse(DNSMessage request, DNSRecord[] answers) --
+//build a response based on the request and the answers you intend to send back.
 
-byte[] toBytes() -- 
-get the bytes to put in a packet and send back
+//byte[] toBytes() -- 
+//get the bytes to put in a packet and send back
 
 //static void writeDomainName(ByteArrayOutputStream, HashMap<String,Integer> domainLocations, String[] domainPieces) -- 
 //If this is the first time we've seen this domain name in the packet, 
@@ -54,7 +54,6 @@ public class DNSMessage {
 	private DNSRecord answers[];
 	private DNSRecord authorityRecords[];
 	private DNSRecord additionalRecords[];
-	private HashMap<String,	Integer> domainNameLocations;
 	
 	public byte[] getByteMessage() {
 		return byteMessage;
@@ -89,7 +88,7 @@ public class DNSMessage {
 		return "DNSMessage [byteMessage=" + Arrays.toString(byteMessage) + ", header=" + header + ", questions="
 				+ Arrays.toString(questions) + ", answers=" + Arrays.toString(answers) + ", authorityRecords="
 				+ Arrays.toString(authorityRecords) + ", additionalRecords=" + Arrays.toString(additionalRecords)
-				+ ", domainNameLocations=" + domainNameLocations + "]";
+				+ ", domainNameLocations=" + "]";
 	}
 
 	public String[] readDomainName(ByteArrayInputStream inStream) {
@@ -102,7 +101,6 @@ public class DNSMessage {
 				labelSize &= mask;
 				labelSize <<= 8;
 				labelSize |= inStream.read();
-				System.out.println(labelSize);
 				return readDomainName(labelSize);
 			}
 			if (labelSize == 0) {
@@ -122,7 +120,36 @@ public class DNSMessage {
 	public String[] readDomainName(int firstByte) {
 		return readDomainName(new ByteArrayInputStream(byteMessage, firstByte, byteMessage.length-firstByte));
 	}
+//	
+//	byte[] toBytes() -- 
+//	get the bytes to put in a packet and send back
 	
+	public byte[] toBytes() {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		//passed by value..?
+		HashMap<String,	Integer> domainNameLocations = new HashMap<>();
+		
+		header.writeBytes(outStream);
+		for (DNSQuestion question : questions) {
+			question.writeBytes(outStream, domainNameLocations);
+		}
+		
+//		System.out.println(outStream.size());
+		
+		for (DNSRecord record: answers) {
+			record.writeBytes(outStream, domainNameLocations);
+		}
+		for (DNSRecord record: authorityRecords) {
+			record.writeBytes(outStream, domainNameLocations);
+		}
+		for (DNSRecord record: additionalRecords) {
+			record.writeBytes(outStream, domainNameLocations);
+		}
+		
+		return outStream.toByteArray();
+	}
+	
+	//TODO Error, last point
 	public static String octetsToString(String[] octets) {
 		String output = "";
 		for (String octet : octets) {
@@ -167,18 +194,28 @@ public class DNSMessage {
 	}
 	
 		
-	//maybe problematic
+	//TODO maybe problematic
 	public static void writeDomainName(ByteArrayOutputStream outStream, HashMap<String,Integer> domainLocations, String[] domainPieces) {
 		String domainKey = octetsToString(domainPieces);
 		if (domainLocations.containsKey(domainKey)) {
 			int intPointer = domainLocations.get(domainKey);
 			byte secondByte = (byte) intPointer;
-			intPointer >>= intPointer;
+			intPointer >>= 8;
 			byte firstByte = (byte) intPointer;
+			int mask = 0xc0;
+			mask <<= 8;
+			intPointer |= mask;
 			outStream.write(firstByte);
 			outStream.write(secondByte);
 		} else {
 			domainLocations.put(octetsToString(domainPieces), outStream.size());
+			for (int i = 0; i < domainPieces.length-1; i++) {
+				outStream.write(domainPieces[i].length());
+				for (char c : domainPieces[i].toCharArray()) {
+					outStream.write(c);
+				}
+			}
+			
 		}
 	}
 	
@@ -187,7 +224,7 @@ public class DNSMessage {
 		response.questions = inputRequest.getQuestions();
 		response.answers = inputAnswers;
 		response.authorityRecords = inputRequest.getAuthorityRecords();
-		response.authorityRecords = inputRequest.additionalRecords;
+		response.additionalRecords = inputRequest.getAdditionalRecords();
 		response.header = DNSHeader.buildResponseHeader(inputRequest, response);
 		
 		return response;

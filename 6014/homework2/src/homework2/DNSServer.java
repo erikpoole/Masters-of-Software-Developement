@@ -32,26 +32,56 @@ public class DNSServer {
 	public void Listen() throws IOException {
 		System.out.println("Listening...");
 		
-		byte[] clientBytes = RecieveMessage(clientSocket);
+		//TODO recieve message method changed
+		byte[] inputBuffer = new byte[1024];
+		DatagramPacket inPacket = new DatagramPacket(inputBuffer, inputBuffer.length);
+		clientSocket.receive(inPacket);
+		
+		byte [] clientBytes = new byte[inPacket.getLength()];
+		for (int i = 0; i < clientBytes.length; i++) {
+			clientBytes[i] = inputBuffer[i]; 
+		}
+
 		DNSMessage clientMessage = DNSMessage.decodeMessage(clientBytes);
+//		ArrayList<DNSRecord> outputAnswers = new ArrayList<>();
+		DNSRecord outputAnswers[] = new DNSRecord[clientMessage.getQuestions().length];
+		int count = 0;
 		
-		
-		//TODO shouldn't use default .containsKey
 		for (DNSQuestion question : clientMessage.getQuestions()) {
 			if (cache.searchFor(question) != null) {
-				System.out.println("Question already asked!");
-				//send record
+				System.out.println("Question Already Asked!");
+				outputAnswers[count] = cache.searchFor(question);
+				count++;
+//				outputAnswers.add(cache.searchFor(question));
 			}
 			else {
-				System.out.println("Never asked before!");
+				System.out.println("Never Asked Before!");
 				SendRequestToGoogle(clientMessage);
 				
 				System.out.println("Waiting for Google Response...");
 				byte[] googleBytes = RecieveMessage(googleSocket);
 				DNSMessage googleMessage = DNSMessage.decodeMessage(googleBytes);
+				System.out.println("Caching Google Response...");
 				cache.addRecord(question, googleMessage.getAnswers()[0]);
+				outputAnswers[count] = cache.searchFor(question);
+				count++;
+//				outputAnswers.add(googleMessage.getAnswers()[0]);
 			}
 		}
+		
+//		DNSMessage response = DNSMessage.buildResponse(clientMessage, (DNSRecord[]) outputAnswers.toArray());
+//		System.out.println(clientMessage.getHeader().id);
+		DNSMessage response = DNSMessage.buildResponse(clientMessage, outputAnswers);
+//		System.out.println(response.getHeader().id);
+		byte outputBytes[] = response.toBytes();
+		System.out.println("Sending Response To Client...");
+		SendResponseToClient(outputBytes, inPacket);
+		System.out.println();
+	}
+	
+	private void SendResponseToClient(byte[] outputBytes, DatagramPacket inPacket) throws IOException {
+		DatagramPacket outpacket = new DatagramPacket(outputBytes, outputBytes.length, inPacket.getAddress(), inPacket.getPort());
+		clientSocket.send(outpacket);
 	}
 	
 	private void SendRequestToGoogle(DNSMessage message) throws UnknownHostException, IOException {
