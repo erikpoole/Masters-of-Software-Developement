@@ -45,7 +45,7 @@ public class DNSRecord {
 	private int class0;
 	private int ttl;
 	private int rdLength;
-	private int rData;
+	private byte rData[];
 	private LocalDate deathDate;
 
 	static DNSRecord decodeRecord(ByteArrayInputStream inStream, DNSMessage inMessage) {
@@ -67,10 +67,12 @@ public class DNSRecord {
 
 		record.rdLength |= inStream.read() << 8;
 		record.rdLength |= inStream.read();
-
-		record.rData |= inStream.read() << 8;
-		record.rData |= inStream.read();
-
+		
+		record.rData = new byte[record.rdLength];
+		for (int i = 0; i < record.rdLength; i++) {
+			record.rData[i] = (byte) inStream.read(); 
+		}
+		
 		record.deathDate = LocalDate.now().plusDays(7);
 
 //		System.out.println("Record:");

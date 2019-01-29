@@ -29,7 +29,6 @@ public class DNSCache {
 		return null;
 	}
 	
-	//TODO
 	public void addRecord(DNSQuestion inputQuestion, DNSRecord inputRecord) {
 		map.put(inputQuestion, inputRecord);
 	}
