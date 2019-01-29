@@ -48,9 +48,7 @@ public class DNSHeader {
 	private int nsCount;
 	private int arCount;
 	
-	private void writeBytes(OutputStream outStream) {
-		
-	}
+	
 	
 	public int getQdCount() {
 		return qdCount;
@@ -132,9 +130,28 @@ public class DNSHeader {
 	}
 	
 	public static DNSHeader buildResponseHeader(DNSMessage request, DNSMessage response) {
-		return null;
+		
+		DNSHeader workingHeader = request.getHeader();
+		workingHeader.id = request.getHeader().id;
+		workingHeader.qr = 1;
+		workingHeader.opcode = 0;
+		workingHeader.aa = 0;
+		workingHeader.tc = 0;
+		workingHeader.rd = 1;
+		workingHeader.ra = 1;
+		workingHeader.z = 0;
+		workingHeader.ad = request.getHeader().ad;
+		workingHeader.cd = request.getHeader().cd;
+		workingHeader.rcode = 0;
+		workingHeader.qdCount = 1;
+		workingHeader.anCount = 1;
+		workingHeader.nsCount = 0;
+		workingHeader.arCount = 1;
+
+
+		response.setHeader(workingHeader);
+		return response.getHeader();
 	}
-	
 	
 	private static int handleTwoByteField(final byte[] inBuffer, int firstBytePosition) {
 		int mask = 0xff;

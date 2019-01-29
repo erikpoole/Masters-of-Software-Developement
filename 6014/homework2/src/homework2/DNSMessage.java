@@ -60,6 +60,14 @@ public class DNSMessage {
 		return byteMessage;
 	}
 	
+	public DNSHeader getHeader() {
+		return header;
+	}
+	
+	public void setHeader(DNSHeader header) {
+		this.header = header;
+	}
+	
 	public DNSQuestion[] getQuestions() {
 		return questions;
 	}
