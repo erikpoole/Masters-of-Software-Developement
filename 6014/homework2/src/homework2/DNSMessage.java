@@ -230,4 +230,17 @@ public class DNSMessage {
 		
 		return response;
 	}
+	
+	public static void writeFieldToOutputStream(int inputField, int numberOfBytes, ByteArrayOutputStream outStream) {
+		byte arr[] = new byte[numberOfBytes];
+		for (int i = numberOfBytes-1; i >= 0; i--) {
+			arr[i] = (byte) inputField;
+			inputField >>= 8;
+		}
+		
+		for (byte b : arr) {
+			outStream.write(b);
+		}
+	}
+	
 }

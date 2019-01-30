@@ -2,7 +2,7 @@ package homework2;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -49,14 +49,12 @@ public class DNSRecord {
 	private int ttl;
 	private int rdLength;
 	private byte rData[];
-	private LocalTime creationTime;
-	
-	
+	private LocalDateTime deathTime;	
 
 	@Override
 	public String toString() {
 		return "DNSRecord [name=" + Arrays.toString(name) + ", type=" + type + ", class0=" + class0 + ", ttl=" + ttl
-				+ ", rdLength=" + rdLength + ", rData=" + Arrays.toString(rData) + ", deathDate=" + creationTime + "]";
+				+ ", rdLength=" + rdLength + ", rData=" + Arrays.toString(rData) + ", deathDate=" + deathTime + "]";
 	}
 
 	static DNSRecord decodeRecord(ByteArrayInputStream inStream, DNSMessage inMessage) {
@@ -84,7 +82,7 @@ public class DNSRecord {
 			record.rData[i] = (byte) inStream.read(); 
 		}
 		
-		record.creationTime = LocalTime.now();
+		record.deathTime = LocalDateTime.now().plusSeconds(record.ttl);
 
 //		System.out.println("Record:");
 //		System.out.println(record.name);
@@ -140,10 +138,12 @@ public class DNSRecord {
 		}
 	}
 
-	boolean isTimestampValid() {
-		if (creationTime.plusSeconds(ttl).isAfter(LocalTime.now())) {
+	boolean isTimestampValid() {		
+		if (deathTime.isAfter(LocalDateTime.now())) {
+			System.out.println("Record expires at: " + deathTime);
 			return true;
 		}
+		System.out.println("Record expired!");
 		return false;
 	}
 }

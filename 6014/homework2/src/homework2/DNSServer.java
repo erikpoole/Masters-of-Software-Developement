@@ -47,9 +47,10 @@ public class DNSServer {
 		ArrayList<DNSRecord> outputAnswers = new ArrayList<>();
 
 		for (DNSQuestion question : clientMessage.getQuestions()) {
-			if (cache.searchFor(question) != null) {
+			DNSRecord answer = cache.searchFor(question);
+			if (answer != null) {
 				System.out.println("Question Already Asked!");
-				outputAnswers.add(cache.searchFor(question));
+				outputAnswers.add(answer);
 			} else {
 				System.out.println("Never Asked Before!");
 				SendRequestToGoogle(clientMessage);
