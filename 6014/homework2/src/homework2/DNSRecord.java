@@ -34,10 +34,10 @@ public class DNSRecord {
 	public void writeBytes(ByteArrayOutputStream outStream, HashMap<String, Integer> domainNameLocations) {
 		DNSMessage.writeDomainName(outStream, domainNameLocations, name);
 		
-		DNSMessage.writeField(type, 2, outStream);
-		DNSMessage.writeField(class0, 2, outStream);
-		DNSMessage.writeField(ttl, 4, outStream);
-		DNSMessage.writeField(rdLength, 2, outStream);
+		DNSMessage.writeByteField(2, outStream, type);
+		DNSMessage.writeByteField(2, outStream, class0);
+		DNSMessage.writeByteField(4, outStream, ttl);
+		DNSMessage.writeByteField(2, outStream, rdLength);
 		
 		for (byte b : rData) {
 			outStream.write(b);
@@ -48,10 +48,10 @@ public class DNSRecord {
 		DNSRecord record = new DNSRecord();
 
 		record.name = inMessage.readDomainName(inStream);
-		record.type = DNSMessage.decodeByteField(inStream, 2);
-		record.class0 = DNSMessage.decodeByteField(inStream, 2);
-		record.ttl = DNSMessage.decodeByteField(inStream, 4);
-		record.rdLength = DNSMessage.decodeByteField(inStream, 2);
+		record.type = DNSMessage.decodeByteField(2, inStream);
+		record.class0 = DNSMessage.decodeByteField(2, inStream);
+		record.ttl = DNSMessage.decodeByteField(4, inStream);
+		record.rdLength = DNSMessage.decodeByteField(2, inStream);
 				
 		record.rData = new byte[record.rdLength];
 		for (int i = 0; i < record.rdLength; i++) {

@@ -198,7 +198,7 @@ public class DNSMessage {
 	// ****************************************************************************************************
 	// ****************************************************************************************************
 
-	public static int decodeByteField(ByteArrayInputStream inStream, int numberOfBytes) {
+	public static int decodeByteField(int numberOfBytes, ByteArrayInputStream inStream) {
 		int output = 0;
 		int mask = 0xff;
 		for (int i = numberOfBytes - 1; i >= 0; i--) {
@@ -210,8 +210,18 @@ public class DNSMessage {
 
 		return output;
 	}
+	
+	public static int decodeSingleBitField(byte inputByte, int bitPosition) {		
+		int output = 0;
+		int mask = 0xff;
+		output |= inputByte << bitPosition;
+		output &= mask;
+		output >>= 7;
+		
+		return output;
+	}
 
-	public static void writeField(int inputField, int numberOfBytes, ByteArrayOutputStream outStream) {
+	public static void writeByteField(int numberOfBytes, ByteArrayOutputStream outStream, int inputField) {
 		byte arr[] = new byte[numberOfBytes];
 		for (int i = numberOfBytes - 1; i >= 0; i--) {
 			arr[i] = (byte) inputField;
@@ -222,5 +232,9 @@ public class DNSMessage {
 			outStream.write(b);
 		}
 	}
-
+	
+	public static byte alignBitField(int inputField, int bitPosition) {
+		return (byte) (inputField << bitPosition);
+		
+	}
 }
