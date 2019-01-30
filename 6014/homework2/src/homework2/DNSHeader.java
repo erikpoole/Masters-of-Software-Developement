@@ -77,8 +77,8 @@ public class DNSHeader {
 		byte secondByte = (byte) idWorking;
 		idWorking >>= 8;
 		byte firstByte = (byte) idWorking;
-		System.out.println(firstByte);
-		System.out.println(secondByte);
+//		System.out.println(firstByte);
+//		System.out.println(secondByte);
 		outStream.write(firstByte);
 		outStream.write(secondByte);
 		
@@ -92,7 +92,7 @@ public class DNSHeader {
 		aaByte <<= 2;
 		
 		byte tcByte = (byte) tc;
-		tcByte <<= 0;
+		tcByte <<= 1;
 		
 		byte rdByte = (byte) rd;
 		
@@ -104,7 +104,7 @@ public class DNSHeader {
 		outStream.write(combinedByteOne);
 		
 		byte raByte = (byte) ra;
-		tcByte <<= 7;
+		raByte <<= 7;
 		
 		byte zByte = (byte) z;
 		zByte <<= 6;
@@ -116,7 +116,6 @@ public class DNSHeader {
 		cdByte <<= 4;
 		
 		byte rcodeByte = (byte) rcode;
-//		System.out.println(rcode);
 		
 		byte combinedByteTwo = raByte;
 		combinedByteTwo |= zByte;
@@ -134,14 +133,14 @@ public class DNSHeader {
 		
 		int anCountWorking = anCount;
 		secondByte = (byte) anCountWorking;
-		qdCountWorking >>= 8;
+		anCountWorking >>= 8;
 		firstByte = (byte) anCountWorking;
 		outStream.write(firstByte);
 		outStream.write(secondByte);
 		
 		int nsCountWorking = nsCount;
 		secondByte = (byte) nsCountWorking;
-		qdCountWorking >>= 8;
+		nsCountWorking >>= 8;
 		firstByte = (byte) nsCountWorking;
 		outStream.write(firstByte);
 		outStream.write(secondByte);
@@ -219,12 +218,11 @@ public class DNSHeader {
 		workingHeader.rd = 1;
 		workingHeader.ra = 1;
 		workingHeader.z = 0;
-		workingHeader.ad = request.getHeader().ad;
-		workingHeader.cd = request.getHeader().cd;
+		workingHeader.ad = 0;
+		workingHeader.cd = 0;
 		workingHeader.rcode = 0;
 		workingHeader.qdCount = response.getQuestions().length;
 		workingHeader.anCount = response.getAnswers().length;
-//		System.out.println(workingHeader.anCount);
 		workingHeader.nsCount = response.getAuthorityRecords().length;
 		workingHeader.arCount = response.getAdditionalRecords().length;
 

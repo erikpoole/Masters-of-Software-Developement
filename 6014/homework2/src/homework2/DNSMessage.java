@@ -215,7 +215,7 @@ public class DNSMessage {
 					outStream.write(c);
 				}
 			}
-			
+			outStream.write(0);	
 		}
 	}
 	

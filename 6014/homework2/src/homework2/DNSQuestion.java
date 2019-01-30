@@ -72,8 +72,11 @@ public class DNSQuestion {
 		byte firstByte = (byte) qTypeWorking;
 		outStream.write(firstByte);
 		outStream.write(secondByte);
-//		System.out.println(firstByte);
-//		System.out.println(secondByte);
+		
+		System.out.println(qType);
+		System.out.println(firstByte);
+		System.out.println(secondByte);
+		
 		
 		int qClassWorking = qClass;
 		secondByte = (byte) qClassWorking;
@@ -81,6 +84,10 @@ public class DNSQuestion {
 		firstByte = (byte) qClassWorking;
 		outStream.write(firstByte);
 		outStream.write(secondByte);
+		
+		System.out.println(qClass);
+		System.out.println(firstByte);
+		System.out.println(secondByte);
 	}
 	
 	static DNSQuestion decodeQuestion(ByteArrayInputStream inStream, DNSMessage inMessage) {
