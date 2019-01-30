@@ -125,7 +125,7 @@ public class DNSHeader {
 	public static DNSHeader decodeHeader(ByteArrayInputStream inStream) throws IOException {
 		DNSHeader header = new DNSHeader();
 		
-		header.id = DNSMessage.decodeField(inStream, 2);
+		header.id = DNSMessage.decodeByteField(inStream, 2);
 		
 		byte[] inBuffer = new byte[2];
 		inStream.read(inBuffer);
@@ -145,10 +145,10 @@ public class DNSHeader {
 		header.ad = decodeSingleBitField(inBuffer, 1, 2);
 		header.cd = decodeSingleBitField(inBuffer, 1, 3);
 
-		header.qdCount = DNSMessage.decodeField(inStream, 2);
-		header.anCount = DNSMessage.decodeField(inStream, 2);
-		header.nsCount = DNSMessage.decodeField(inStream, 2);
-		header.arCount = DNSMessage.decodeField(inStream, 2);
+		header.qdCount = DNSMessage.decodeByteField(inStream, 2);
+		header.anCount = DNSMessage.decodeByteField(inStream, 2);
+		header.nsCount = DNSMessage.decodeByteField(inStream, 2);
+		header.arCount = DNSMessage.decodeByteField(inStream, 2);
 		
 		return header;
 		

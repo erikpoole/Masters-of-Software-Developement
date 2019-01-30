@@ -11,6 +11,10 @@ public class DNSQuestion {
 	private int qType;
 	private int qClass;
 
+	public String[] getqName() {
+		return qName;
+	}
+	
 	@Override
 	public String toString() {
 		return "DNSQuestion [qName=" + Arrays.toString(qName) + ", qType=" + qType + ", qClass=" + qClass + "]";
@@ -54,8 +58,8 @@ public class DNSQuestion {
 		DNSQuestion question = new DNSQuestion();
 
 		question.qName = inMessage.readDomainName(inStream);
-		question.qType = DNSMessage.decodeField(inStream, 2);
-		question.qClass = DNSMessage.decodeField(inStream, 2);
+		question.qType = DNSMessage.decodeByteField(inStream, 2);
+		question.qClass = DNSMessage.decodeByteField(inStream, 2);
 
 		return question;
 	}

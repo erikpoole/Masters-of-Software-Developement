@@ -6,41 +6,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 
-/*
-//Everything after the header and question parts of the DNS message are stored as records. 
-//This should have all the fields listed in the spec as well as a Date object storing when this record was created by your program. 
-//It should also have the following public methods:
-//
-//static DNSRecord decodeRecord(InputStream, DNSMessage)
-//
-//static writeBytes(ByteArrayOutputStream, HashMap<String, Integer>)
-//
-//String toString()
-//
-//boolean timestampValid() -- 
-//return whether the creation date + the time to live is after the current time. The Date and Calendar classes will be useful for this.
-
-         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-       |                                               |
-       /                                               /
-       /                      NAME                     /
-       /                                               /
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-       |                      TYPE                     |
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-       |                     CLASS                     |
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-       |                      TTL                      |
-       |                                               |
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-       |                   RDLENGTH                    |
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--|
-       /                     RDATA                     /
-       /                                               /
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-
- */
 
 public class DNSRecord {
 	private String[] name;
@@ -57,43 +22,13 @@ public class DNSRecord {
 				+ ", rdLength=" + rdLength + ", rData=" + Arrays.toString(rData) + ", deathDate=" + deathTime + "]";
 	}
 
-	static DNSRecord decodeRecord(ByteArrayInputStream inStream, DNSMessage inMessage) {
-		DNSRecord record = new DNSRecord();
-
-		record.name = inMessage.readDomainName(inStream);
-		
-		
-		record.type |= inStream.read() << 8;
-		record.type |= inStream.read();
-
-		record.class0 |= inStream.read() << 8;
-		record.class0 |= inStream.read();
-
-		record.ttl |= inStream.read() << 24;
-		record.ttl |= inStream.read() << 16;
-		record.ttl |= inStream.read() << 8;
-		record.ttl |= inStream.read();
-
-		record.rdLength |= inStream.read() << 8;
-		record.rdLength |= inStream.read();
-		
-		record.rData = new byte[record.rdLength];
-		for (int i = 0; i < record.rdLength; i++) {
-			record.rData[i] = (byte) inStream.read(); 
+	boolean isTimestampValid() {		
+		if (deathTime.isAfter(LocalDateTime.now())) {
+			System.out.println("Record expires at: " + deathTime);
+			return true;
 		}
-		
-		record.deathTime = LocalDateTime.now().plusSeconds(record.ttl);
-
-//		System.out.println("Record:");
-//		System.out.println(record.name);
-//		System.out.println(record.type);
-//		System.out.println(record.class0);
-//		System.out.println(record.ttl);
-//		System.out.println(record.rdLength);
-//		System.out.println(record.rData);
-//		System.out.println(record.deathDate);
-
-		return record;
+		System.out.println("Record expired!");
+		return false;
 	}
 	
 	public void writeBytes(ByteArrayOutputStream outStream, HashMap<String, Integer> domainNameLocations) {
@@ -108,13 +43,24 @@ public class DNSRecord {
 			outStream.write(b);
 		}
 	}
+	
+	static DNSRecord decodeRecord(ByteArrayInputStream inStream, DNSMessage inMessage) {
+		DNSRecord record = new DNSRecord();
 
-	boolean isTimestampValid() {		
-		if (deathTime.isAfter(LocalDateTime.now())) {
-			System.out.println("Record expires at: " + deathTime);
-			return true;
+		record.name = inMessage.readDomainName(inStream);
+		record.type = DNSMessage.decodeByteField(inStream, 2);
+		record.class0 = DNSMessage.decodeByteField(inStream, 2);
+		record.ttl = DNSMessage.decodeByteField(inStream, 4);
+		record.rdLength = DNSMessage.decodeByteField(inStream, 2);
+				
+		record.rData = new byte[record.rdLength];
+		for (int i = 0; i < record.rdLength; i++) {
+			record.rData[i] = (byte) inStream.read(); 
 		}
-		System.out.println("Record expired!");
-		return false;
+		
+		record.deathTime = LocalDateTime.now().plusSeconds(record.ttl);
+
+		return record;
 	}
+
 }

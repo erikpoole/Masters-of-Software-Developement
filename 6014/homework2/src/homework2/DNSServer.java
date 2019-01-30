@@ -47,12 +47,12 @@ public class DNSServer {
 		ArrayList<DNSRecord> outputAnswers = new ArrayList<>();
 
 		for (DNSQuestion question : clientMessage.getQuestions()) {
+			System.out.println("Requesting " + DNSMessage.octetsToString(question.getqName()));
 			DNSRecord answer = cache.searchFor(question);
 			if (answer != null) {
-				System.out.println("Question Already Asked!");
 				outputAnswers.add(answer);
 			} else {
-				System.out.println("Never Asked Before!");
+				System.out.println("Not In Cache!");
 				SendRequestToGoogle(clientMessage);
 
 				System.out.println("Waiting for Google Response...");
