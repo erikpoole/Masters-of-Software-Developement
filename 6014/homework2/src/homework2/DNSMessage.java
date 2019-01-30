@@ -231,7 +231,7 @@ public class DNSMessage {
 		return response;
 	}
 	
-	public static void writeFieldToOutputStream(int inputField, int numberOfBytes, ByteArrayOutputStream outStream) {
+	public static void writeField(int inputField, int numberOfBytes, ByteArrayOutputStream outStream) {
 		byte arr[] = new byte[numberOfBytes];
 		for (int i = numberOfBytes-1; i >= 0; i--) {
 			arr[i] = (byte) inputField;

@@ -66,22 +66,8 @@ public class DNSQuestion {
 	public void writeBytes(ByteArrayOutputStream outStream, HashMap<String, Integer> domainNameLocations) {
 		DNSMessage.writeDomainName(outStream, domainNameLocations, qName);
 		
-		DNSMessage.writeFieldToOutputStream(qType, 2, outStream);
-		DNSMessage.writeFieldToOutputStream(qClass, 2, outStream);
-		
-//		int qTypeWorking = qType;
-//		byte secondByte = (byte) qTypeWorking;
-//		qTypeWorking >>= 8;
-//		byte firstByte = (byte) qTypeWorking;
-//		outStream.write(firstByte);
-//		outStream.write(secondByte);
-		
-//		int qClassWorking = qClass;
-//		secondByte = (byte) qClassWorking;
-//		qClassWorking >>= 8;
-//		firstByte = (byte) qClassWorking;
-//		outStream.write(firstByte);
-//		outStream.write(secondByte);
+		DNSMessage.writeField(qType, 2, outStream);
+		DNSMessage.writeField(qClass, 2, outStream);
 	}
 	
 	static DNSQuestion decodeQuestion(ByteArrayInputStream inStream, DNSMessage inMessage) {

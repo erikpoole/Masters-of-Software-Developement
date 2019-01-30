@@ -99,39 +99,10 @@ public class DNSRecord {
 	public void writeBytes(ByteArrayOutputStream outStream, HashMap<String, Integer> domainNameLocations) {
 		DNSMessage.writeDomainName(outStream, domainNameLocations, name);
 		
-		int typeWorking = type;
-		byte secondByte = (byte) typeWorking;
-		typeWorking >>= 8;
-		byte firstByte = (byte) typeWorking;
-		outStream.write(firstByte);
-		outStream.write(secondByte);
-		
-		int classWorking = class0;
-		secondByte = (byte) classWorking;
-		classWorking >>= 8;
-		firstByte = (byte) classWorking;
-		outStream.write(firstByte);
-		outStream.write(secondByte);
-		
-		int ttlWorking = ttl;
-		byte fourthByte = (byte) ttlWorking;
-		ttlWorking >>= 8;
-		byte thirdByte = (byte) ttlWorking;
-		ttlWorking >>= 8;
-		secondByte = (byte) ttlWorking;
-		ttlWorking >>= 8;
-		firstByte = (byte) ttlWorking;
-		outStream.write(firstByte);
-		outStream.write(secondByte);
-		outStream.write(thirdByte);
-		outStream.write(fourthByte);
-		
-		int rdLengthWorking = rdLength;
-		secondByte = (byte) rdLengthWorking;
-		rdLengthWorking >>= 8;
-		firstByte = (byte) rdLengthWorking;
-		outStream.write(firstByte);
-		outStream.write(secondByte);
+		DNSMessage.writeField(type, 2, outStream);
+		DNSMessage.writeField(class0, 2, outStream);
+		DNSMessage.writeField(ttl, 4, outStream);
+		DNSMessage.writeField(rdLength, 2, outStream);
 		
 		for (byte b : rData) {
 			outStream.write(b);

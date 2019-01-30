@@ -73,14 +73,7 @@ public class DNSHeader {
 
 
 	public void writeBytes(ByteArrayOutputStream outStream) {
-		int idWorking = id;
-		byte secondByte = (byte) idWorking;
-		idWorking >>= 8;
-		byte firstByte = (byte) idWorking;
-//		System.out.println(firstByte);
-//		System.out.println(secondByte);
-		outStream.write(firstByte);
-		outStream.write(secondByte);
+		DNSMessage.writeField(id, 2, outStream);
 		
 		byte qrByte = (byte) qr;
 		qrByte <<= 7;
@@ -124,33 +117,10 @@ public class DNSHeader {
 		combinedByteTwo |= rcodeByte;
 		outStream.write(combinedByteTwo);
 		
-		int qdCountWorking = qdCount;
-		secondByte = (byte) qdCountWorking;
-		qdCountWorking >>= 8;
-		firstByte = (byte) qdCountWorking;
-		outStream.write(firstByte);
-		outStream.write(secondByte);
-		
-		int anCountWorking = anCount;
-		secondByte = (byte) anCountWorking;
-		anCountWorking >>= 8;
-		firstByte = (byte) anCountWorking;
-		outStream.write(firstByte);
-		outStream.write(secondByte);
-		
-		int nsCountWorking = nsCount;
-		secondByte = (byte) nsCountWorking;
-		nsCountWorking >>= 8;
-		firstByte = (byte) nsCountWorking;
-		outStream.write(firstByte);
-		outStream.write(secondByte);
-		
-		int arCountWorking = arCount;
-		secondByte = (byte) arCountWorking;
-		arCountWorking >>= 8;
-		firstByte = (byte) arCountWorking;
-		outStream.write(firstByte);
-		outStream.write(secondByte);
+		DNSMessage.writeField(qdCount, 2, outStream);
+		DNSMessage.writeField(anCount, 2, outStream);
+		DNSMessage.writeField(nsCount, 2, outStream);
+		DNSMessage.writeField(arCount, 2, outStream);
 	}
 	
 	//most significant bit on left
