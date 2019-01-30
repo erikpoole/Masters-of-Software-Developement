@@ -202,9 +202,10 @@ public class DNSMessage {
 			byte secondByte = (byte) intPointer;
 			intPointer >>= 8;
 			byte firstByte = (byte) intPointer;
-			int mask = 0xc0;
-			mask <<= 8;
-			intPointer |= mask;
+			byte mask = (byte) 0xc0;
+			firstByte |= mask;
+			System.out.println(firstByte);
+			System.out.println(secondByte);
 			outStream.write(firstByte);
 			outStream.write(secondByte);
 		} else {

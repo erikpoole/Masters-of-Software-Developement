@@ -116,11 +116,17 @@ public class DNSRecord {
 		outStream.write(secondByte);
 		
 		int ttlWorking = ttl;
+		byte fourthByte = (byte) ttlWorking;
+		ttlWorking >>= 8;
+		byte thirdByte = (byte) ttlWorking;
+		ttlWorking >>= 8;
 		secondByte = (byte) ttlWorking;
 		ttlWorking >>= 8;
 		firstByte = (byte) ttlWorking;
 		outStream.write(firstByte);
 		outStream.write(secondByte);
+		outStream.write(thirdByte);
+		outStream.write(fourthByte);
 		
 		int rdLengthWorking = rdLength;
 		secondByte = (byte) rdLengthWorking;

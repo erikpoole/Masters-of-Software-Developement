@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 /*
  * 
@@ -31,62 +32,58 @@ public class DNSServer {
 
 	public void Listen() throws IOException {
 		System.out.println("Listening...");
-		
-		//TODO recieve message method changed
+
+		// TODO recieve message method changed
 		byte[] inputBuffer = new byte[1024];
 		DatagramPacket inPacket = new DatagramPacket(inputBuffer, inputBuffer.length);
 		clientSocket.receive(inPacket);
-		
-		byte [] clientBytes = new byte[inPacket.getLength()];
+
+		byte[] clientBytes = new byte[inPacket.getLength()];
 		for (int i = 0; i < clientBytes.length; i++) {
-			clientBytes[i] = inputBuffer[i]; 
+			clientBytes[i] = inputBuffer[i];
 		}
 
 		DNSMessage clientMessage = DNSMessage.decodeMessage(clientBytes);
-//		ArrayList<DNSRecord> outputAnswers = new ArrayList<>();
-		DNSRecord outputAnswers[] = new DNSRecord[clientMessage.getQuestions().length];
-		int count = 0;
-		
+		ArrayList<DNSRecord> outputAnswers = new ArrayList<>();
+
 		for (DNSQuestion question : clientMessage.getQuestions()) {
 			if (cache.searchFor(question) != null) {
 				System.out.println("Question Already Asked!");
-				outputAnswers[count] = cache.searchFor(question);
-				count++;
-//				outputAnswers.add(cache.searchFor(question));
-			}
-			else {
+				outputAnswers.add(cache.searchFor(question));
+			} else {
 				System.out.println("Never Asked Before!");
 				SendRequestToGoogle(clientMessage);
-				
+
 				System.out.println("Waiting for Google Response...");
 				byte[] googleBytes = RecieveMessage(googleSocket);
 				DNSMessage googleMessage = DNSMessage.decodeMessage(googleBytes);
 				System.out.println("Caching Google Response...");
-				cache.addRecord(question, googleMessage.getAnswers()[0]);
-				outputAnswers[count] = cache.searchFor(question);
-				count++;
-//				outputAnswers.add(googleMessage.getAnswers()[0]);
+				if (googleMessage.getAnswers().length != 0) {
+					cache.addRecord(question, googleMessage.getAnswers()[0]);
+					outputAnswers.add(googleMessage.getAnswers()[0]);
+				}
+
+
 			}
 		}
-		
-//		DNSMessage response = DNSMessage.buildResponse(clientMessage, (DNSRecord[]) outputAnswers.toArray());
-//		System.out.println(clientMessage.getHeader().id);
-		DNSMessage response = DNSMessage.buildResponse(clientMessage, outputAnswers);
-//		System.out.println(response.getHeader().id);
+
+		DNSMessage response = DNSMessage.buildResponse(clientMessage, outputAnswers.toArray(new DNSRecord[outputAnswers.size()]));
 		byte outputBytes[] = response.toBytes();
 		System.out.println("Sending Response To Client...");
 		SendResponseToClient(outputBytes, inPacket);
 		System.out.println();
 	}
-	
+
 	private void SendResponseToClient(byte[] outputBytes, DatagramPacket inPacket) throws IOException {
-		DatagramPacket outpacket = new DatagramPacket(outputBytes, outputBytes.length, inPacket.getAddress(), inPacket.getPort());
+		DatagramPacket outpacket = new DatagramPacket(outputBytes, outputBytes.length, inPacket.getAddress(),
+				inPacket.getPort());
 		clientSocket.send(outpacket);
 	}
-	
+
 	private void SendRequestToGoogle(DNSMessage message) throws UnknownHostException, IOException {
 		InetAddress googleIP = InetAddress.getByName("8.8.8.8");
-		DatagramPacket outpacket = new DatagramPacket(message.getByteMessage(), message.getByteMessage().length, googleIP, 53);
+		DatagramPacket outpacket = new DatagramPacket(message.getByteMessage(), message.getByteMessage().length,
+				googleIP, 53);
 		googleSocket.send(outpacket);
 	}
 
@@ -94,10 +91,10 @@ public class DNSServer {
 		byte[] inputBuffer = new byte[1024];
 		DatagramPacket inPacket = new DatagramPacket(inputBuffer, inputBuffer.length);
 		inSocket.receive(inPacket);
-		
-		byte [] packetBytes = new byte[inPacket.getLength()];
+
+		byte[] packetBytes = new byte[inPacket.getLength()];
 		for (int i = 0; i < packetBytes.length; i++) {
-			packetBytes[i] = inputBuffer[i]; 
+			packetBytes[i] = inputBuffer[i];
 		}
 		return packetBytes;
 	}
