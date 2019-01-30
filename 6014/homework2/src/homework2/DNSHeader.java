@@ -45,6 +45,9 @@ public class DNSHeader {
 				+ ", ancount=" + anCount + ", nscount=" + nsCount + ", arcount=" + arCount + "]";
 	}
 
+	
+	// ****************************************************************************************************
+	// ****************************************************************************************************
 
 	public void writeBytes(ByteArrayOutputStream outStream) {
 		DNSMessage.writeByteField(2, outStream, id);
@@ -78,6 +81,10 @@ public class DNSHeader {
 		DNSMessage.writeByteField(2, outStream, nsCount);
 		DNSMessage.writeByteField(2, outStream, arCount);
 	}
+	
+	
+	// ****************************************************************************************************
+	// ****************************************************************************************************
 	
 	public static DNSHeader decodeHeader(ByteArrayInputStream inStream) throws IOException {
 		DNSHeader header = new DNSHeader();

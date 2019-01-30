@@ -19,6 +19,10 @@ public class DNSQuestion {
 	public String toString() {
 		return "DNSQuestion [qName=" + Arrays.toString(qName) + ", qType=" + qType + ", qClass=" + qClass + "]";
 	}
+	
+	
+	// ****************************************************************************************************
+	// ****************************************************************************************************
 
 	@Override
 	public int hashCode() {
@@ -47,6 +51,10 @@ public class DNSQuestion {
 			return false;
 		return true;
 	}
+	
+	
+	// ****************************************************************************************************
+	// ****************************************************************************************************
 
 	public void writeBytes(ByteArrayOutputStream outStream, HashMap<String, Integer> domainNameLocations) {
 		DNSMessage.writeDomainName(outStream, domainNameLocations, qName);

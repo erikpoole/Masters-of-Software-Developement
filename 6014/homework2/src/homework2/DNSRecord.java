@@ -21,6 +21,10 @@ public class DNSRecord {
 		return "DNSRecord [name=" + Arrays.toString(name) + ", type=" + type + ", class0=" + class0 + ", ttl=" + ttl
 				+ ", rdLength=" + rdLength + ", rData=" + Arrays.toString(rData) + ", deathDate=" + deathTime + "]";
 	}
+	
+	
+	// ****************************************************************************************************
+	// ****************************************************************************************************
 
 	boolean isTimestampValid() {		
 		if (deathTime.isAfter(LocalDateTime.now())) {
@@ -30,6 +34,10 @@ public class DNSRecord {
 		System.out.println("Record expired!");
 		return false;
 	}
+	
+	
+	// ****************************************************************************************************
+	// ****************************************************************************************************
 	
 	public void writeBytes(ByteArrayOutputStream outStream, HashMap<String, Integer> domainNameLocations) {
 		DNSMessage.writeDomainName(outStream, domainNameLocations, name);

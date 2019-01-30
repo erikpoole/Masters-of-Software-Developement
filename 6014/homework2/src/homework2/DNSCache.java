@@ -8,6 +8,9 @@ public class DNSCache {
 	public DNSCache() {
 		map = new HashMap<>();
 	}
+	
+	// ****************************************************************************************************
+	// ****************************************************************************************************
 
 	public DNSRecord searchFor(DNSQuestion inputQuestion) {
 		if (map.containsKey(inputQuestion)) {
