@@ -47,7 +47,6 @@ public class DNSHeader {
 	private int arCount;
 	
 	
-	
 	public int getQdCount() {
 		return qdCount;
 	}
@@ -123,63 +122,41 @@ public class DNSHeader {
 		DNSMessage.writeField(arCount, 2, outStream);
 	}
 	
-	//most significant bit on left
-	//byte to int is causing promotion problems
 	public static DNSHeader decodeHeader(ByteArrayInputStream inStream) throws IOException {
 		DNSHeader header = new DNSHeader();
-		byte[] inBuffer = new byte[12];
+		
+		header.id = DNSMessage.decodeField(inStream, 2);
+		
+		byte[] inBuffer = new byte[2];
 		inStream.read(inBuffer);
 		
-//		for (byte b : inBuffer) {
-//			System.out.println(String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0'));
-//		}
-		
 		int mask = 0xf;
-		
-		header.opcode |= inBuffer[2] >> 3;
+		header.opcode |= inBuffer[0] >> 3;
 		header.opcode &= mask;
-
-		header.rcode &= mask;
-
-		header.id = handleTwoByteField(inBuffer, 0);
-		header.qdCount = handleTwoByteField(inBuffer, 4);
-		header.anCount = handleTwoByteField(inBuffer, 6);
-		header.nsCount = handleTwoByteField(inBuffer, 8);
-		header.arCount = handleTwoByteField(inBuffer, 10);
-
-		header.qr = handleSingleBitField(inBuffer, 2, 0);
-		header.aa = handleSingleBitField(inBuffer, 2, 5);
-		header.tc = handleSingleBitField(inBuffer, 2, 6);
-		header.rd = handleSingleBitField(inBuffer, 2, 7);
-		header.ra = handleSingleBitField(inBuffer, 3, 0);
-		header.z = handleSingleBitField(inBuffer, 3, 1);
-		header.ad = handleSingleBitField(inBuffer, 3, 2);
-		header.cd = handleSingleBitField(inBuffer, 3, 3);
+		header.rcode |= inBuffer[1];
+		header.rcode &= mask;	
 		
-//		System.out.println("Header:");
-//		System.out.println("0 & 1: " + Integer.toBinaryString(header.id));
-//		System.out.println("2: " + Integer.toBinaryString(header.qr));
-//		System.out.println("2: " + Integer.toBinaryString(header.opcode));
-//		System.out.println("2: " + Integer.toBinaryString(header.aa));
-//		System.out.println("2: " + Integer.toBinaryString(header.tc));
-//		System.out.println("2: " + Integer.toBinaryString(header.rd));
-//		System.out.println("3: " + Integer.toBinaryString(header.ra));
-//		System.out.println("3: " + Integer.toBinaryString(header.z));
-//		System.out.println("3: " + Integer.toBinaryString(header.ad));
-//		System.out.println("3: " + Integer.toBinaryString(header.cd));
-//		System.out.println("3: " + Integer.toBinaryString(header.rcode));
-//		System.out.println("qdCount: " + Integer.toBinaryString(header.qdCount));
-//		System.out.println("anCount: " + Integer.toBinaryString(header.anCount));
-//		System.out.println("nsCount: " + Integer.toBinaryString(header.nsCount));
-//		System.out.println("arCount: " + Integer.toBinaryString(header.arCount));
+		header.qr = decodeSingleBitField(inBuffer, 0, 0);
+		header.aa = decodeSingleBitField(inBuffer, 0, 5);
+		header.tc = decodeSingleBitField(inBuffer, 0, 6);
+		header.rd = decodeSingleBitField(inBuffer, 0, 7);
+		header.ra = decodeSingleBitField(inBuffer, 1, 0);
+		header.z = decodeSingleBitField(inBuffer, 1, 1);
+		header.ad = decodeSingleBitField(inBuffer, 1, 2);
+		header.cd = decodeSingleBitField(inBuffer, 1, 3);
+
+		header.qdCount = DNSMessage.decodeField(inStream, 2);
+		header.anCount = DNSMessage.decodeField(inStream, 2);
+		header.nsCount = DNSMessage.decodeField(inStream, 2);
+		header.arCount = DNSMessage.decodeField(inStream, 2);
 		
 		return header;
 		
 	}
 	
 	public static DNSHeader buildResponseHeader(DNSMessage request, DNSMessage response) {
-		
 		DNSHeader workingHeader = request.getHeader();
+		
 		workingHeader.id = request.getHeader().id;
 		workingHeader.qr = 1;
 		workingHeader.opcode = 0;
@@ -199,19 +176,7 @@ public class DNSHeader {
 		return workingHeader;
 	}
 	
-	private static int handleTwoByteField(final byte[] inBuffer, int firstBytePosition) {
-		int mask = 0xff;
-		int byte1 = inBuffer[firstBytePosition] & mask;
-		int byte2 = inBuffer[firstBytePosition+1] & mask;
-
-		int output = 0;
-		output |= byte1 << 8;
-		output |= byte2;
-		
-		return output;
-	}
-	
-	private static int handleSingleBitField(final byte[] inBuffer, int bytePosition, int bitPosition) {		
+	private static int decodeSingleBitField(final byte[] inBuffer, int bytePosition, int bitPosition) {		
 		int value = 0;
 		int mask = 0xff;
 		value |= inBuffer[bytePosition] << bitPosition;

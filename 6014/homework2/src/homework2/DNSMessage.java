@@ -193,8 +193,6 @@ public class DNSMessage {
 		return message;
 	}
 	
-		
-	//TODO maybe problematic
 	public static void writeDomainName(ByteArrayOutputStream outStream, HashMap<String,Integer> domainLocations, String[] domainPieces) {
 		String domainKey = octetsToString(domainPieces);
 		if (domainLocations.containsKey(domainKey)) {
@@ -241,6 +239,19 @@ public class DNSMessage {
 		for (byte b : arr) {
 			outStream.write(b);
 		}
+	}
+	
+	public static int decodeField(ByteArrayInputStream inStream, int numberOfBytes) {
+		int output = 0;
+		int mask = 0xff;
+		for (int i = numberOfBytes-1; i >= 0; i--) {
+			int workingByte = inStream.read();
+			workingByte &= mask;
+			workingByte <<= (8 * i);
+			output |= workingByte;
+		}
+		
+		return output;
 	}
 	
 }
