@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <sstream>
 #include "shelpers.hpp"
 
 int main(int argc, const char * argv[]) {
@@ -14,9 +15,30 @@ int main(int argc, const char * argv[]) {
 
     std::string inputString;
     while (std::getline(std::cin, inputString)) {
+        std::stringstream stringStream(inputString);
+        std::string singleInput;
         std::vector<std::string> inputs;
-        inputs.push_back(inputString);
-//        std::vector<Command> commands = getCommands(inputs);
+        while (std::getline(stringStream, singleInput, ' ')) {
+            inputs.push_back(singleInput);
+        }
+        std::vector<Command> commands = getCommands(inputs);
+
+        
+        operator<<(std::cout, commands[0]);
+        std::cout << "\n";
+        
+        /*
+         //You'll need to fork/exec for each one of these!,
+         //Initially, assume the user tries to only execute 1 command.
+         struct Command{
+         std::string exec; //the name of the executable
+         //remember argv[0] should be the name of the program (same as exec)
+         //Also, argv should end with a nullptr!
+         std::vector<const char*> argv;
+         int fdStdin, fdStdout;
+         bool background;
+         };
+         */
         
         pid_t id = fork();
         if (id < 0) {
@@ -24,12 +46,12 @@ int main(int argc, const char * argv[]) {
             exit(1);
         } else if (id == 0) {
             //child
-            char *cmd = "ls";
-            char *argv[2];
-            argv[0] = "ls";
-            argv[1] = NULL;
+            Command workingCommand = commands[0];
+            const char** argumentsPointer = workingCommand.argv.data();
             
-            execvp(cmd, argv);
+            const char* namePointer = workingCommand.exec.c_str();
+            
+            execvp(namePointer, const_cast<char* const*> (argumentsPointer));
             exit(1);
         } else {
             //parent
@@ -37,11 +59,11 @@ int main(int argc, const char * argv[]) {
             do {
                 result = waitpid(id, NULL, 0);
                 if(result < 0 && errno != EINTR) {
-                    printf("Wait Error!\n");
+                    perror("Wait Error!\n");
                 }
             } while (result < 0);
             
-            std::cout << id << "\n";
+//            std::cout << id << "\n";
         }
         
     }
