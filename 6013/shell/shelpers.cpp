@@ -7,6 +7,7 @@
 //
 
 #include "shelpers.hpp"
+#include <fcntl.h>
 
 /*
  text handling functions
@@ -101,6 +102,9 @@ std::vector<Command> getCommands(const std::vector<std::string>& tokens){
         ret[i].fdStdout = 1;
         ret[i].background = false;
         
+//        for (std::string token : tokens) {
+//            std::cout << token << "\n";
+//        }
         for(int j = first + 1; j < last; ++j){
             if(tokens[j] == ">" || tokens[j] == "<" ){
                 //I/O redirection
@@ -110,7 +114,22 @@ std::vector<Command> getCommands(const std::vector<std::string>& tokens){
                  (all others get input from a pipe)
                  Only the LAST command can have output redirection!
                  */
-                assert(false);
+                if (tokens[j] == ">") {
+                    int file = open(tokens[j+1].c_str(), O_WRONLY | O_CREAT, 0666);
+                    if (file < 0) {
+                        perror(strerror(errno));
+                    }
+                    ret[i].argv.push_back(nullptr);
+                    ret[i].fdStdout = file;
+                }
+                
+                if (tokens[j] == "<") {
+                    int file = open(tokens[j+1].c_str(), O_RDONLY);
+                    if (file < 0) {
+                        perror(strerror(errno));
+                    }
+                    ret[i].fdStdin = file;
+                }
                 
             } else if(tokens[j] == "&"){
                 //Fill this in if you choose to do the optional "background command" part

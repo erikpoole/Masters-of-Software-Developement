@@ -27,25 +27,44 @@ int main(int argc, const char * argv[]) {
         operator<<(std::cout, commands[0]);
         std::cout << "\n";
         
+
+        
+//        dup2(fds[0], <#int#>)
+        
         /*
-         //You'll need to fork/exec for each one of these!,
-         //Initially, assume the user tries to only execute 1 command.
-         struct Command{
-         std::string exec; //the name of the executable
-         //remember argv[0] should be the name of the program (same as exec)
-         //Also, argv should end with a nullptr!
-         std::vector<const char*> argv;
-         int fdStdin, fdStdout;
-         bool background;
-         };
+         int main()
+         {
+         int file_desc = open("tricky.txt",O_WRONLY | O_APPEND);
+         
+         // here the newfd is the file descriptor of stdout (i.e. 1)
+         dup2(file_desc, 1) ;
+         
+         // All the printf statements will be written in the file
+         // "tricky.txt"
+         printf("I will be printed in the file tricky.txt\n");
+         
+         return 0;
+         }
          */
+        
+        /*
+         read = 0
+         write = 1
+         */
+        
+//        int fds[2];
+//        fds[0] = commands[0].fdStdin;
+//        fds[1] = commands[0].fdStdout;
         
         pid_t id = fork();
         if (id < 0) {
-            perror("Forking Error!\n");
+            perror(strerror(errno));
             exit(1);
         } else if (id == 0) {
             //child
+            dup2(commands[0].fdStdin, 0);
+            dup2(commands[0].fdStdout, 1);
+            
             Command workingCommand = commands[0];
             const char** argumentsPointer = workingCommand.argv.data();
             
@@ -59,7 +78,7 @@ int main(int argc, const char * argv[]) {
             do {
                 result = waitpid(id, NULL, 0);
                 if(result < 0 && errno != EINTR) {
-                    perror("Wait Error!\n");
+                    perror(strerror(errno));
                 }
             } while (result < 0);
             
@@ -68,6 +87,10 @@ int main(int argc, const char * argv[]) {
         
     }
 }
+
+
+
+
 
 /*
  char *cmd = "ls";
