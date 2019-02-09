@@ -70,12 +70,14 @@ std::vector<std::string> tokenize(const std::string& s){
 }
 
 
+
 std::ostream& operator<<(std::ostream& outs, const Command& c){
     outs << c.exec << " argv: ";
     for(const auto& arg : c.argv){ if(arg) {outs << arg << ' ';}}
     outs << "fds: " << c.fdStdin << ' ' << c.fdStdout << ' ' << (c.background ? "background" : "");
     return outs;
 }
+
 
 //returns an empty vector on error
 /*
@@ -102,9 +104,6 @@ std::vector<Command> getCommands(const std::vector<std::string>& tokens){
         ret[i].fdStdout = 1;
         ret[i].background = false;
         
-//        for (std::string token : tokens) {
-//            std::cout << token << "\n";
-//        }
         for(int j = first + 1; j < last; ++j){
             if(tokens[j] == ">" || tokens[j] == "<" ){
                 //I/O redirection
@@ -115,7 +114,7 @@ std::vector<Command> getCommands(const std::vector<std::string>& tokens){
                  Only the LAST command can have output redirection!
                  */
                 if (tokens[j] == ">") {
-                    int file = open(tokens[j+1].c_str(), O_WRONLY | O_CREAT, 0666);
+                    int file = open(tokens[j+1].c_str(), O_WRONLY | O_CREAT);
                     if (file < 0) {
                         perror(strerror(errno));
                     }
@@ -144,7 +143,15 @@ std::vector<Command> getCommands(const std::vector<std::string>& tokens){
             /* there are multiple commands.  Open open a pipe and
              Connect the ends to the fds for the commands!
              */
-            assert(false);
+            int pipeFDs[2];
+            if (pipe(pipeFDs) < 0) {
+                perror(strerror(errno));
+            }
+            
+            //previous command
+            ret[i-1].fdStdout = pipeFDs[1];
+            //current command
+            ret[i].fdStdin = pipeFDs[0];
         }
         //exec wants argv to have a nullptr at the end!
         ret[i].argv.push_back(nullptr);
