@@ -34,7 +34,7 @@ int main(int argc, const char * argv[]) {
                 if (commands[i].argv.size() == 2) {
                     if (chdir(getenv("HOME")) < 0) {
                         perror(strerror(errno));
-                        closeFDs(commands);                        
+                        closeFDs(commands);
                     }
                 } else {
                     if (chdir(commands[i].argv[1]) < 0) {
@@ -76,7 +76,6 @@ int main(int argc, const char * argv[]) {
         closeFDs(commands);
         
         int result;
-        //        std::cout << childIDs.size() << std::endl;
         for (pid_t id : childIDs) {
             do {
                 result = waitpid(id, NULL, 0);
