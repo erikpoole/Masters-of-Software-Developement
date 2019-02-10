@@ -6,28 +6,29 @@
 //  Copyright © 2019 ErikPoole. All rights reserved.
 //
 
-#include <iostream>
-#include <sstream>
+
 #include "shelpers.hpp"
 
 
 int main(int argc, const char * argv[]) {
     std::cout << "Shell Running\n";
-    
-    std::string inputString;
-    while (std::getline(std::cin, inputString)) {
-        std::stringstream stringStream(inputString);
+
+    char* completeInput;
+    while ((completeInput = readline("> ")) != nullptr) {
+        std::stringstream stringStream(completeInput);
+        free(completeInput);
+        
         std::string singleInput;
         std::vector<std::string> inputs;
         while (std::getline(stringStream, singleInput, ' ')) {
             inputs.push_back(singleInput);
         }
         std::vector<Command> commands = getCommands(inputs);
-        
-        
+
+
         //        operator<<(std::cout, commands[0]);
         //        std::cout << "\n";
-        
+
         std::vector<pid_t> childIDs;
         for (int i = 0; i < commands.size(); i++) {
             if (commands[i].exec == "cd") {
@@ -44,37 +45,37 @@ int main(int argc, const char * argv[]) {
                 }
                 continue;
             }
-            
+
             pid_t id = fork();
             if (id < 0) {
                 perror(strerror(errno));
                 closeFDs(commands);
             }
-            
+
             if (id == 0) {
                 //child
                 dup2(commands[i].fdStdin, 0);
                 dup2(commands[i].fdStdout, 1);
-                
+
                 for (int j = 0; j < commands.size(); j++) {
                     if (j != i && commands[j].fdStdout != 1) {
                         close(commands[j].fdStdout);
                     }
                 }
-                
+
                 const char** argumentsPointer = commands[i].argv.data();
                 const char* namePointer = commands[i].exec.c_str();
-                
+
                 execvp(namePointer, const_cast<char* const*> (argumentsPointer));
             } else {
                 //parent
                 childIDs.push_back(id);
-                
+
             }
         }
-        
+
         closeFDs(commands);
-        
+
         int result;
         for (pid_t id : childIDs) {
             do {
@@ -84,10 +85,10 @@ int main(int argc, const char * argv[]) {
                     closeFDs(commands);
                 }
             } while (result < 0 && errno != EINTR);
-            
+
             //            std::cout << id << "\n";
         }
-        
-        
+
+
     }
 }

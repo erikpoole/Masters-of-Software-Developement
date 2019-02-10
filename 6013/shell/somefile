@@ -1,1 +1,10 @@
-pocket full of shells
+//
+//  main.cpp
+//  shell
+//
+//  Created by Erik Poole on 2/5/19.
+//  Copyright © 2019 ErikPoole. All rights reserved.
+//
+
+
+#include "shelpers.hpp"

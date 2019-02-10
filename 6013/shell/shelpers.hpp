@@ -8,12 +8,16 @@
 
 #pragma once
 
+#include <fcntl.h>
 #include <string>
 #include <iostream>
-#include <unistd.h>
+#include <readline/readline.h>
+#include <sstream>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
+#include <unistd.h>
 #include <vector>
 
 

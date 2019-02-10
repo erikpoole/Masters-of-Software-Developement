@@ -7,7 +7,6 @@
 //
 
 #include "shelpers.hpp"
-#include <fcntl.h>
 
 /*
  text handling functions
