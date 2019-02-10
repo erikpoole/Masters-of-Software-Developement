@@ -10,6 +10,7 @@
 #include <sstream>
 #include "shelpers.hpp"
 
+
 int main(int argc, const char * argv[]) {
     std::cout << "Shell Running\n";
     
@@ -29,9 +30,25 @@ int main(int argc, const char * argv[]) {
         
         std::vector<pid_t> childIDs;
         for (int i = 0; i < commands.size(); i++) {
+            if (commands[i].exec == "cd") {
+                if (commands[i].argv.size() == 2) {
+                    if (chdir(getenv("HOME")) < 0) {
+                        perror(strerror(errno));
+                        closeFDs(commands);                        
+                    }
+                } else {
+                    if (chdir(commands[i].argv[1]) < 0) {
+                        perror(strerror(errno));
+                        closeFDs(commands);
+                    }
+                }
+                continue;
+            }
+            
             pid_t id = fork();
             if (id < 0) {
                 perror(strerror(errno));
+                closeFDs(commands);
             }
             
             if (id == 0) {
@@ -56,11 +73,7 @@ int main(int argc, const char * argv[]) {
             }
         }
         
-        for (Command command: commands) {
-            if (command.fdStdout != 1) {
-                close(command.fdStdout);
-            }
-        }
+        closeFDs(commands);
         
         int result;
         //        std::cout << childIDs.size() << std::endl;
@@ -69,6 +82,7 @@ int main(int argc, const char * argv[]) {
                 result = waitpid(id, NULL, 0);
                 if(result < 0 && errno != EINTR) {
                     perror(strerror(errno));
+                    closeFDs(commands);
                 }
             } while (result < 0 && errno != EINTR);
             

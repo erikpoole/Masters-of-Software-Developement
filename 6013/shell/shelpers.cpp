@@ -117,6 +117,7 @@ std::vector<Command> getCommands(const std::vector<std::string>& tokens){
                     int file = open(tokens[j+1].c_str(), O_WRONLY | O_CREAT);
                     if (file < 0) {
                         perror(strerror(errno));
+                        closeFDs(ret);
                     }
                     ret[i].argv.push_back(nullptr);
                     ret[i].fdStdout = file;
@@ -126,6 +127,7 @@ std::vector<Command> getCommands(const std::vector<std::string>& tokens){
                     int file = open(tokens[j+1].c_str(), O_RDONLY);
                     if (file < 0) {
                         perror(strerror(errno));
+                        closeFDs(ret);
                     }
                     ret[i].fdStdin = file;
                 }
@@ -146,6 +148,7 @@ std::vector<Command> getCommands(const std::vector<std::string>& tokens){
             int pipeFDs[2];
             if (pipe(pipeFDs) < 0) {
                 perror(strerror(errno));
+                closeFDs(ret);
             }
             
             //previous command
@@ -171,4 +174,13 @@ std::vector<Command> getCommands(const std::vector<std::string>& tokens){
     }
     
     return ret;
+}
+
+
+void closeFDs(std::vector<Command> inputCommands) {
+    for (Command command: inputCommands) {
+        if (command.fdStdout != 1) {
+            close(command.fdStdout);
+        }
+    }
 }
