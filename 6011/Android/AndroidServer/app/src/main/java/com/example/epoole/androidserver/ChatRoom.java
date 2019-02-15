@@ -58,8 +58,8 @@ public class ChatRoom extends AppCompatActivity {
 
         try {
             Log.d("myDebug", "Activity Opened");
-            //ws = factory.createSocket("ws://10.0.2.2:8080");
-            ws = factory.createSocket("http://erikpooleserver.eastus.cloudapp.azure.com:8080/webChatLogin.html");
+            ws = factory.createSocket("ws://10.0.2.2:8080");
+//            ws = factory.createSocket("http://erikpooleserver.eastus.cloudapp.azure.com:8080/webChatLogin.html");
 
             ws.addListener(new WebSocketAdapter() {
                 @Override
