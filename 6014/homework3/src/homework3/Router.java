@@ -45,10 +45,10 @@ public class Router {
 
 
     public void dumpDistanceTable() {
-        System.out.println("router: " + this);
-        for(Router r : distances.keySet()){
-            System.out.println("\t" + r + "\t" + distances.get(r));
-        }
+//        System.out.println("router: " + this);
+//        for(Router r : distances.keySet()){
+//            System.out.println("\t" + r + "\t" + distances.get(r));
+//        }
     }
 
     @Override

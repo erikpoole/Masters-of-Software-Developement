@@ -35,7 +35,7 @@ public class Network {
     public static void runBellmanFord() throws InterruptedException {
 
         while(!messageQueue.isEmpty()){
-            System.out.println("processing message");
+//            System.out.println("processing message");
             ++messageCount;
             Message message = messageQueue.take();
             message.dump();
@@ -69,12 +69,12 @@ public class Network {
     }
 
     public static void dump(){
-        for(Router r : links.keySet()){
-            System.out.println("router " + r);
-            for (Neighbor n : links.get(r)){
-                System.out.println("\t" + n);
-            }
-        }
+//        for(Router r : links.keySet()){
+//            System.out.println("router " + r);
+//            for (Neighbor n : links.get(r)){
+//                System.out.println("\t" + n);
+//            }
+//        }
     }
 
 
