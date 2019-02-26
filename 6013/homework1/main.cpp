@@ -17,7 +17,7 @@ extern "C" {
 
 int main(int argc, const char * argv[]) {
     sayHello();
-    myPuts("poop", 4);
+    myPuts("", 4);
     
     timeval myTime;
     timeval theirTime;
@@ -26,4 +26,6 @@ int main(int argc, const char * argv[]) {
     gettimeofday(&theirTime, NULL);
     
     std::cout << myTime.tv_sec - theirTime.tv_sec << std::endl;
+    std::cout <<myTime.tv_sec << "\n";
+    std::cout <<theirTime.tv_sec << "\n";
 }
