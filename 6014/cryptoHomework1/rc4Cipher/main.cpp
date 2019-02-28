@@ -6,16 +6,6 @@
 //  Copyright © 2019 ErikPoole. All rights reserved.
 //
 
-/*
- Implement the RC4 cypher as described in class (it's not very much code! Probably a struct/class with a constructor and a single method. Pseudocode in the class slides or many other places).
- 
- Verify that decrypting a message with a different key than the encryption key does not reveal the plaintext.
- 
- Verify that encrypting 2 messages using the same keystream is insecure (what do you expect to see if you xor the two encrypted messages?)
- 
- Modify part of a message using a bit-flipping attack. For example, try sending the message "Your salary is $1000" encrypted with RC4. Modify the cyphertext so that when decrypted is says that your salary is 9999 instead. Hint: this should just require using xor.
- */
-
 
 #include <iostream>
 #include <vector>
@@ -57,6 +47,16 @@ public:
 };
 
 
+std::string xOR(std::string inputText1, std::string inputText2) {
+    std::string output = "";
+    for (int i = 0; i < inputText1.size(); i++) {
+        output += inputText1[i]^inputText2[i];
+    }
+    
+    return output;
+}
+
+
 int main(int argc, const char * argv[]) {
     std::string password = "Password";
     std::string badPassword = "Badword";
@@ -78,22 +78,36 @@ int main(int argc, const char * argv[]) {
     std::cout << "\n";
     
     
-    //duplicate keystream
+    //reused key attack demonstration
     std::string plainText2 = "10 Letters";
     std::string cipherText2 = encoder2.encode(plainText2);
     std::cout << "ciphertext: " << cipherText << "\n";
     std::cout << "ciphertext2: " << cipherText2 << "\n";
     
-    std::string combinedPlainText = "";
-    for (int i = 0; i < cipherText.size(); i++) {
-        combinedPlainText += cipherText[i]^cipherText2[i];
-    }
+    std::string combinedPlainText = xOR(cipherText, cipherText2);
     std::cout << "combined plaintext: " << combinedPlainText << "\n";
     
-    std::string hackedText = "";
-    for (int i = 0; i < plainText.size(); i++) {
-        hackedText += plainText2[i]^combinedPlainText[i];
-    }
+    std::string hackedText = xOR(plainText2, combinedPlainText);
     std::cout << "Hacked text given that plaintext2 is known: " << hackedText << "\n";
     std::cout << "\n";
+    
+    
+    //bit flipping attack demonstration
+    std::string salaryText = "Your salary is $1000";
+    std::string attackerText = "Your salary is $9999";
+    std::string salaryCipher = encoder.encode(salaryText);
+    std::string attackerCipher = xOR(salaryCipher, xOR(attackerText, salaryText));
+    std::string decryptedAttack = encoder2.encode(attackerCipher);
+    
+    std::cout << "salaryText: " << salaryText << "\n";
+    std::cout << "attackerText: " << attackerText << "\n";
+    std::cout << "salaryCipher: " << salaryCipher << "\n";
+    std::cout << "attackerCipher: " << attackerCipher << "\n";
+    std::cout << "decryptedAttack: " << decryptedAttack << "\n";
+    
+    
+    
+    
 }
+
+
