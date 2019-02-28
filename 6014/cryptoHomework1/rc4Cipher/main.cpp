@@ -59,17 +59,41 @@ public:
 
 int main(int argc, const char * argv[]) {
     std::string password = "Password";
+    std::string badPassword = "Badword";
+    
     rc4Cipher encoder = rc4Cipher(password);
+    rc4Cipher encoder2 = rc4Cipher(password);
     rc4Cipher decoder = rc4Cipher(password);
+    rc4Cipher badDecoder = rc4Cipher(badPassword);
     
     std::string plainText = "My Message";
     std::string cipherText = encoder.encode(plainText);
     std::string decryptedText = decoder.encode(cipherText);
+    std::string badDecryptedText = badDecoder.encode(cipherText);
     
     std::cout << "plaintext: " << plainText << "\n";
     std::cout << "ciphertext: " << cipherText << "\n";
-    std::cout << "decrpytedtext: " << decryptedText << "\n";
+    std::cout << "decryptedText: " << decryptedText << "\n";
+    std::cout << "badDecryptedText: " << badDecryptedText << "\n";
+    std::cout << "\n";
     
     
+    //duplicate keystream
+    std::string plainText2 = "10 Letters";
+    std::string cipherText2 = encoder2.encode(plainText2);
+    std::cout << "ciphertext: " << cipherText << "\n";
+    std::cout << "ciphertext2: " << cipherText2 << "\n";
     
+    std::string combinedPlainText = "";
+    for (int i = 0; i < cipherText.size(); i++) {
+        combinedPlainText += cipherText[i]^cipherText2[i];
+    }
+    std::cout << "combined plaintext: " << combinedPlainText << "\n";
+    
+    std::string hackedText = "";
+    for (int i = 0; i < plainText.size(); i++) {
+        hackedText += plainText2[i]^combinedPlainText[i];
+    }
+    std::cout << "Hacked text given that plaintext2 is known: " << hackedText << "\n";
+    std::cout << "\n";
 }
