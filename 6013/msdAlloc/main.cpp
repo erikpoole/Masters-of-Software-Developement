@@ -42,48 +42,50 @@
  Our allocator has a ton of internal fragmentation since very few calls to allocate will ask for multiples of the page size. This leads to lots of memory waste (if we allocate 4096 1 byte bits of memory, we'll use 4096 times as much memory as we really need!).
  
  For a bonus, develop an improved allocator that reduces this fragmentation. Test and benchmark this allocator to make sure it works correctly and is actually faster than the naive version described above.
-*/
+ */
 
 
 #include <iostream>
 #include <sys/mman.h>
 #include <vector>
 
-class allocater {
+class Allocater {
 private:
-    std::pair<void*, int>* hashMapPointer;
-    int size;
-    int filledSlots;
     
-
-    long calculateHash(void* ptr) {
-        return (long) ptr >> 12;
+    std::pair<void*, size_t>* hashMapPointer;
+    size_t internalSize;
+    size_t filledSlots;
+    
+    
+    size_t calculateHash(void* ptr) {
+        return (size_t) ptr >> 12;
     }
     
-    void hashInsert(void* ptr, int size) {
-        if (filledSlots > size / 2) {
+    void hashInsert(void* ptr, size_t size) {
+        if (filledSlots > internalSize / 2) {
             hashGrow();
         }
         
-        long location = calculateHash(ptr) % size;
+        size_t location = calculateHash(ptr) % internalSize;
         int collisions = 0;
+//        std::cout << location << "\n";
         while (hashMapPointer[location].first != nullptr) {
             collisions++;
-            location += (collisions + collisions*collisions)/2 % size;
+            location += (collisions + collisions*collisions)/2 % internalSize;
         }
         
         hashMapPointer[location] = std::pair<void*, int> (ptr, size);
         filledSlots++;
     }
     
-    int hashDelete(int* ptr) {
-        long location = calculateHash(ptr) % size;
+    size_t hashDelete(void* ptr) {
+        long location = calculateHash(ptr) % internalSize;
         int collisions = 0;
         while (hashMapPointer[location].first != ptr && hashMapPointer[location].second != 0) {
             collisions++;
-            location += (collisions + collisions*collisions)/2 % size;
+            location += (collisions + collisions*collisions)/2 % internalSize;
         }
-        int size = hashMapPointer[location].second;
+        size_t size = hashMapPointer[location].second;
         hashMapPointer[location] = std::pair<void*, int> (nullptr, -1);
         filledSlots--;
         
@@ -92,51 +94,82 @@ private:
     
     void hashGrow() {
         
-        std::pair<void*, int>* tempPointer = hashMapPointer;
-        hashMapPointer = (std::pair<void*, int>*) mmap(NULL, size*2, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
+        std::pair<void*, size_t>* tempPointer = hashMapPointer;
+        size_t newSize = internalSize*sizeof(hashMapPointer[0])*2;
+        hashMapPointer = (std::pair<void*, size_t>*) mmap(NULL, newSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
         
-        for (int i = 0; i < size; i++) {
+        filledSlots = 0;
+        for (int i = 0; i < internalSize; i++) {
             if (tempPointer[i].first != nullptr) {
                 hashInsert(tempPointer[i].first, tempPointer[i].second);
+                munmap(tempPointer[i].first, tempPointer[i].second);
             }
         }
         
-        size *= 2;
+        munmap(tempPointer, internalSize);
+        
+        internalSize *= 2;
     }
+    
     
 public:
-
-    allocater() {
-        hashMapPointer = (std::pair<void*, int>*) mmap(NULL, 4096, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
-        size = 4096 / sizeof(std::pair<void*, int>*);
+    
+    Allocater() {
+        hashMapPointer = (std::pair<void*, size_t>*) mmap(NULL, 4096, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
+        internalSize = 4096 / sizeof(hashMapPointer[0]);;
         filledSlots = 0;
+        
+        //        std::cout << internalSize << "\n";
+        //        for (int i = 0; i < internalSize; i++) {
+        //            std::cout << hashMapPointer[i].first << "\n";
+        //            std::cout << hashMapPointer[i].second << "\n";
+        //        }
     }
     
-    ~allocater() {
-        for (int i = 0; i < size; i++) {
+    ~Allocater() {
+        for (int i = 0; i < internalSize; i++) {
             if (hashMapPointer[i].first != nullptr) {
                 munmap(hashMapPointer[i].first, 4096);
             }
         }
         
-        munmap(hashMapPointer, size);
+        munmap(hashMapPointer, internalSize);
     }
     
     void* allocate(size_t bytesToAllocate) {
+        size_t pagesToAllocate = bytesToAllocate / 4096;
+        if (bytesToAllocate % 4096 != 0) {
+            pagesToAllocate++;
+        }
+        size_t bytesSize = pagesToAllocate * 4096;
         
-        return nullptr;
+        void* memory = mmap(NULL, bytesSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
+        hashInsert(memory, bytesSize);
+        
+        return memory;
     }
     
     void deallocate(void* ptr) {
-        
+        size_t bytesSize = hashDelete(ptr);
+        munmap(ptr, bytesSize);
     }
-    
-    
-    
     
 };
 
 
 int main(int argc, const char * argv[]) {
     
+    Allocater allocater = Allocater();
+    
+    int number = 500000;
+    void* pointers[number];
+    for (int i = 0; i < number; i++) {
+        pointers[i] = allocater.allocate(1);
+    }
+    for (int i = 0; i < number; i++) {
+        allocater.deallocate(pointers[i]);
+    }
+    
+    
 }
+
