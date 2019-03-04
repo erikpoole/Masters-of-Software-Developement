@@ -46,73 +46,80 @@
 
 
 #include <iostream>
+#include <sys/mman.h>
 #include <vector>
 
 class allocater {
 private:
-    std::vector<std::pair<void*, int>> hashTable;
+    std::pair<void*, int>* hashMapPointer;
+    int size;
     int filledSlots;
     
-    
+
     long calculateHash(void* ptr) {
         return (long) ptr >> 12;
     }
     
     void hashInsert(void* ptr, int size) {
-        if (filledSlots > hashTable.size() / 2) {
+        if (filledSlots > size / 2) {
             hashGrow();
         }
         
-        long location = calculateHash(ptr) % hashTable.size();
+        long location = calculateHash(ptr) % size;
         int collisions = 0;
-        while (hashTable[location].first != nullptr) {
+        while (hashMapPointer[location].first != nullptr) {
             collisions++;
-            location += (collisions + collisions*collisions)/2 % hashTable.size();
+            location += (collisions + collisions*collisions)/2 % size;
         }
         
-        hashTable[location] = std::pair<void*, int> (ptr, size);
+        hashMapPointer[location] = std::pair<void*, int> (ptr, size);
         filledSlots++;
     }
     
     int hashDelete(int* ptr) {
-        long location = calculateHash(ptr) % hashTable.size();
+        long location = calculateHash(ptr) % size;
         int collisions = 0;
-        while (hashTable[location].first != ptr && hashTable[location].second != 0) {
+        while (hashMapPointer[location].first != ptr && hashMapPointer[location].second != 0) {
             collisions++;
-            location += (collisions + collisions*collisions)/2 % hashTable.size();
+            location += (collisions + collisions*collisions)/2 % size;
         }
-        int size = hashTable[location].second;
-        hashTable[location] = std::pair<void*, int> (nullptr, -1);
+        int size = hashMapPointer[location].second;
+        hashMapPointer[location] = std::pair<void*, int> (nullptr, -1);
         filledSlots--;
         
         return size;
     }
     
     void hashGrow() {
-
-        std::vector<std::pair<void*, int>> tempTable;
-        for (int i = 0; i < hashTable.size(); i++) {
-            if (hashTable[i].first != nullptr) {
-                tempTable.push_back(hashTable[i]);
+        
+        std::pair<void*, int>* tempPointer = hashMapPointer;
+        hashMapPointer = (std::pair<void*, int>*) mmap(NULL, size*2, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
+        
+        for (int i = 0; i < size; i++) {
+            if (tempPointer[i].first != nullptr) {
+                hashInsert(tempPointer[i].first, tempPointer[i].second);
             }
         }
-        int newSize = (int) hashTable.size() * 2;
-        hashTable = std::vector<std::pair<void*, int>>(newSize, std::pair<void*, int>(nullptr, 0));
         
-        for (int i = 0; i < tempTable.size(); i++) {
-            hashInsert(tempTable[i].first, tempTable[i].second);
-        }
+        size *= 2;
     }
     
 public:
 
     allocater() {
-        hashTable = std::vector<std::pair<void*, int>>(8, std::pair<void*, int>(nullptr, 0));
+        hashMapPointer = (std::pair<void*, int>*) mmap(NULL, 4096, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
+        size = 4096 / sizeof(std::pair<void*, int>*);
         filledSlots = 0;
     }
     
     ~allocater() {
-        //for allocation in hash table call munmap
+        for (int i = 0; i < size; i++) {
+            if (hashMapPointer[i].first != nullptr) {
+                munmap(hashMapPointer[i].first, 4096);
+            }
+        }
+        
+        munmap(hashMapPointer, size);
     }
     
     void* allocate(size_t bytesToAllocate) {
