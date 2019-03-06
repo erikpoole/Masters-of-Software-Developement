@@ -1,4 +1,4 @@
-timer: 
+default: 
 	clang++ -DNDEBUG -std=c++17 -c -O3 main.cpp functions.cpp
 	clang++ -o timer main.o functions.o
 	./timer
@@ -9,5 +9,6 @@ test:
 	./tester
 
 clean:
-	rm tester
-	rm timer
+	rm -f *.o
+	rm -f tester
+	rm -f timer

@@ -16,6 +16,7 @@
 int main(int argc, const char * argv[]) {
     
     int number = 50000;
+    int size = 10000;
     void* pointers[number];
     
     Allocater allocater = Allocater();
@@ -25,7 +26,7 @@ int main(int argc, const char * argv[]) {
     //timing MSDalloc
     auto timeStart = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < number; i++) {
-        pointers[i] = allocater.allocate(1);
+        pointers[i] = allocater.allocate(size);
     }
     for (int i = 0; i < number; i++) {
         allocater.deallocate(pointers[i]);
@@ -38,7 +39,7 @@ int main(int argc, const char * argv[]) {
     //timing Malloc
     timeStart = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < number; i++) {
-        pointers[i] = malloc(1);
+        pointers[i] = malloc(size);
     }
     for (int i = 0; i < number; i++) {
         free(pointers[i]);

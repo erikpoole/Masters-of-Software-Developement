@@ -23,7 +23,6 @@ void Allocater::hashInsert(void* ptr, size_t size) {
     
     size_t location = calculateHash(ptr) % internalSize;
     int collisions = 0;
-    //        std::cout << location << "\n";
     while (hashMapPointer[location].first != nullptr) {
         collisions++;
         location = (location + (collisions + collisions*collisions)/2) % internalSize;
@@ -35,8 +34,8 @@ void Allocater::hashInsert(void* ptr, size_t size) {
 
 size_t Allocater::hashDelete(void* ptr) {
     long location = calculateHash(ptr) % internalSize;
-    int collisions = 0;
-    int numHops = 0;
+    long collisions = 0;
+    long numHops = 0;
     while (hashMapPointer[location].first != ptr || hashMapPointer[location].second == -1) {
         collisions++;
         location = (location + (collisions + collisions*collisions)/2) % internalSize;
@@ -69,12 +68,11 @@ void Allocater::hashGrow() {
     for (int i = 0; i < internalSize; i++) {
         if (tempPointer[i].first != nullptr) {
             hashInsert(tempPointer[i].first, tempPointer[i].second);
-            munmap(tempPointer[i].first, tempPointer[i].second);
+//            munmap(tempPointer[i].first, tempPointer[i].second);
         }
     }
     
     munmap(tempPointer, internalSize);
-    
     internalSize *= 2;
 }
 
