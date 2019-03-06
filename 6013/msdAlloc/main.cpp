@@ -47,3 +47,4 @@ int main(int argc, const char * argv[]) {
     
     std::cout << "Malloc Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeStart).count() << "\n";
 }
+

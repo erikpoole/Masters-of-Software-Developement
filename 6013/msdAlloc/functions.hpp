@@ -15,8 +15,10 @@
 #endif /* functions_h */
 
 class Allocater {
-private:
+    //private:
     
+    //made everything public for unit testing
+public:
     std::pair<void*, size_t>* hashMapPointer;
     size_t internalSize;
     size_t filledSlots;
@@ -28,7 +30,7 @@ private:
     void hashGrow();
     
     
-public:
+    //public:
     
     Allocater();
     ~Allocater();
@@ -37,3 +39,4 @@ public:
     void deallocate(void* ptr);
     
 };
+
