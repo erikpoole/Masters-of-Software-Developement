@@ -26,7 +26,7 @@ void Allocater::hashInsert(void* ptr, size_t size) {
     //        std::cout << location << "\n";
     while (hashMapPointer[location].first != nullptr) {
         collisions++;
-        location += (collisions + collisions*collisions)/2 % internalSize;
+        location = (location + (collisions + collisions*collisions)/2) % internalSize;
     }
     
     hashMapPointer[location] = std::pair<void*, int> (ptr, size);
@@ -36,10 +36,22 @@ void Allocater::hashInsert(void* ptr, size_t size) {
 size_t Allocater::hashDelete(void* ptr) {
     long location = calculateHash(ptr) % internalSize;
     int collisions = 0;
-    while (hashMapPointer[location].first != ptr && hashMapPointer[location].second != 0) {
+    int numHops = 0;
+    while (hashMapPointer[location].first != ptr || hashMapPointer[location].second == -1) {
         collisions++;
-        location += (collisions + collisions*collisions)/2 % internalSize;
+        location = (location + (collisions + collisions*collisions)/2) % internalSize;
+        
+        numHops++;
+        if (numHops > internalSize) {
+            break;
+        }
     }
+    
+    if (numHops > internalSize) {
+        std::cout << "Wrapped\n";
+        return -1;
+    }
+    
     size_t size = hashMapPointer[location].second;
     hashMapPointer[location] = std::pair<void*, int> (nullptr, -1);
     filledSlots--;
@@ -98,6 +110,10 @@ void* Allocater::allocate(size_t bytesToAllocate) {
 
 void Allocater::deallocate(void* ptr) {
     size_t bytesSize = hashDelete(ptr);
-    munmap(ptr, bytesSize);
+    if (bytesSize >= 0) {
+        munmap(ptr, bytesSize);
+    }
+    
 }
+
 

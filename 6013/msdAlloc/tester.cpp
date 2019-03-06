@@ -51,12 +51,12 @@ TEST_CASE("hashInsert & hashDelete") {
         }
         REQUIRE(count == allocater.filledSlots);
     }
-    
+
     size_t outputSize = allocater.hashDelete(testPointer);
     SECTION("hashDelete") {
 
         REQUIRE(outputSize == size);
-        
+    
         REQUIRE(allocater.internalSize == 256);
         REQUIRE(allocater.filledSlots == 0);
         
@@ -72,7 +72,7 @@ TEST_CASE("hashInsert & hashDelete") {
     SECTION("many hashInsert & hashDelete") {
         void* testPointerArr[10000];
         for (int i = 0; i < 10000; i++) {
-            void* testPointer = (std::pair<void*, size_t>*) mmap(NULL, i, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
+            void* testPointer = (std::pair<void*, size_t>*) mmap(NULL, i+1, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
             testPointerArr[i] = testPointer;
             allocater.hashInsert(testPointerArr[i], i);
         }
@@ -97,6 +97,7 @@ TEST_CASE("hashInsert & hashDelete") {
         for (int i = 0; i < allocater.internalSize; i++) {
             if (allocater.hashMapPointer[i].first != nullptr) {
                 count++;
+                std::cout << allocater.hashMapPointer[i].first << "\n";
             }
         }
         REQUIRE(count == allocater.filledSlots);
