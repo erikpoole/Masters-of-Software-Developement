@@ -22,20 +22,20 @@ void Allocater::hashInsert(void* ptr, size_t size) {
     }
     
     size_t location = calculateHash(ptr) % internalSize;
-    int collisions = 0;
+    size_t collisions = 0;
     while (hashMapPointer[location].first != nullptr) {
         collisions++;
         location = (location + (collisions + collisions*collisions)/2) % internalSize;
     }
     
-    hashMapPointer[location] = std::pair<void*, int> (ptr, size);
+    hashMapPointer[location] = std::pair<void*, size_t> (ptr, size);
     filledSlots++;
 }
 
 size_t Allocater::hashDelete(void* ptr) {
-    long location = calculateHash(ptr) % internalSize;
-    long collisions = 0;
-    long numHops = 0;
+    size_t location = calculateHash(ptr) % internalSize;
+    size_t collisions = 0;
+    size_t numHops = 0;
     while (hashMapPointer[location].first != ptr || hashMapPointer[location].second == -1) {
         collisions++;
         location = (location + (collisions + collisions*collisions)/2) % internalSize;
@@ -47,33 +47,36 @@ size_t Allocater::hashDelete(void* ptr) {
     }
     
     if (numHops > internalSize) {
+        location = calculateHash(ptr) % internalSize;
+        std:: cout << location << "\n";
         std::cout << "Wrapped\n";
         return -1;
     }
     
     size_t size = hashMapPointer[location].second;
-    hashMapPointer[location] = std::pair<void*, int> (nullptr, -1);
+    hashMapPointer[location] = std::pair<void*, size_t> (nullptr, -1);
     filledSlots--;
     
     return size;
 }
 
 void Allocater::hashGrow() {
-    
     std::pair<void*, size_t>* tempPointer = hashMapPointer;
+    size_t tempSize = internalSize;
     size_t newSize = internalSize*sizeof(hashMapPointer[0])*2;
+    
     hashMapPointer = (std::pair<void*, size_t>*) mmap(NULL, newSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
     
     filledSlots = 0;
-    for (int i = 0; i < internalSize; i++) {
+    internalSize *= 2;
+    for (int i = 0; i < tempSize; i++) {
         if (tempPointer[i].first != nullptr) {
             hashInsert(tempPointer[i].first, tempPointer[i].second);
-//            munmap(tempPointer[i].first, tempPointer[i].second);
         }
     }
     
-    munmap(tempPointer, internalSize);
-    internalSize *= 2;
+    munmap(tempPointer, tempSize);
+
 }
 
 
@@ -86,7 +89,7 @@ Allocater::Allocater() {
 Allocater::~Allocater() {
     for (int i = 0; i < internalSize; i++) {
         if (hashMapPointer[i].first != nullptr) {
-            munmap(hashMapPointer[i].first, 4096);
+            munmap(hashMapPointer[i].first, hashMapPointer[i].second);
         }
     }
     
@@ -115,3 +118,41 @@ void Allocater::deallocate(void* ptr) {
 }
 
 
+//***************************************************************************
+//***************************************************************************
+
+
+void compareMallocs(int entries, int entrySize) {
+    void* pointers[entries];
+    Allocater allocater = Allocater();
+    
+    std::cout.precision(2);
+    std::cout << std::scientific;
+    std::cout << "Number of Entries: " << (float) entries << " // Size of Entries: " << (float) entrySize << ":\n";
+    
+    //timing MSDalloc
+    auto timeStart = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < entries; i++) {
+        pointers[i] = allocater.allocate(entrySize);
+    }
+    for (int i = 0; i < entries; i++) {
+        allocater.deallocate(pointers[i]);
+    }
+    auto timeEnd = std::chrono::high_resolution_clock::now();
+
+    std::cout << "MSDalloc Allocate/Deallocate time: " << std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeStart).count() << "ms \n";
+    
+    
+    //timing Malloc
+    timeStart = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < entries; i++) {
+        pointers[i] = malloc(entrySize);
+    }
+    for (int i = 0; i < entries; i++) {
+        free(pointers[i]);
+    }
+    timeEnd = std::chrono::high_resolution_clock::now();
+    
+    std::cout << "Malloc/Free time: " << std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeStart).count() << "ms \n";
+    std::cout << "\n";
+}

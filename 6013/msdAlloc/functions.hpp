@@ -40,3 +40,4 @@ public:
     
 };
 
+void compareMallocs(int entries, int entrySize);

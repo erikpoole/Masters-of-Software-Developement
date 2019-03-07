@@ -12,40 +12,24 @@
 #include <thread>
 #include <iostream>
 
-
 int main(int argc, const char * argv[]) {
-    
-    int number = 50000;
-    int size = 10000;
-    void* pointers[number];
-    
-    Allocater allocater = Allocater();
     
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     
-    //timing MSDalloc
-    auto timeStart = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < number; i++) {
-        pointers[i] = allocater.allocate(size);
-    }
-    for (int i = 0; i < number; i++) {
-        allocater.deallocate(pointers[i]);
-    }
-    auto timeEnd = std::chrono::high_resolution_clock::now();
+    compareMallocs(10000, 1000);
+    compareMallocs(100000, 1000);
+    compareMallocs(1000000, 1000);
+    std::cout << "\n";
     
-    std::cout << "MSDalloc Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeStart).count() << "\n";
+    compareMallocs(10000, 10000);
+    compareMallocs(100000, 10000);
+    compareMallocs(1000000, 10000);
+    std::cout << "\n";
     
-    
-    //timing Malloc
-    timeStart = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < number; i++) {
-        pointers[i] = malloc(size);
-    }
-    for (int i = 0; i < number; i++) {
-        free(pointers[i]);
-    }
-    timeEnd = std::chrono::high_resolution_clock::now();
-    
-    std::cout << "Malloc Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeStart).count() << "\n";
+    compareMallocs(10000, 100000);
+    compareMallocs(100000, 100000);
+    compareMallocs(1000000, 100000);
+    std::cout << "\n";
+
 }
 
