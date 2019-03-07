@@ -1,0 +1,5 @@
+In the terminal type "make" to run timing comparison.
+
+In the terminal type "make test" to run unit testing.
+
+Thanks!

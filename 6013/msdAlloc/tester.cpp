@@ -33,9 +33,11 @@ TEST_CASE("hashInsert & hashDelete") {
     void* testPointer = (std::pair<void*, size_t>*) mmap(NULL, size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
     int count = 0;
     
-    REQUIRE(allocater.hashMapPointer != nullptr);
-    REQUIRE(allocater.internalSize == 256);
-    REQUIRE(allocater.filledSlots == 0);
+    SECTION("constructor") {
+        REQUIRE(allocater.hashMapPointer != nullptr);
+        REQUIRE(allocater.internalSize == 256);
+        REQUIRE(allocater.filledSlots == 0);
+    }
     
     allocater.hashInsert(testPointer, size);
     SECTION("hashInsert") {
@@ -69,10 +71,10 @@ TEST_CASE("hashInsert & hashDelete") {
         REQUIRE(count == allocater.filledSlots);
     }
     
-    SECTION("many hashInsert & hashDelete") {
+    SECTION("Many hashInsert & hashDelete") {
         void* testPointerArr[10000];
         for (int i = 0; i < 10000; i++) {
-            void* testPointer = (std::pair<void*, size_t>*) mmap(NULL, i+1, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
+            void* testPointer = (std::pair<void*, size_t>*) mmap(NULL, i, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
             testPointerArr[i] = testPointer;
             allocater.hashInsert(testPointerArr[i], i);
         }
@@ -102,23 +104,23 @@ TEST_CASE("hashInsert & hashDelete") {
         }
         REQUIRE(count == allocater.filledSlots);
     }
-}
-
-TEST_CASE() {
     
+    SECTION("Allocation Overlap") {
+        size_t size = 10000;
+        size_t entries = 10000;
+        Allocater allocater = Allocater();
+        
+        void* testPointerArr[entries];
+        for (int i = 0; i < 10000; i++) {
+            void* testPointer = (std::pair<void*, size_t>*) mmap(NULL, size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
+            testPointerArr[i] = testPointer;
+            allocater.hashInsert(testPointerArr[i], i);
+        }
+        
+        for (int i = 0; i < entries; i++) {
+            for (int j = i+1; j < entries; j++)
+                REQUIRE_FALSE(((char*) allocater.hashMapPointer[j].first >= (char*) allocater.hashMapPointer[i].first && (char*) allocater.hashMapPointer[j].first < (char*) allocater.hashMapPointer[i].first + allocater.hashMapPointer[i].second));
+        }
+        
+    }
 }
-
-/*
- 
- void hashInsert(void* ptr, size_t size);
- size_t hashDelete(void* ptr);
- void hashGrow();
- 
- Allocater();
- ~Allocater();
- 
- void* allocate(size_t bytesToAllocate);
- void deallocate(void* ptr);
- */
-
-

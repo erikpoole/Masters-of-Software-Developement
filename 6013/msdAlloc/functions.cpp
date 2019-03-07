@@ -126,7 +126,7 @@ void compareMallocs(int entries, int entrySize) {
     void* pointers[entries];
     Allocater allocater = Allocater();
     
-    std::cout.precision(2);
+    std::cout.precision(1);
     std::cout << std::scientific;
     std::cout << "Number of Entries: " << (float) entries << " // Size of Entries: " << (float) entrySize << ":\n";
     
