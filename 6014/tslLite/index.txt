@@ -1,0 +1,2 @@
+V	200317181637Z		1000	unknown	/C=US/ST=UT/O=UtahMSD/CN=client
+V	200317181846Z		1001	unknown	/C=US/ST=UT/O=UtahMSD/CN=server
