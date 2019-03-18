@@ -7,7 +7,12 @@ all: ctxt-switch
 ctxt-switch: swtch.o thread.o ctxt-switch.o
 	$(CC) $(CFLAGS) -o $@ $^
 
+kThreads:
+	clang++ -c -std=c++11 main.cpp
+	clang++ -o kernalThreading main.o
+
+
 .PHONY: clean
 
 clean:
-	-rm *.o ctxt-switch
+	-rm -f *.o ctxt-switch kernalThreading
