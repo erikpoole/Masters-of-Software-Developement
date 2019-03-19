@@ -36,13 +36,13 @@
 #include <atomic>
 #include <iostream>
 #include <thread>
+#include <vector>
 
 void starter(int iterations, std::atomic<int> *shared) {
     for (int i = 0; i < iterations; i++) {
         while (*shared % 2 == 1) {
         }
         *shared += 1;
-//        std::cout << "odd\n";
     }
 }
 
@@ -51,7 +51,6 @@ void finisher(int iterations, std::atomic<int> *shared) {
         while (*shared % 2 == 0) {
         }
         *shared += 1;
-//        std::cout << "even\n";
     }
 }
 
@@ -61,14 +60,16 @@ int main(int argc, const char * argv[]) {
     
     std::atomic<int> sharedNum(0);
     
-    std::thread thread1(starter, iterationsPerPair, &sharedNum);
-    std::thread thread2(finisher, iterationsPerPair, &sharedNum);
+    std::vector<std::thread> threads;
     
-    thread1.join();
-    thread2.join();
+    for (int i = 0; i < threadPairCount; i++) {
+        threads.push_back(std::thread(starter, iterationsPerPair, &sharedNum));
+        threads.push_back(std::thread(finisher, iterationsPerPair, &sharedNum));
+    }
+    
+    for (std::thread &thread : threads) {
+        thread.join();
+    }
     
     std::cout << sharedNum << "\n";
-    
-//    std::cout << threadPairCount << " " << iterationsPerPair << "\n";
-    
 }

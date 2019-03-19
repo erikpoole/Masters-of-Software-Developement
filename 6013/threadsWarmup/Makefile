@@ -13,7 +13,7 @@ threads:
 
 sanThread:
 	clang++ -fsanitize=thread -g main.cpp
-	./a.out 100 100
+	./a.out 10 10
 
 .PHONY: clean
 clean:
