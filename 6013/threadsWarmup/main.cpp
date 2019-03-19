@@ -31,16 +31,27 @@
  assert( shared == start + 2*i + 1)
  ++(*shared)
  }
- 
- 
  */
 
+#include <atomic>
 #include <iostream>
 #include <thread>
 
-void countTo1000() {
-    for (int i = 1; i <= 1000; i++) {
-        std::cout << i << "\n";
+void starter(int iterations, std::atomic<int> *shared) {
+    for (int i = 0; i < iterations; i++) {
+        while (*shared % 2 == 1) {
+        }
+        *shared += 1;
+//        std::cout << "odd\n";
+    }
+}
+
+void finisher(int iterations, std::atomic<int> *shared) {
+    for (int i = 0; i < iterations; i++) {
+        while (*shared % 2 == 0) {
+        }
+        *shared += 1;
+//        std::cout << "even\n";
     }
 }
 
@@ -48,12 +59,15 @@ int main(int argc, const char * argv[]) {
     int threadPairCount = std::stoi(argv[1]);
     int iterationsPerPair = std::stoi(argv[2]);
     
-    for (int i = 0; i < 1; i++) {
-        countTo1000();
-//        std::thread thread(countTo1000);
-    }
+    std::atomic<int> sharedNum(0);
     
-
+    std::thread thread1(starter, iterationsPerPair, &sharedNum);
+    std::thread thread2(finisher, iterationsPerPair, &sharedNum);
+    
+    thread1.join();
+    thread2.join();
+    
+    std::cout << sharedNum << "\n";
     
 //    std::cout << threadPairCount << " " << iterationsPerPair << "\n";
     
