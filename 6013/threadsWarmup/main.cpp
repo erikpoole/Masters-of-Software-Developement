@@ -31,6 +31,16 @@
  assert( shared == start + 2*i + 1)
  ++(*shared)
  }
+ 
+ 
+ 
+ C portion - void* f(void*)
+ pass struct* to thread constructor
+ 
+ writeup - with different number of threads through profiler and look at where hot spots are
+ 
+ ask ben about shared value
+ 
  */
 
 #include <atomic>
@@ -38,7 +48,7 @@
 #include <thread>
 #include <vector>
 
-void starter(int iterations, std::atomic<int> *shared) {
+void starter(int iterations, std::atomic<int>* shared) {
     for (int i = 0; i < iterations; i++) {
         while (*shared % 2 == 1) {
         }
@@ -46,7 +56,7 @@ void starter(int iterations, std::atomic<int> *shared) {
     }
 }
 
-void finisher(int iterations, std::atomic<int> *shared) {
+void finisher(int iterations, std::atomic<int>* shared) {
     for (int i = 0; i < iterations; i++) {
         while (*shared % 2 == 0) {
         }
@@ -58,18 +68,28 @@ int main(int argc, const char * argv[]) {
     int threadPairCount = std::stoi(argv[1]);
     int iterationsPerPair = std::stoi(argv[2]);
     
-    std::atomic<int> sharedNum(0);
-    
     std::vector<std::thread> threads;
+    std::vector<std::atomic<int>*> ints;
     
     for (int i = 0; i < threadPairCount; i++) {
-        threads.push_back(std::thread(starter, iterationsPerPair, &sharedNum));
-        threads.push_back(std::thread(finisher, iterationsPerPair, &sharedNum));
+        ints.push_back(new std::atomic<int>(0));
+    }
+    
+    for (int i = 0; i < threadPairCount; i++) {
+        threads.push_back(std::thread(starter, iterationsPerPair, ints[i]));
+        threads.push_back(std::thread(finisher, iterationsPerPair, ints[i]));
     }
     
     for (std::thread &thread : threads) {
         thread.join();
     }
     
-    std::cout << sharedNum << "\n";
+//    for (int i = 0; i < threadPairCount; i++) {
+//        std::cout << *ints[i] << "\n";
+//    }
+    
+    for (std::atomic<int>* ptr : ints) {
+        free(ptr);
+    }
+
 }
