@@ -39,8 +39,6 @@
  
  writeup - with different number of threads through profiler and look at where hot spots are
  
- ask ben about shared value
- 
  */
 
 #include <atomic>
@@ -51,6 +49,7 @@
 void starter(int iterations, std::atomic<int>* shared) {
     for (int i = 0; i < iterations; i++) {
         while (*shared % 2 == 1) {
+            std::this_thread::yield();
         }
         *shared += 1;
     }
@@ -59,6 +58,7 @@ void starter(int iterations, std::atomic<int>* shared) {
 void finisher(int iterations, std::atomic<int>* shared) {
     for (int i = 0; i < iterations; i++) {
         while (*shared % 2 == 0) {
+            std::this_thread::yield();
         }
         *shared += 1;
     }

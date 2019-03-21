@@ -7,15 +7,19 @@ all: ctxt-switch
 ctxt-switch: swtch.o thread.o ctxt-switch.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-threads:
-	clang++ -c -std=c++11 main.cpp
-	clang++ -o kernalThreading main.o
+kernel:
+	clang++ -c -std=c++11 kernelMain.cpp
+	clang++ -o kernelThreading kernelMain.o
 
-sanThread:
-	clang++ -fsanitize=thread -g main.cpp
+user:
+	clang -c ctxt-switch.c thread.c
+	clang -o userThreading ctxt-switch.o thread.o
+
+sanKernel:
+	clang++ -fsanitize=thread -g kernelMain.cpp
 	./a.out 10 10
 
 .PHONY: clean
 clean:
-	-rm -f *.o *a.out ctxt-switch kernalThreading
+	-rm -f *.o *a.out ctxt-switch kernelThreading userThreading
 	-rm -r *a.out*
