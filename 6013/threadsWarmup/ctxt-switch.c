@@ -8,7 +8,6 @@
 #include "thread.h"
 
 struct argumentContainer{
-    //unassigned members are initialized as zero
     atomic_int shared;
     int iterations;
 };
@@ -48,61 +47,26 @@ int main(int argc, char* argv[]) {
     printf("%d", iterationsPerPair);
     printf("\n");
     
-//    struct argumentContainer arguments[threadPairCount];
+    struct argumentContainer arguments[threadPairCount];
+    for (int i = 0; i < threadPairCount; i++) {
+        arguments[i].shared = 0;
+        arguments[i].iterations = iterationsPerPair;
+    }
+
+    thread_t threads[threadPairCount * 2];
+    for (int i = 0; i < threadPairCount * 2; i += 2) {
+        memset(&threads[i], 0, sizeof(threads[i]));
+        memset(&threads[i+1], 0, sizeof(threads[i+1]));
+
+        thread_create(&threads[i], starter, &arguments[i/2]);
+        thread_create(&threads[i+1], finisher, &arguments[i/2]);
+    }
+
+    for (int i = 0; i < threadPairCount * 2; i++) {
+        thread_join(&threads[i]);
+    }
+
 //    for (int i = 0; i < threadPairCount; i++) {
-//
-//    }
-    
-    
-    struct argumentContainer temp;
-    temp.iterations = iterationsPerPair;
-    
-//    printf("%d\n", temp.shared);
-//    temp.shared += 1;
-//    printf("%d\n", temp.shared);
-
-    thread_t t1;
-    thread_t t2;
-
-    memset(&t1, 0, sizeof(t1));
-    memset(&t2, 0, sizeof(t1));
-
-    thread_create(&t1, starter, &temp);
-    thread_create(&t2, finisher, &temp);
-
-    thread_join(&t1);
-    thread_join(&t2);
-
-
-    printf("%d\n", temp.shared);
-
-
-    
-    
-//    int threadPairCount = std::stoi(argv[1]);
-//    int iterationsPerPair = std::stoi(argv[2]);
-//
-//    std::vector<std::thread> threads;
-//    std::vector<std::atomic<int>*> ints;
-//
-//    for (int i = 0; i < threadPairCount; i++) {
-//        ints.push_back(new std::atomic<int>(0));
-//    }
-//
-//    for (int i = 0; i < threadPairCount; i++) {
-//        threads.push_back(std::thread(starter, iterationsPerPair, ints[i]));
-//        threads.push_back(std::thread(finisher, iterationsPerPair, ints[i]));
-//    }
-//
-//    for (std::thread &thread : threads) {
-//        thread.join();
-//    }
-//
-//    for (int i = 0; i < threadPairCount; i++) {
-//        std::cout << *ints[i] << "\n";
-//    }
-//
-//    for (std::atomic<int>* ptr : ints) {
-//        free(ptr);
+//        printf("%d\n", arguments[i].shared);
 //    }
 }
