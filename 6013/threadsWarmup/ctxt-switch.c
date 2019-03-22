@@ -2,13 +2,12 @@
 #include <assert.h>
 #include <inttypes.h>
 #include <string.h>
-#include <stdatomic.h>
 #include <stdlib.h>
 
 #include "thread.h"
 
 struct argumentContainer{
-    atomic_int shared;
+    int shared;
     int iterations;
 };
 

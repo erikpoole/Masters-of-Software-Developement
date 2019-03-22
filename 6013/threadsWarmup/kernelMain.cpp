@@ -89,7 +89,8 @@ int main(int argc, const char * argv[]) {
 //    }
     
     for (std::atomic<int>* ptr : ints) {
-        free(ptr);
+        delete ptr;
+        ptr = nullptr;
     }
 
 }

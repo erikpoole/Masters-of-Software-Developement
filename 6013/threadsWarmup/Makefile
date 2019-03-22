@@ -11,10 +11,6 @@ kernel:
 	clang++ -c -std=c++11 kernelMain.cpp
 	clang++ -o kernelThreading kernelMain.o
 
-user:
-	clang -c ctxt-switch.c thread.c
-	clang -o userThreading ctxt-switch.o thread.o
-
 sanKernel:
 	clang++ -fsanitize=thread -g kernelMain.cpp
 	./a.out 10 10
