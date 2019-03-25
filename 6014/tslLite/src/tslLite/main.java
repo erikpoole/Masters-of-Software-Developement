@@ -1,19 +1,12 @@
 package tslLite;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
-import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
-import java.security.Signature;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.spec.InvalidKeySpecException;
 
 /*
@@ -77,29 +70,21 @@ public class main {
 		
 		
 		KeyMaker keyMaker = new KeyMaker();
-		PrivateKey clientKey = keyMaker.makeKey("clientPrivateKey.der");
-		PrivateKey serverKey = keyMaker.makeKey("serverPrivateKey.der");
+		BigInteger clientKey = keyMaker.makeKey("clientPrivateKey.der");
+		BigInteger serverKey = keyMaker.makeKey("serverPrivateKey.der");
+		
+		BigInteger clientDH = keyMaker.generateDHKey(clientKey);
+		BigInteger serverDH = keyMaker.generateDHKey(serverKey);
+		
+		BigInteger clientSecret = keyMaker.generateDHSecret(clientKey, serverDH);
+		BigInteger serverSecret = keyMaker.generateDHSecret(serverKey, clientDH);
+				
+		System.out.println(clientSecret);
+		System.out.println(serverSecret);
+		
 		
 		Certificate clientCert = keyMaker.makeCertificate("CASignedClientCertificate.pem");
-		Certificate serverCert = keyMaker.makeCertificate("CASignedClientCertificate.pem");
-		
-		
-		File dhFile = new File("diffieHelmanVariable.txt");
-		FileInputStream dhStream = new FileInputStream(dhFile);
-		byte dhbytes[] = dhStream.readAllBytes();
-		
-		String dhString = "";
-		for (byte dhByte : dhbytes) {
-			if (dhByte != ' ' && dhByte != '\n') {
-				dhString += (char) dhByte;
-			}
-		}
-		
-		BigInteger dhPrime = new BigInteger(dhString, 16);
-		int dhGenerator = 2;
-		
-		
-		
+		Certificate serverCert = keyMaker.makeCertificate("CASignedClientCertificate.pem");		
 		
 		
 	}
