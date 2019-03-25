@@ -9,6 +9,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 
+import javax.crypto.interfaces.DHPrivateKey;
+
 /*
  * Authority certificate
 Client certificate
@@ -68,20 +70,24 @@ public class main {
 		 * Client: MAC(all handshake messages so far including the previous step, Client's MAC key).
 		 */
 		
+		//diffie helman key should be random number
+		//RSA secret - certificate and private key
 		
 		KeyMaker keyMaker = new KeyMaker();
-		BigInteger clientKey = keyMaker.makeKey("clientPrivateKey.der");
-		BigInteger serverKey = keyMaker.makeKey("serverPrivateKey.der");
+		User client = new User();
+		User server = new User();
 		
-		BigInteger clientDH = keyMaker.generateDHKey(clientKey);
-		BigInteger serverDH = keyMaker.generateDHKey(serverKey);
+		client.rsaKey = keyMaker.makeKey("clientPrivateKey.der");
+		server.rsaKey = keyMaker.makeKey("serverPrivateKey.der");
 		
-		BigInteger clientSecret = keyMaker.generateDHSecret(clientKey, serverDH);
-		BigInteger serverSecret = keyMaker.generateDHSecret(serverKey, clientDH);
+		client.dhPublicKey = keyMaker.generateDHKey(client.dhPrivateKey);
+		server.dhPublicKey = keyMaker.generateDHKey(server.dhPrivateKey);
+		
+		client.dhSecret = keyMaker.generateDHSecret(client.dhPrivateKey, server.dhPublicKey);
+		server.dhSecret = keyMaker.generateDHSecret(server.dhPrivateKey, client.dhPublicKey);
 				
-		System.out.println(clientSecret);
-		System.out.println(serverSecret);
-		
+		System.out.println(client.dhSecret);
+		System.out.println(server.dhSecret);
 		
 		Certificate clientCert = keyMaker.makeCertificate("CASignedClientCertificate.pem");
 		Certificate serverCert = keyMaker.makeCertificate("CASignedClientCertificate.pem");		

@@ -35,9 +35,6 @@ public class KeyMaker {
 	
 	private BigInteger dhPrime;
 	private BigInteger dhGenerator;
-	
-
-	
 	private KeyFactory keyFactory;
 	//TODO "X.509"???
 	private CertificateFactory certificateFactory;
