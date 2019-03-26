@@ -2,9 +2,12 @@ package tslLite;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
@@ -51,7 +54,7 @@ init.sign & init.verify for keys
 
 public class main {
 
-	public static void main(String[] args) throws NoSuchAlgorithmException, CertificateException, IOException, InvalidKeySpecException {
+	public static void main(String[] args) throws Exception {
 		System.out.println("Hello World!");
 		
 
@@ -61,7 +64,7 @@ public class main {
 		byte nonce1[] = new byte[32];
 		secureRandom.nextBytes(nonce1);
 		
-		 /* 
+		/* 
 		 * Server: Server Certificate, DiffieHellman public key, Signed DiffieHellman public key (Sign[g^ks % N, Spub])
 		 * Client: Client Certificate, DiffieHellman public key, Signed DiffieHellman public key (Sign[g^kc % N, Cpub])
 		 * //Client and server compute the shared secret here using DH
@@ -73,24 +76,46 @@ public class main {
 		//diffie helman key should be random number
 		//RSA secret - certificate and private key
 		
-		KeyMaker keyMaker = new KeyMaker();
-		User client = new User();
-		User server = new User();
-		
-		client.rsaKey = keyMaker.makeKey("clientPrivateKey.der");
-		server.rsaKey = keyMaker.makeKey("serverPrivateKey.der");
-		
-		client.dhPublicKey = keyMaker.generateDHKey(client.dhPrivateKey);
-		server.dhPublicKey = keyMaker.generateDHKey(server.dhPrivateKey);
-		
-		client.dhSecret = keyMaker.generateDHSecret(client.dhPrivateKey, server.dhPublicKey);
-		server.dhSecret = keyMaker.generateDHSecret(server.dhPrivateKey, client.dhPublicKey);
+		DiffieHelmanHandler diffieHelmanHandler = new DiffieHelmanHandler();
+		User client = new Client(diffieHelmanHandler, "clientPrivateKey.der", "CASignedClientCertificate.pem");
+		User server = new Server(diffieHelmanHandler, "serverPrivateKey.der", "CASignedServerCertificate.pem");
 				
-		System.out.println(client.dhSecret);
-		System.out.println(server.dhSecret);
+
+//		Certificate authorityCert = keyMaker.makeCertificate("CAcertificate.pem");
 		
-		Certificate clientCert = keyMaker.makeCertificate("CASignedClientCertificate.pem");
-		Certificate serverCert = keyMaker.makeCertificate("CASignedClientCertificate.pem");		
+		Signature clientSig = Signature.getInstance("SHA256withRSA");
+		Signature serverSig = Signature.getInstance("SHA256withRSA");
+	
+		clientSig.initSign(client.rsaKey);
+		serverSig.initSign(server.rsaKey);
+		
+		clientSig.update(client.dhPublicKey.toByteArray());
+		serverSig.update(server.dhPublicKey.toByteArray());
+		
+		byte clientDHSigned[] = clientSig.sign();
+		byte serverDHSigned[] = serverSig.sign();
+		
+		
+		clientSig.initVerify(server.certificate);
+		serverSig.initVerify(client.certificate);
+		
+		clientSig.update(server.dhPublicKey.toByteArray());
+		serverSig.update(client.dhPublicKey.toByteArray());
+		
+		System.out.println(clientSig.verify(serverDHSigned));
+		System.out.println(serverSig.verify(clientDHSigned));
+		
+		
+//		client.dhSecret = keyMaker.generateDHSecret(client.dhPrivateKey, server.dhPublicKey);
+//		server.dhSecret = keyMaker.generateDHSecret(server.dhPrivateKey, client.dhPublicKey);
+		
+		
+//		System.out.println(client.dhSecret);
+//		System.out.println(server.dhSecret);
+//		
+//		System.out.println(clientDHSigned);
+//		System.out.println(serverDHSigned);
+		
 		
 		
 	}
