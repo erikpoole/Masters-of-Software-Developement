@@ -9,18 +9,25 @@ public class DiffieHelmanHandler {
 	private BigInteger dhPrime;
 	private BigInteger dhGenerator;
 
-	
 	public DiffieHelmanHandler() throws IOException {
 		dhPrime = readDHFromFile("diffieHelmanVariable.txt");
 		dhGenerator = BigInteger.valueOf(2);
 	}
-	
+
+	public BigInteger generateDHKey(BigInteger privateKey) {
+		return dhGenerator.modPow(privateKey, dhPrime);
+	}
+
+	public BigInteger generateDHSecret(BigInteger myPrivateKey, BigInteger theirHDKey) {
+		return theirHDKey.modPow(myPrivateKey, dhPrime);
+	}
+
 	private static BigInteger readDHFromFile(String fileName) throws IOException {
 		File dhFile = new File(fileName);
 		FileInputStream dhStream = new FileInputStream(dhFile);
 		byte dhbytes[] = dhStream.readAllBytes();
 		dhStream.close();
-		
+
 		String dhString = "";
 		for (byte dhByte : dhbytes) {
 			if (dhByte != ' ' && dhByte != '\n') {
@@ -29,14 +36,5 @@ public class DiffieHelmanHandler {
 		}
 		return new BigInteger(dhString, 16);
 	}
-	
-	public BigInteger generateDHKey(BigInteger privateKey) {
-		return dhGenerator.modPow(privateKey, dhPrime);
-	}
-	
-	public BigInteger generateDHSecret(BigInteger myPrivateKey, BigInteger theirHDKey) {
-		return theirHDKey.modPow(myPrivateKey, dhPrime);
-	}
-	
 
 }
