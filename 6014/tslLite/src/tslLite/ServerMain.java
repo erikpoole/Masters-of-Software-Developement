@@ -43,7 +43,7 @@ Keep diffie helman and rsa keys separate
 init.sign & init.verify for keys
  */
 
-public class Main {
+public class ServerMain {
 
 	public static void main(String[] args) throws Exception {
 		/* 
@@ -60,37 +60,39 @@ public class Main {
 		//RSA secret - certificate and private key
 		
 		DiffieHelmanHandler diffieHelmanHandler = new DiffieHelmanHandler();
-		Client client = new Client(diffieHelmanHandler, "clientPrivateKey.der", "CASignedClientCertificate.pem");
 		Server server = new Server(diffieHelmanHandler, "serverPrivateKey.der", "CASignedServerCertificate.pem");
 		
+		server.listen();
 		
-			
-		byte[] nonce = client.sendNonce();
 		
-		System.out.println("Sending Server DH");
-		ByteArrayOutputStream serverOutStream = server.sendDHCredentials();
-		byte[] serverOutArray = serverOutStream.toByteArray();
-		ByteArrayInputStream clientInStream = new ByteArrayInputStream(serverOutArray);
-		boolean serverVerified = client.verifyDHCredentials(new ObjectInputStream(clientInStream));
-		
-		if (!serverVerified) {
-			System.out.println("Server Not Verified");
-			System.exit(0);
-		}
-		
-		System.out.println("Sending Client DH");
-		ByteArrayOutputStream clientOutStream = client.sendDHCredentials();
-		byte[] clientOutArray = clientOutStream.toByteArray();
-		ByteArrayInputStream serverInStream = new ByteArrayInputStream(clientOutArray);
-		boolean clientVerified = server.verifyDHCredentials(new ObjectInputStream(serverInStream));
-		
-		if (!serverVerified) {
-			System.out.println("Client Not Verified");
-			System.exit(0);
-		}
-		
-		System.out.println(server.dhSecret);
-		System.out.println(client.dhSecret);
+//			
+//		byte[] nonce = client.sendNonce();
+//		server.receiveNonce(nonce);
+//		
+//		System.out.println("Sending Server DH");
+//		ByteArrayOutputStream serverOutStream = server.sendDHCredentials();
+//		byte[] serverOutArray = serverOutStream.toByteArray();
+//		ByteArrayInputStream clientInStream = new ByteArrayInputStream(serverOutArray);
+//		boolean serverVerified = client.verifyDHCredentials(new ObjectInputStream(clientInStream));
+//		
+//		if (!serverVerified) {
+//			System.out.println("Server Not Verified");
+//			System.exit(0);
+//		}
+//		
+//		System.out.println("Sending Client DH");
+//		ByteArrayOutputStream clientOutStream = client.sendDHCredentials();
+//		byte[] clientOutArray = clientOutStream.toByteArray();
+//		ByteArrayInputStream serverInStream = new ByteArrayInputStream(clientOutArray);
+//		boolean clientVerified = server.verifyDHCredentials(new ObjectInputStream(serverInStream));
+//		
+//		if (!serverVerified) {
+//			System.out.println("Client Not Verified");
+//			System.exit(0);
+//		}
+//		
+//		server.generateSecretKeys();
+//		client.generateSecretKeys();
 		
 	}
 
