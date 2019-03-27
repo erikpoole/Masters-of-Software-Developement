@@ -63,19 +63,35 @@ public class Main {
 		Client client = new Client(diffieHelmanHandler, "clientPrivateKey.der", "CASignedClientCertificate.pem");
 		Server server = new Server(diffieHelmanHandler, "serverPrivateKey.der", "CASignedServerCertificate.pem");
 		
-//		Certificate authorityCert = keyMaker.makeCertificate("CAcertificate.pem");
+		
 			
 		byte[] nonce = client.sendNonce();
 		
+		System.out.println("Sending Server DH");
 		ByteArrayOutputStream serverOutStream = server.sendDHCredentials();
 		byte[] serverOutArray = serverOutStream.toByteArray();
 		ByteArrayInputStream clientInStream = new ByteArrayInputStream(serverOutArray);
-		System.out.println(client.verifyDHCredentials(new ObjectInputStream(clientInStream)));
+		boolean serverVerified = client.verifyDHCredentials(new ObjectInputStream(clientInStream));
 		
+		if (!serverVerified) {
+			System.out.println("Server Not Verified");
+			System.exit(0);
+		}
+		
+		System.out.println("Sending Client DH");
 		ByteArrayOutputStream clientOutStream = client.sendDHCredentials();
 		byte[] clientOutArray = clientOutStream.toByteArray();
 		ByteArrayInputStream serverInStream = new ByteArrayInputStream(clientOutArray);
-		System.out.println(server.verifyDHCredentials(new ObjectInputStream(serverInStream)));
+		boolean clientVerified = server.verifyDHCredentials(new ObjectInputStream(serverInStream));
+		
+		if (!serverVerified) {
+			System.out.println("Client Not Verified");
+			System.exit(0);
+		}
+		
+		System.out.println(server.dhSecret);
+		System.out.println(client.dhSecret);
+		
 	}
 
 }
