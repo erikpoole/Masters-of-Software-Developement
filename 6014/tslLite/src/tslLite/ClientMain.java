@@ -1,11 +1,12 @@
 package tslLite;
 
+import userAndSubclasses.Client;
+
 public class ClientMain {
 
 	public static void main(String[] args) throws Exception {
 		
-		DiffieHelmanHandler diffieHelmanHandler = new DiffieHelmanHandler();
-		Client client = new Client(diffieHelmanHandler, "clientPrivateKey.der", "CASignedClientCertificate.pem");
+		Client client = new Client("clientPrivateKey.der", "CASignedClientCertificate.pem");
 
 		client.connect();
 		client.sendNonce();
@@ -15,6 +16,8 @@ public class ClientMain {
 		};
 		client.sendDHCredentials();
 		client.generateSecretKeys();
+		
+		byte bytes[] = client.messagesByteStream.toByteArray();
+		System.out.println(bytes.length);
 	}
-
 }

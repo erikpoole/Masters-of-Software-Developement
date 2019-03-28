@@ -1,5 +1,6 @@
-package tslLite;
+package userAndSubclasses;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,58 +18,77 @@ import javax.crypto.Mac;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import tslLite.DiffieHelmanHandler;
+import tslLite.KeyMaker;
+
 public abstract class User {
-	public PrivateKey rsaKey;
-	public Certificate certificate;
-	public Certificate caCertificate;
-	public Signature signature;
+	protected PrivateKey rsaKey;
+	protected Certificate certificate;
+	protected Certificate caCertificate;
+	protected Signature signature;
 
 	private DiffieHelmanHandler dhHandler;
-	public BigInteger dhPrivateKey;
-	public BigInteger dhPublicKey;
-	public BigInteger dhSecret;
+	protected BigInteger dhPrivateKey;
+	protected BigInteger dhPublicKey;
+	protected BigInteger dhSecret;
 	
-	public byte[] nonce;
+	protected byte[] nonce;
+	public ObjectOutputStream messagesObjectStream;
+	public ByteArrayOutputStream messagesByteStream;
 	
-	public Socket socket;
-	public ObjectOutputStream objectOutStream;
-	public ObjectInputStream objectInStream;
+	protected Socket socket;
+	protected ObjectOutputStream portOutStream;
+	protected ObjectInputStream portInStream;
 	
-	public SecretKeySpec serverEncrypt;
-	public SecretKeySpec clientEncrypt;
-	public Mac serverMAC;
-	public Mac clientMAC;
-	public IvParameterSpec serverIV;
-	public IvParameterSpec clientIV;
+	protected SecretKeySpec serverEncrypt;
+	protected SecretKeySpec clientEncrypt;
+	protected Mac serverMAC;
+	protected Mac clientMAC;
+	protected IvParameterSpec serverIV;
+	protected IvParameterSpec clientIV;
 
-	public User(DiffieHelmanHandler diffieHelmanHandler, String rsaKeyFileName, String certificateFileName) throws Exception {
+	public User(String rsaKeyFileName, String certificateFileName) throws Exception {
 		rsaKey = KeyMaker.makeKey(rsaKeyFileName);
 		certificate = KeyMaker.makeCertificate(certificateFileName);
 		caCertificate = KeyMaker.makeCertificate("CAcertificate.pem");
 		signature = Signature.getInstance("SHA256withRSA");
 		
-		dhHandler = diffieHelmanHandler;
+		messagesByteStream = new ByteArrayOutputStream();
+		messagesObjectStream = new ObjectOutputStream(messagesByteStream);
+		
+		dhHandler = new DiffieHelmanHandler();
 		dhPrivateKey = new BigInteger(32, new Random());
 		dhPublicKey = dhHandler.generateDHKey(dhPrivateKey);
 	}	
 	
-	public BigInteger makeSignedDiffieHelman() throws InvalidKeyException, SignatureException {
+	private BigInteger makeSignedDiffieHelman() throws InvalidKeyException, SignatureException {
 		signature.initSign(rsaKey);
 		signature.update(dhPublicKey.toByteArray());
 		return new BigInteger(signature.sign());
 	}
 	
 	public void sendDHCredentials() throws IOException, InvalidKeyException, SignatureException {
-		objectOutStream.writeObject(certificate);
-		objectOutStream.writeObject(dhPublicKey);
-		objectOutStream.writeObject(makeSignedDiffieHelman());
+		BigInteger signedDH = makeSignedDiffieHelman();
+		
+		portOutStream.writeObject(certificate);
+		portOutStream.writeObject(dhPublicKey);
+		portOutStream.writeObject(signedDH);
+		
+		messagesObjectStream.writeObject(certificate);
+		messagesObjectStream.writeObject(dhPublicKey);
+		messagesObjectStream.writeObject(signedDH);
+		
 		System.out.println("Diffie Helman Credentials Sent");
 	}
 	
 	public boolean verifyDHCredentials() throws Exception {
-		Certificate receivedCert = (Certificate) objectInStream.readObject();
-		BigInteger receievedDHKey = (BigInteger) objectInStream.readObject();
-		BigInteger receivedDHSigned = (BigInteger) objectInStream.readObject();
+		Certificate receivedCert = (Certificate) portInStream.readObject();
+		BigInteger receievedDHKey = (BigInteger) portInStream.readObject();
+		BigInteger receivedDHSigned = (BigInteger) portInStream.readObject();
+		
+		messagesObjectStream.writeObject(receivedCert);
+		messagesObjectStream.writeObject(receievedDHKey);
+		messagesObjectStream.writeObject(receivedDHSigned);
 		
 		System.out.println("Diffie Helman Credentials Received");
 		

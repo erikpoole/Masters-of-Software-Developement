@@ -1,5 +1,6 @@
 package tslLite;
 
+import userAndSubclasses.Server;
 
 /*
  * Authority certificate
@@ -52,11 +53,7 @@ public class ServerMain {
 		 * Client: MAC(all handshake messages so far including the previous step, Client's MAC key).
 		 */
 		
-		//diffie helman key should be random number
-		//RSA secret - certificate and private key
-		
-		DiffieHelmanHandler diffieHelmanHandler = new DiffieHelmanHandler();
-		Server server = new Server(diffieHelmanHandler, "serverPrivateKey.der", "CASignedServerCertificate.pem");
+		Server server = new Server("serverPrivateKey.der", "CASignedServerCertificate.pem");
 		
 		server.listen();
 		server.receiveNonce();
@@ -66,6 +63,10 @@ public class ServerMain {
 			System.exit(0);
 		};
 		server.generateSecretKeys();
+		
+		byte bytes[] = server.messagesByteStream.toByteArray();
+		System.out.println(bytes.length);
+
 	}
 
 }
