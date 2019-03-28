@@ -14,6 +14,7 @@ import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Random;
 import javax.crypto.Mac;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public abstract class User {
@@ -29,9 +30,16 @@ public abstract class User {
 	
 	public byte[] nonce;
 	
-	Socket socket;
-	ObjectOutputStream objectOutStream;
-	ObjectInputStream objectInStream;
+	public Socket socket;
+	public ObjectOutputStream objectOutStream;
+	public ObjectInputStream objectInStream;
+	
+	public SecretKeySpec serverEncrypt;
+	public SecretKeySpec clientEncrypt;
+	public Mac serverMAC;
+	public Mac clientMAC;
+	public IvParameterSpec serverIV;
+	public IvParameterSpec clientIV;
 
 	public User(DiffieHelmanHandler diffieHelmanHandler, String rsaKeyFileName, String certificateFileName) throws Exception {
 		rsaKey = KeyMaker.makeKey(rsaKeyFileName);
@@ -75,53 +83,42 @@ public abstract class User {
 		return false;
 	}
 	
-	private byte[] hkdfSecretKeyExpand(byte key[], String tag) throws NoSuchAlgorithmException, InvalidKeyException {
-		byte tagBytes[] = tag.getBytes();
+	private byte[] hkdfExpand(byte key[], String tag) throws NoSuchAlgorithmException, InvalidKeyException {
+		String appendedTag = tag + 1;
+		byte tagBytes[] = appendedTag.getBytes();
 		
 		Mac mac = Mac.getInstance("HmacSHA256");
-		SecretKeySpec secretKeySpec = new SecretKeySpec(key, tag + '1');
+		SecretKeySpec secretKeySpec = new SecretKeySpec(key, "HmacSHA256");
 		mac.init(secretKeySpec);
-		return Arrays.copyOfRange(mac.doFinal(), 0 , 16);
-	}
-	
-	private byte[] hkdfIVParameterExpand(byte key[], String tag) throws NoSuchAlgorithmException, InvalidKeyException {
-		byte tagBytes[] = tag.getBytes();
-		
-		Mac mac = Mac.getInstance("HmacSHA256");
-		SecretKeySpec secretKeySpec = new SecretKeySpec(key, tag + '1');
-		mac.init(secretKeySpec);
-		return Arrays.copyOfRange(mac.doFinal(), 0 , 16);
+		return Arrays.copyOfRange(mac.doFinal(tagBytes), 0 , 16);
 	}
 	
 	public void generateSecretKeys() throws NoSuchAlgorithmException, InvalidKeyException {
 		Mac mac = Mac.getInstance("HmacSHA256");
-		SecretKeySpec secretKeySpec = new SecretKeySpec(nonce, dhSecret.toString());
+		SecretKeySpec secretKeySpec = new SecretKeySpec(nonce, "HmacSHA2356");
 		mac.init(secretKeySpec);
-		byte[] temp = mac.doFinal();
+		byte[] prk = mac.doFinal(dhSecret.toByteArray());
 		
-		byte[] serverEncrypt = hkdfSecretKeyExpand(temp, "server encrypt");
-		byte[] clientEncrypt = hkdfSecretKeyExpand(serverEncrypt, "client encrypt");
-		byte[] serverMAC = hkdfSecretKeyExpand(clientEncrypt, "server MAC");
-		byte[] clientMAC = hkdfSecretKeyExpand(serverMAC, "client MAC");
+		byte[] serverEncryptBytes = hkdfExpand(prk, "server encrypt");
+		serverEncrypt = new SecretKeySpec(serverEncryptBytes, "AES");
+		byte[] clientEncryptBytes = hkdfExpand(serverEncryptBytes, "client encrypt");
+		clientEncrypt = new SecretKeySpec(clientEncryptBytes, "AES");
 		
-		byte[] serverIV = hkdfIVParameterExpand(clientMAC, "server IV");
-		byte[] clientIV = hkdfIVParameterExpand(serverIV, "client IV");
+		byte[] serverMACBytes = hkdfExpand(clientEncryptBytes, "server MAC");
+		serverMAC = Mac.getInstance("HmacSHA256");
+		SecretKeySpec serverMACSecretKeySpec = new SecretKeySpec(serverMACBytes, "HmacSHA256");
+		serverMAC.init(serverMACSecretKeySpec);
+		
+		byte[] clientMACBytes = hkdfExpand(serverMACBytes, "client MAC");
+		Mac clientMAC = Mac.getInstance("HmacSHA256");
+		SecretKeySpec clientMACSecretKeySpec = new SecretKeySpec(clientMACBytes, "HmacSHA256");
+		clientMAC.init(clientMACSecretKeySpec);
+		
+		byte[] serverIVBytes = hkdfExpand(clientMACBytes, "server IV");
+		serverIV = new IvParameterSpec(serverIVBytes);
+		byte[] clientIVBytes = hkdfExpand(serverIVBytes, "client IV");
+		clientIV = new IvParameterSpec(clientIVBytes);
+		
+		System.out.println("Secret Keys Generated");
 	}
-	
-	
-//	def hdkfExpand(input, tag): //tag is a string, but probably convenient to take its contents as byte[]
-//		okm = HMAC(key = input,  data = tag concatenated with a byte with value 1)
-//		return first 16 bytes of okm
-//
-//
-//	def makeSecretKeys(clientNonce, sharedSecretFromDiffieHellman):
-//		prk = HMAC(key = clientNonce, data = sharedSecretFromDiffieHellman)
-//		serverEncrypt = hkdfExpand(prk, "server encrypt")
-//		clientEncrypt = hkdfExpand(serverEncrypt, "client encrypt")
-//		serverMAC = hkdfExpand(clientEncrypt, "server MAC")
-//		clientMAC = hkdfExpand(serverMAC, "client MAC")
-//		serverIV = hkdfExpand(clientMAC, "server IV")
-//		clientIV = hkdfExpand(serverIV, "client IV")
-	
-	
 }
