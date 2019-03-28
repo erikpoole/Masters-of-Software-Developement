@@ -1,10 +1,10 @@
 package tslLite;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
+import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -28,6 +28,10 @@ public abstract class User {
 	public BigInteger dhSecret;
 	
 	public byte[] nonce;
+	
+	Socket socket;
+	ObjectOutputStream objectOutStream;
+	ObjectInputStream objectInStream;
 
 	public User(DiffieHelmanHandler diffieHelmanHandler, String rsaKeyFileName, String certificateFileName) throws Exception {
 		rsaKey = KeyMaker.makeKey(rsaKeyFileName);
@@ -46,20 +50,19 @@ public abstract class User {
 		return new BigInteger(signature.sign());
 	}
 	
-	public ByteArrayOutputStream sendDHCredentials() throws IOException, InvalidKeyException, SignatureException {
-		ByteArrayOutputStream oStream = new ByteArrayOutputStream();
-		ObjectOutputStream objectStream = new ObjectOutputStream(oStream);
-		objectStream.writeObject(certificate);
-		objectStream.writeObject(dhPublicKey);
-		objectStream.writeObject(makeSignedDiffieHelman());
-		
-		return oStream;
+	public void sendDHCredentials() throws IOException, InvalidKeyException, SignatureException {
+		objectOutStream.writeObject(certificate);
+		objectOutStream.writeObject(dhPublicKey);
+		objectOutStream.writeObject(makeSignedDiffieHelman());
+		System.out.println("Diffie Helman Credentials Sent");
 	}
 	
-	public boolean verifyDHCredentials(ObjectInputStream objectStream) throws Exception {
-		Certificate receivedCert = (Certificate) objectStream.readObject();
-		BigInteger receievedDHKey = (BigInteger) objectStream.readObject();
-		BigInteger receivedDHSigned = (BigInteger) objectStream.readObject();
+	public boolean verifyDHCredentials() throws Exception {
+		Certificate receivedCert = (Certificate) objectInStream.readObject();
+		BigInteger receievedDHKey = (BigInteger) objectInStream.readObject();
+		BigInteger receivedDHSigned = (BigInteger) objectInStream.readObject();
+		
+		System.out.println("Diffie Helman Credentials Received");
 		
 		receivedCert.verify(caCertificate.getPublicKey());
 		

@@ -1,9 +1,5 @@
 package tslLite;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-
 
 /*
  * Authority certificate
@@ -63,37 +59,13 @@ public class ServerMain {
 		Server server = new Server(diffieHelmanHandler, "serverPrivateKey.der", "CASignedServerCertificate.pem");
 		
 		server.listen();
-		
-		
-//			
-//		byte[] nonce = client.sendNonce();
-//		server.receiveNonce(nonce);
-//		
-//		System.out.println("Sending Server DH");
-//		ByteArrayOutputStream serverOutStream = server.sendDHCredentials();
-//		byte[] serverOutArray = serverOutStream.toByteArray();
-//		ByteArrayInputStream clientInStream = new ByteArrayInputStream(serverOutArray);
-//		boolean serverVerified = client.verifyDHCredentials(new ObjectInputStream(clientInStream));
-//		
-//		if (!serverVerified) {
-//			System.out.println("Server Not Verified");
-//			System.exit(0);
-//		}
-//		
-//		System.out.println("Sending Client DH");
-//		ByteArrayOutputStream clientOutStream = client.sendDHCredentials();
-//		byte[] clientOutArray = clientOutStream.toByteArray();
-//		ByteArrayInputStream serverInStream = new ByteArrayInputStream(clientOutArray);
-//		boolean clientVerified = server.verifyDHCredentials(new ObjectInputStream(serverInStream));
-//		
-//		if (!serverVerified) {
-//			System.out.println("Client Not Verified");
-//			System.exit(0);
-//		}
-//		
-//		server.generateSecretKeys();
-//		client.generateSecretKeys();
-		
+		server.receiveNonce();
+		server.sendDHCredentials();
+		if (!server.verifyDHCredentials()) {
+			System.err.println("Diffie Helman Credentials unable to be Verified");
+			System.exit(0);
+		};
+		server.generateSecretKeys();
 	}
 
 }

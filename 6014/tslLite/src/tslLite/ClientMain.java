@@ -8,7 +8,13 @@ public class ClientMain {
 		Client client = new Client(diffieHelmanHandler, "clientPrivateKey.der", "CASignedClientCertificate.pem");
 
 		client.connect();
-
+		client.sendNonce();
+		if (!client.verifyDHCredentials()) {
+			System.err.println("Diffie Helman Credentials unable to be Verified");
+			System.exit(0);
+		};
+		client.sendDHCredentials();
+		client.generateSecretKeys();
 	}
 
 }
