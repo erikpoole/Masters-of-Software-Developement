@@ -31,15 +31,24 @@ public class Server extends User {
 		
 		System.out.println("Nonce Received");
 	}
-
-	public void sendHandshakeRecord() {
-		serverMAC.doFinal(messagesByteStream.toByteArray());
+	
+	public void sendMessageRecord() throws IOException {
+		byte[] recordMAC = serverMAC.doFinal(messagesByteStream.toByteArray());
+		BigInteger bigRecordMAC = new BigInteger(recordMAC);
+		messagesObjectStream.writeObject(bigRecordMAC);
+		portOutStream.writeObject(bigRecordMAC);
+		System.out.println("Message Record Sent");
 	}
 	
-	/*
-	 	 * Server: MAC(all handshake messages so far, Server's MAC key)
-		 * Client: MAC(all handshake messages so far including the previous step, Client's MAC key).
-	 */
-	
-	
+	public boolean verifyMessageRecord() throws ClassNotFoundException, IOException {
+		BigInteger bigInputMAC = (BigInteger) portInStream.readObject();
+		byte[] thisMACBytes = clientMAC.doFinal(messagesByteStream.toByteArray());
+		
+		messagesObjectStream.writeObject(bigInputMAC);
+		BigInteger bigThisMAC = new BigInteger(thisMACBytes);
+		
+		System.out.println("Message Record Received");
+		
+		return (bigInputMAC.equals(bigThisMAC));
+	}
 }

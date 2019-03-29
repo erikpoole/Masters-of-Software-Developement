@@ -130,7 +130,7 @@ public abstract class User {
 		serverMAC.init(serverMACSecretKeySpec);
 		
 		byte[] clientMACBytes = hkdfExpand(serverMACBytes, "client MAC");
-		Mac clientMAC = Mac.getInstance("HmacSHA256");
+		clientMAC = Mac.getInstance("HmacSHA256");
 		SecretKeySpec clientMACSecretKeySpec = new SecretKeySpec(clientMACBytes, "HmacSHA256");
 		clientMAC.init(clientMACSecretKeySpec);
 		
@@ -141,4 +141,8 @@ public abstract class User {
 		
 		System.out.println("Secret Keys Generated");
 	}
+	
+
+	
+	
 }

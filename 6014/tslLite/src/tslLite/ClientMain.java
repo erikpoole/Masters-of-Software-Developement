@@ -10,6 +10,7 @@ public class ClientMain {
 
 		client.connect();
 		client.sendNonce();
+		
 		if (!client.verifyDHCredentials()) {
 			System.err.println("Diffie Helman Credentials unable to be Verified");
 			System.exit(0);
@@ -17,7 +18,12 @@ public class ClientMain {
 		client.sendDHCredentials();
 		client.generateSecretKeys();
 		
-		byte bytes[] = client.messagesByteStream.toByteArray();
-		System.out.println(bytes.length);
+		if (!client.verifyMessageRecord()) {
+			System.err.println("Handshake Message unable to be Verified");
+			System.exit(0);
+		};
+		client.sendMessageRecord();
+		
+
 	}
 }

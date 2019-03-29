@@ -35,5 +35,24 @@ public class Client extends User {
 		
 		System.out.println("Nonce Sent");
 	}
-
+	
+	public void sendMessageRecord() throws IOException {
+		byte[] recordMAC = clientMAC.doFinal(messagesByteStream.toByteArray());
+		BigInteger bigRecordMAC = new BigInteger(recordMAC);
+		messagesObjectStream.writeObject(bigRecordMAC);
+		portOutStream.writeObject(bigRecordMAC);
+		System.out.println("Message Record Sent");
+	}
+	
+	public boolean verifyMessageRecord() throws ClassNotFoundException, IOException {
+		BigInteger bigInputMAC = (BigInteger) portInStream.readObject();
+		byte[] thisMACBytes = serverMAC.doFinal(messagesByteStream.toByteArray());
+		
+		messagesObjectStream.writeObject(bigInputMAC);
+		BigInteger bigThisMAC = new BigInteger(thisMACBytes);
+		
+		System.out.println("Message Record Received");
+		
+		return (bigInputMAC.equals(bigThisMAC));
+	}
 }

@@ -49,6 +49,7 @@ public class ServerMain {
 		 * Client: Client Certificate, DiffieHellman public key, Signed DiffieHellman public key (Sign[g^kc % N, Cpub])
 		 * //Client and server compute the shared secret here using DH
 		 * //client and server derive 6 session keys from the shared secret. 2 each of bulk encryption keys, MAC keys, IVs for CBC using HKDF (below)
+		 * //don't send MAC key, just use that key
 		 * Server: MAC(all handshake messages so far, Server's MAC key)
 		 * Client: MAC(all handshake messages so far including the previous step, Client's MAC key).
 		 */
@@ -57,6 +58,7 @@ public class ServerMain {
 		
 		server.listen();
 		server.receiveNonce();
+		
 		server.sendDHCredentials();
 		if (!server.verifyDHCredentials()) {
 			System.err.println("Diffie Helman Credentials unable to be Verified");
@@ -64,8 +66,13 @@ public class ServerMain {
 		};
 		server.generateSecretKeys();
 		
-		byte bytes[] = server.messagesByteStream.toByteArray();
-		System.out.println(bytes.length);
+		server.sendMessageRecord();		
+		if (!server.verifyMessageRecord()) {
+			System.err.println("Handshake Message unable to be Verified");
+			System.exit(0);
+		};
+		
+
 
 	}
 
