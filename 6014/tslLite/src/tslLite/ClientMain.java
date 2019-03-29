@@ -24,6 +24,10 @@ public class ClientMain {
 		};
 		client.sendMessageRecord();
 		
-
+		System.out.println("Handshake Completed");
+		System.out.println();
+		
+		String received = client.receiveMessage().toString();
+		client.sendMessage(received);
 	}
 }

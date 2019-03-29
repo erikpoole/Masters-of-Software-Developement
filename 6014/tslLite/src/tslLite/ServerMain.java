@@ -72,8 +72,20 @@ public class ServerMain {
 			System.exit(0);
 		};
 		
-
-
+		System.out.println("Handshake Completed");
+		System.out.println();
+		
+		String toSend = "Hello There!";
+		server.sendMessage(toSend);
+		String received = server.receiveMessage();
+		
+		if (!toSend.equals(received)) {
+			System.err.println("Sent and Received Messages are not Identical");
+			System.err.println("Sent: " + toSend);
+			System.err.println("Received: " + received);
+			System.exit(0);
+		};
+		
+		
 	}
-
 }

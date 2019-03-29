@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.net.Socket;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -14,6 +15,8 @@ import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Random;
+
+import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -46,6 +49,9 @@ public abstract class User {
 	protected Mac clientMAC;
 	protected IvParameterSpec serverIV;
 	protected IvParameterSpec clientIV;
+	
+	protected Cipher encryptCipher;
+	protected Cipher decryptCipher;
 
 	public User(String rsaKeyFileName, String certificateFileName) throws Exception {
 		rsaKey = KeyMaker.makeKey(rsaKeyFileName);
@@ -59,6 +65,9 @@ public abstract class User {
 		dhHandler = new DiffieHelmanHandler();
 		dhPrivateKey = new BigInteger(32, new Random());
 		dhPublicKey = dhHandler.generateDHKey(dhPrivateKey);
+		
+		encryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+		decryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 	}	
 	
 	private BigInteger makeSignedDiffieHelman() throws InvalidKeyException, SignatureException {
@@ -113,7 +122,7 @@ public abstract class User {
 		return Arrays.copyOfRange(mac.doFinal(tagBytes), 0 , 16);
 	}
 	
-	public void generateSecretKeys() throws NoSuchAlgorithmException, InvalidKeyException {
+	public void generateSecretKeys() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException {
 		Mac mac = Mac.getInstance("HmacSHA256");
 		SecretKeySpec secretKeySpec = new SecretKeySpec(nonce, "HmacSHA2356");
 		mac.init(secretKeySpec);
@@ -140,9 +149,5 @@ public abstract class User {
 		clientIV = new IvParameterSpec(clientIVBytes);
 		
 		System.out.println("Secret Keys Generated");
-	}
-	
-
-	
-	
+	}	
 }
