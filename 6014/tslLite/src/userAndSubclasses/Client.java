@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
 
@@ -60,22 +61,26 @@ public class Client extends User {
 		return (bigInputMAC.equals(bigThisMAC));
 	}
 	
-	public void sendMessage(String message) throws Exception {
-		byte[] messageMAC = clientMAC.doFinal(message.getBytes());
-		byte[] encryped = encryptCipher.doFinal(message.getBytes());
+	@Override
+	public void sendMessage(byte[] message) throws Exception {
+		byte[] messageMAC = clientMAC.doFinal(message);
+//		byte[] base64Message = Base64.getEncoder().encode(message);
+//		byte[] encryped = encryptCipher.doFinal(base64Message);
+		byte[] encryped = encryptCipher.doFinal(message);
 		portOutStream.writeObject(new BigInteger(messageMAC));
 		portOutStream.writeObject(new BigInteger(encryped));
 		System.out.println("Message Sent");
 	}
 	
-	public String receiveMessage() throws Exception {
+	public byte[] receiveMessage() throws Exception {
 		BigInteger bigReceivedMAC = (BigInteger) portInStream.readObject();
 		BigInteger bigReceivedMessage = (BigInteger) portInStream.readObject();
 		
+//		byte[] base64Message = Base64.getDecoder().decode(bigReceivedMessage.toByteArray());
+//		byte[] decyrpted = decryptCipher.doFinal(base64Message);
 		byte[] decyrpted = decryptCipher.doFinal(bigReceivedMessage.toByteArray());
-		String decryptedString = new String(decyrpted);
 		
-		byte[] generatedMAC = serverMAC.doFinal(decryptedString.getBytes());
+		byte[] generatedMAC = serverMAC.doFinal(decyrpted);
 		if (!new BigInteger(generatedMAC).equals(bigReceivedMAC)) {
 			System.err.println("Message MAC does not match Message");
 			System.exit(0);
@@ -83,6 +88,6 @@ public class Client extends User {
 		
 		System.out.println("Message Received");
 		
-		return decryptedString;
+		return decyrpted;
 	}
 }

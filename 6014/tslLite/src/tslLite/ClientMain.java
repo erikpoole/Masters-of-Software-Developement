@@ -27,7 +27,10 @@ public class ClientMain {
 		System.out.println("Handshake Completed");
 		System.out.println();
 		
-		String received = client.receiveMessage().toString();
+		byte[] received = client.receiveMessage();
 		client.sendMessage(received);
+		
+		client.sendFile("sampleFile.pdf");
+		client.receiveMessage();
 	}
 }

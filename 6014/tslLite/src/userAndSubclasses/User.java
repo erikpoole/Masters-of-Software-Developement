@@ -1,6 +1,9 @@
 package userAndSubclasses;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -149,5 +152,58 @@ public abstract class User {
 		clientIV = new IvParameterSpec(clientIVBytes);
 		
 		System.out.println("Secret Keys Generated");
-	}	
+	}
+	
+	public abstract void sendMessage(byte[] message) throws Exception;
+	public abstract byte[] receiveMessage() throws Exception;
+	
+	public void sendFile(String filename) throws Exception {
+		File file = new File(filename);
+		FileInputStream inputStream = new FileInputStream(file);
+		int fileLength = (int) file.length();
+//		BigInteger bigFileLength = new BigInteger(String.valueOf(fileLength));
+		
+		System.out.println("Sending File");
+		portOutStream.writeObject(fileLength);
+		
+		int messageSize = 12000;
+		byte buffer[] = new byte[messageSize];
+		int fullMessagesToSend = fileLength / messageSize;
+		int lastMessageSize = fileLength % messageSize;
+		assert((fullMessagesToSend * messageSize) + lastMessageSize) == fileLength;
+		
+		for (int i = 0; i < fullMessagesToSend; i++) {
+			inputStream.read(buffer);
+			sendMessage(buffer);
+		}
+		buffer = new byte[lastMessageSize];
+		inputStream.read(buffer);
+		sendMessage(buffer);
+		
+		System.out.println("File Sent");
+		inputStream.close();
+	}
+	
+	public void receiveFile() throws Exception {
+		FileOutputStream outStream = new FileOutputStream(new File("received_output"));
+		int incomingLength = (int) portInStream.readObject();
+		
+		int messageSize = 12000;
+		int messagesToRead;
+		if (incomingLength % messageSize != 0) {
+			messagesToRead = (incomingLength / messageSize) + 1;
+		} else {
+			messagesToRead = incomingLength / messageSize;
+		}
+		System.out.println("Messages To Read: " + messagesToRead);
+		
+		for (int i = 0; i < messagesToRead; i++) {
+			outStream.write(receiveMessage());
+		}
+		System.out.println("File Received");
+		sendMessage("File Received".getBytes());
+		outStream.close();
+		
+	}
+	
 }
