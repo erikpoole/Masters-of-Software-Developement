@@ -161,7 +161,6 @@ public abstract class User {
 		File file = new File(filename);
 		FileInputStream inputStream = new FileInputStream(file);
 		int fileLength = (int) file.length();
-//		BigInteger bigFileLength = new BigInteger(String.valueOf(fileLength));
 		
 		System.out.println("Sending File");
 		portOutStream.writeObject(fileLength);
@@ -185,7 +184,7 @@ public abstract class User {
 	}
 	
 	public void receiveFile() throws Exception {
-		FileOutputStream outStream = new FileOutputStream(new File("received_output"));
+		FileOutputStream outStream = new FileOutputStream(new File("received_output.pdf"));
 		int incomingLength = (int) portInStream.readObject();
 		
 		int messageSize = 12000;
