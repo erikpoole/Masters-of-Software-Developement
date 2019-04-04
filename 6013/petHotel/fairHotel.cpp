@@ -20,9 +20,9 @@ FairHotel::FairHotel() {
     numDogs = 0;
     numCats = 0;
     
-    maxBirds = 2;
-    maxDogs = 2;
-    maxCats = 2;
+    maxBirds = 99;
+    maxDogs = 99;
+    maxCats = 99;
 
     birdsFull = false;
     dogsFull = false;
