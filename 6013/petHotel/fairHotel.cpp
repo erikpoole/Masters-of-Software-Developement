@@ -21,16 +21,18 @@ FairHotel::FairHotel(char** argv) {
     numDogs = 0;
     numCats = 0;
     
-    maxBirds = std::atoi(argv[1]);
-    maxDogs = std::atoi(argv[2]);
-    maxCats = std::atoi(argv[3]);
     
-    std::cout << maxBirds << maxDogs << maxCats;
+    
+    maxBirds = std::atoi(argv[1]);
+    maxDogs = std::atoi(argv[3]);
+    maxCats = std::atoi(argv[2]);
 
     birdsFull = false;
     dogsFull = false;
     catsFull = false;
 }
+
+
 
 void FairHotel::bird() {
     std::unique_lock<std::mutex> lock(myMutex);
