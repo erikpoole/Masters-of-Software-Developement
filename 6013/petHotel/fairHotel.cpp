@@ -7,6 +7,7 @@
 //
 
 #include "fairHotel.hpp"
+#include <iostream>
  
  void FairHotel::play() const {
      for(volatile int i = 0; i < 10000; ++i) {} //use the CPU for a while
@@ -15,14 +16,16 @@
  }
 
 
-FairHotel::FairHotel() {
+FairHotel::FairHotel(char** argv) {
     numBirds = 0;
     numDogs = 0;
     numCats = 0;
     
-    maxBirds = 99;
-    maxDogs = 99;
-    maxCats = 99;
+    maxBirds = std::atoi(argv[1]);
+    maxDogs = std::atoi(argv[2]);
+    maxCats = std::atoi(argv[3]);
+    
+    std::cout << maxBirds << maxDogs << maxCats;
 
     birdsFull = false;
     dogsFull = false;
@@ -36,7 +39,7 @@ void FairHotel::bird() {
     }
     
     ++numBirds;
-    if (numBirds > maxBirds) {
+    if (numBirds >= maxBirds) {
         birdsFull = true;
     }
     
@@ -62,7 +65,7 @@ void FairHotel::dog() {
     }
 
     ++numDogs;
-    if (numDogs > maxDogs) {
+    if (numDogs >= maxDogs) {
         dogsFull = true;
     }
     
@@ -89,7 +92,7 @@ void FairHotel::cat() {
     }
     
     ++numCats;
-    if (numCats > maxCats) {
+    if (numCats >= maxCats) {
         catsFull = true;
     }
     

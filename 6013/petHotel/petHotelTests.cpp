@@ -4,22 +4,21 @@
 #include <cassert>
 
 #include "petHotel.hpp"
-#include "fairHotel.hpp"
 
 
-void birdThread(FairHotel& hotel, int& counter, std::atomic<bool>& done){
+void birdThread(PetHotel& hotel, int& counter, std::atomic<bool>& done){
   while(!done){
 	hotel.bird();
 	++counter;
   }
 }
-void dogThread(FairHotel& hotel, int& counter, std::atomic<bool>& done){
+void dogThread(PetHotel& hotel, int& counter, std::atomic<bool>& done){
   while(!done){
 	hotel.dog();
 	++counter;
   }
 }
-void catThread(FairHotel& hotel, int& counter, std::atomic<bool>& done){
+void catThread(PetHotel& hotel, int& counter, std::atomic<bool>& done){
   while(!done){
 	hotel.cat();
 	++counter;
@@ -42,8 +41,8 @@ int main(int argc, char**argv){
   auto now = std::chrono::high_resolution_clock::now();
   auto stopTime = now + std::chrono::seconds(5);
   std::atomic<bool> done{false};
-//  PetHotel hotel;
-  FairHotel hotel;
+  PetHotel hotel;
+//  FairHotel hotel;
   
   for(int i = 0; i < numBirds; ++i){
 	threads.push_back(std::thread(birdThread,

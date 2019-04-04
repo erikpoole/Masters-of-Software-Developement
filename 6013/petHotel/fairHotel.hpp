@@ -37,7 +37,7 @@ public:
     bool dogsFull;
     bool catsFull;
     
-    FairHotel();
+    FairHotel(char** argv);
     
     void play() const;
     
