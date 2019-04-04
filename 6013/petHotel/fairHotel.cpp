@@ -20,22 +20,26 @@ FairHotel::FairHotel() {
     numDogs = 0;
     numCats = 0;
     
-    maxBirdDogs = 4;
-    maxCats = 1;
-    birdDogsFull = false;
+    maxBirds = 2;
+    maxDogs = 2;
+    maxCats = 2;
+
+    birdsFull = false;
+    dogsFull = false;
     catsFull = false;
 }
 
 void FairHotel::bird() {
     std::unique_lock<std::mutex> lock(myMutex);
-    while (numCats != 0 || birdDogsFull) {
+    while (numCats != 0 || birdsFull) {
         birdDogsCV.wait(lock);
-    }
-    if (numDogs + numBirds > maxBirdDogs) {
-        birdDogsFull = true;
     }
     
     ++numBirds;
+    if (numBirds > maxBirds) {
+        birdsFull = true;
+    }
+    
     lock.unlock();
     
     assert(numCats == 0);
@@ -43,7 +47,8 @@ void FairHotel::bird() {
     lock.lock();
     --numBirds;
     if (numBirds + numDogs == 0) {
-        birdDogsFull = false;
+        birdsFull = false;
+        dogsFull = false;
         catCV.notify_all();
     }
     lock.unlock();
@@ -52,14 +57,15 @@ void FairHotel::bird() {
 
 void FairHotel::dog() {
     std::unique_lock<std::mutex> lock(myMutex);
-    while (numCats != 0 || birdDogsFull) {
+    while (numCats != 0 || dogsFull) {
         birdDogsCV.wait(lock);
     }
-    if (numDogs + numBirds > maxBirdDogs) {
-        birdDogsFull = true;
+
+    ++numDogs;
+    if (numDogs > maxDogs) {
+        dogsFull = true;
     }
     
-    ++numDogs;
     lock.unlock();
     
     assert(numCats == 0);
@@ -67,8 +73,10 @@ void FairHotel::dog() {
     
     lock.lock();
     --numDogs;
+
     if (numBirds + numDogs == 0) {
-        birdDogsFull = false;
+        birdsFull = false;
+        dogsFull = false;
         catCV.notify_all();
     }
     lock.unlock();
@@ -79,11 +87,12 @@ void FairHotel::cat() {
     while (numDogs + numBirds != 0 || catsFull) {
         catCV.wait(lock);
     }
+    
+    ++numCats;
     if (numCats > maxCats) {
         catsFull = true;
     }
     
-    ++numCats;
     lock.unlock();
     
     assert(numDogs + numBirds == 0);

@@ -29,9 +29,12 @@ public:
     int numDogs;
     int numCats;
     
-    int maxBirdDogs;
+    int maxBirds;
+    int maxDogs;
     int maxCats;
-    bool birdDogsFull;
+
+    bool birdsFull;
+    bool dogsFull;
     bool catsFull;
     
     FairHotel();
