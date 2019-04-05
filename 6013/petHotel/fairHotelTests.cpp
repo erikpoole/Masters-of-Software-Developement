@@ -41,8 +41,9 @@ int main(int argc, char**argv){
     auto now = std::chrono::high_resolution_clock::now();
     auto stopTime = now + std::chrono::seconds(5);
     std::atomic<bool> done{false};
+    std::atomic<bool>* donePtr = &done;
     //  PetHotel hotel;
-    FairHotel hotel(argv);
+    FairHotel hotel(argv, donePtr);
     
     for(int i = 0; i < numBirds; ++i){
         threads.push_back(std::thread(birdThread,

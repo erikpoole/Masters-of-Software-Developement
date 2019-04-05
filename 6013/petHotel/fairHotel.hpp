@@ -26,6 +26,7 @@ public:
     std::mutex myMutex;
     std::condition_variable birdDogsCV;
     std::condition_variable catCV;
+    std::atomic<bool> *donePtr;
     
     int numBirds;
     int numDogs;
@@ -39,7 +40,7 @@ public:
     bool dogsFull;
     bool catsFull;
     
-    FairHotel(char** argv);
+    FairHotel(char** argv, std::atomic<bool> *done);
     
     void play() const;
     

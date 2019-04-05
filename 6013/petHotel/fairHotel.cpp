@@ -16,29 +16,60 @@
  }
 
 
-FairHotel::FairHotel(char** argv) {
+FairHotel::FairHotel(char** argv, std::atomic<bool>* done) {
     numBirds = 0;
     numDogs = 0;
     numCats = 0;
+    donePtr = done;
+    
+    birdsFull = false;
+    dogsFull = false;
+    catsFull = false;
     
     int birdThreadCount = std::atoi(argv[1]);
     int dogThreadCount = std::atoi(argv[3]);
     int catThreadCount = std::atoi(argv[2]);
-    double averageThreadCount = ((double) birdThreadCount + dogThreadCount + catThreadCount) / 3;
     
+    double averageThreadCount = ((double) birdThreadCount + dogThreadCount + catThreadCount) / 3;
     std::vector<int> birdDivisors = findDivisors(birdThreadCount);
     std::vector<int> dogDivisors = findDivisors(dogThreadCount);
     std::vector<int> catDivisors = findDivisors(catThreadCount);
     
-//    maxBirds = findClosestDivisor(birdDivisors, averageThreadCount);
-//    maxDogs = findClosestDivisor(dogDivisors, averageThreadCount);
-//    maxCats = findClosestDivisor(catDivisors, averageThreadCount);
+    maxBirds = findClosestDivisor(birdDivisors, averageThreadCount);
+    maxDogs = findClosestDivisor(dogDivisors, averageThreadCount);
+    maxCats = findClosestDivisor(catDivisors, averageThreadCount);
     
-        maxBirds = std::atoi(argv[1]);
-        maxDogs = std::atoi(argv[3]);
-        maxCats = std::atoi(argv[2]);
+    /* equal limits
+    maxBirds = std::atoi(argv[1]);
+    maxDogs = std::atoi(argv[3]);
+    maxCats = std::atoi(argv[2]);
+     */
     
+    // cat limit
+//    maxBirds = std::atoi(argv[2]);
+//    maxDogs = std::atoi(argv[2]);
+//    maxCats = std::atoi(argv[2]);
+
+    /* minimum limit
+    if (birdThreadCount < dogThreadCount && birdThreadCount < catThreadCount) {
+        //birds smallest
+        maxBirds = birdThreadCount;
+        maxDogs = birdThreadCount;
+        maxCats = birdThreadCount;
+    } else if (dogThreadCount < catThreadCount) {
+        //dogs smallest
+        maxBirds = dogThreadCount;
+        maxDogs = dogThreadCount;
+        maxCats = dogThreadCount;
+    } else {
+        //cats smallest
+        maxBirds = catThreadCount;
+        maxDogs = catThreadCount;
+        maxCats = catThreadCount;
+    }
+    */
     
+    /* debugging output
     std::cout << "Average: " << averageThreadCount << "\n";
     
     std::cout << "Bird Divisors:";
@@ -46,36 +77,30 @@ FairHotel::FairHotel(char** argv) {
         std::cout << " " << i;
     }
     std::cout << "\n";
-    
+
     std::cout << "Dog Divisors:";
     for (int i : dogDivisors) {
         std::cout << " " << i;
     }
     std::cout << "\n";
-    
+
     std::cout << "Cat Divisors:";
     for (int i : catDivisors) {
         std::cout << " " << i;
     }
     std::cout << "\n";
-    
+
     std::cout << "Closest Bird: " << maxBirds << "\n";
     std::cout << "Closest Dog: " << maxDogs << "\n";
     std::cout << "Closest Cat: " << maxCats << "\n";
-
-    
-
-
-    birdsFull = false;
-    dogsFull = false;
-    catsFull = false;
+     */
 }
 
 
 
 void FairHotel::bird() {
     std::unique_lock<std::mutex> lock(myMutex);
-    while (numCats != 0 || birdsFull) {
+    while (numCats != 0 || (birdsFull && !*donePtr)) {
         birdDogsCV.wait(lock);
     }
     
@@ -101,7 +126,7 @@ void FairHotel::bird() {
 
 void FairHotel::dog() {
     std::unique_lock<std::mutex> lock(myMutex);
-    while (numCats != 0 || dogsFull) {
+    while (numCats != 0 || (dogsFull && !*donePtr)) {
         birdDogsCV.wait(lock);
     }
 
@@ -128,7 +153,7 @@ void FairHotel::dog() {
 
 void FairHotel::cat() {
     std::unique_lock<std::mutex> lock(myMutex);
-    while (numDogs + numBirds != 0 || catsFull) {
+    while (numDogs + numBirds != 0 || (catsFull && !*donePtr)) {
         catCV.wait(lock);
     }
     
