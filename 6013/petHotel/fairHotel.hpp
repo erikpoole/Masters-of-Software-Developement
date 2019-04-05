@@ -10,12 +10,14 @@
 #define fairHotel_hpp
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <thread>
 #include <chrono>
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
+#include <vector>
 
 #endif /* fairHotel_hpp */
 
@@ -45,3 +47,7 @@ public:
     void dog();
     void cat();
 };
+
+
+std::vector<int> findDivisors(int num);
+int findClosestDivisor(std::vector<int> divisors, int average);

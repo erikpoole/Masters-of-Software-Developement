@@ -21,11 +21,50 @@ FairHotel::FairHotel(char** argv) {
     numDogs = 0;
     numCats = 0;
     
+    int birdThreadCount = std::atoi(argv[1]);
+    int dogThreadCount = std::atoi(argv[3]);
+    int catThreadCount = std::atoi(argv[2]);
+    double averageThreadCount = ((double) birdThreadCount + dogThreadCount + catThreadCount) / 3;
+    
+    std::vector<int> birdDivisors = findDivisors(birdThreadCount);
+    std::vector<int> dogDivisors = findDivisors(dogThreadCount);
+    std::vector<int> catDivisors = findDivisors(catThreadCount);
+    
+//    maxBirds = findClosestDivisor(birdDivisors, averageThreadCount);
+//    maxDogs = findClosestDivisor(dogDivisors, averageThreadCount);
+//    maxCats = findClosestDivisor(catDivisors, averageThreadCount);
+    
+        maxBirds = std::atoi(argv[1]);
+        maxDogs = std::atoi(argv[3]);
+        maxCats = std::atoi(argv[2]);
     
     
-    maxBirds = std::atoi(argv[1]);
-    maxDogs = std::atoi(argv[3]);
-    maxCats = std::atoi(argv[2]);
+    std::cout << "Average: " << averageThreadCount << "\n";
+    
+    std::cout << "Bird Divisors:";
+    for (int i : birdDivisors) {
+        std::cout << " " << i;
+    }
+    std::cout << "\n";
+    
+    std::cout << "Dog Divisors:";
+    for (int i : dogDivisors) {
+        std::cout << " " << i;
+    }
+    std::cout << "\n";
+    
+    std::cout << "Cat Divisors:";
+    for (int i : catDivisors) {
+        std::cout << " " << i;
+    }
+    std::cout << "\n";
+    
+    std::cout << "Closest Bird: " << maxBirds << "\n";
+    std::cout << "Closest Dog: " << maxDogs << "\n";
+    std::cout << "Closest Cat: " << maxCats << "\n";
+
+    
+
 
     birdsFull = false;
     dogsFull = false;
@@ -112,3 +151,26 @@ void FairHotel::cat() {
     lock.unlock();
 }
 
+
+
+std::vector<int> findDivisors(int num) {
+    std::vector<int> output;
+    for (int i = 1; i <= num; i++) {
+        if (num % i == 0) {
+            output.push_back(i);
+        }
+    }
+    return output;
+}
+
+int findClosestDivisor(std::vector<int> divisors, int average) {
+    long closestIndex = divisors.size()-1;
+    int difference = std::abs(divisors[closestIndex] - average);
+    for (int i = 0; i < divisors.size(); i++) {
+        if (std::abs(divisors[i] - average) < difference) {
+            closestIndex = i;
+            difference = std::abs(divisors[i] - average);
+        }
+    }
+    return divisors[closestIndex];
+}
