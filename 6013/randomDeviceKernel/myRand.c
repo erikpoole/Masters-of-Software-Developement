@@ -25,48 +25,46 @@ static struct cdev cdev; //the device
  
  DEFINE ALL YOUR RC4 STUFF HERE
  
- */
+*/
 
-struct rc4Cipher {
-public:
-    std::vector<uint8_t> table;
-    int index1, index2;
-    
-    rc4Cipher(const std::string &key) {
-        int i;
-        for (i=0; i < 256; i++) {
-            table.push_back(i);
+static uint8_t table[256];
+static int index1, index2;
+
+void rc4Init(unsigned char* key, int length) {
+	int i;
+	int j;
+	int temp;
+
+        for (i=0; i < sizeof(table)/sizeof(uint8_t); i++) {
+            table[i] = i;
         }
         
-        int j = 0;
-        int i;
-        for (i = 0; i < table.size(); i++) {
-            j = (j + table[i] + key[i % key.size()]) % 256;
-            std::swap(table[i], table[j]);
+        j = 0;
+        for (i = 0; i < sizeof(table)/sizeof(uint8_t); i++) {
+            j = (j + table[i] + key[i % sizeof(key)/sizeof(char)]) % 256; 
+	    temp = table[i];
+	    table[i] = table[j];
+	    table[j] = temp;
         }
         
         index1 = 0;
         index2 = 0;
-    }
-    
-    std::string encode(const std::string &plaintext) {
-        std::string ciphertext = "";
-        int i;
-        for (i = 0; i < plaintext.size(); i++) {
-            index1 = (index1 + 1) % table.size();
-            index2 = (index2 + table[index1]) % table.size();
-            std::swap(table[index1], table[index2]);
-            uint8_t cypterByte = table[(table[index1] + table[index2]) % table.size()];
-            cypterByte ^= plaintext[i];
-            
-            ciphertext += cypterByte;
-        }
-        
-        return ciphertext;
-    }
-};
+}
 
+unsigned char rc4Next(void) {
+	int temp;
+	unsigned char randomChar;
 
+	index1 = (index1 + 1) % sizeof(table)/sizeof(uint8_t);
+	index2 = (index2 + table[index1]) % sizeof(table)/sizeof(uint8_t);
+	temp = table[index1];
+	table[index1] = table[index2];
+	table[index2] = temp;
+
+	randomChar = table[(table[index1] + table[index2]) % sizeof(table)/sizeof(uint8_t)];
+
+	return (char) randomChar;
+}
 
 /*
  called when opening a device.  We won't do anything
@@ -95,6 +93,9 @@ ssize_t myRand_write(struct file*filp, const char __user *buf, size_t count, lof
      USE THE USER's BUFFER TO RE-INITIALIZE YOUR RC4 GENERATOR
      BE SURE NOT TO DIRECTLY DEREFERENCE A USER POINTER!
      */
+    //void* userInput = kmalloc(count, GFP_KERNEL);
+    //long bytesErrored = copy_from_user(userInput, 
+    //kfree(userInput);
     return 0;
 }
 
@@ -124,16 +125,23 @@ static int myRand_uevent(struct device* dev, struct kobj_uevent_env *env){
 /* Called when the module is loaded.  Do all our initialization stuff here */
 static int __init
 myRand_init_module(void){
+    int err;
+    int minor;
+    dev_t devno;
+    dev_t dev;
+    struct device *device;
+
     printk("Loading my random module");
     
     /*
      INITIALIZE YOUR RC4 GENERATOR WITH A SINGLE 0 BYTE
      */
+    rc4Init(0, 1);
     
     
     /*  This allocates necessary kernel data structures and plumbs everything together */
-    dev_t dev = 0;
-    int err = 0;
+    dev = 0;
+    err = 0;
     err = alloc_chrdev_region(&dev, 0, 1, MY_DEVICE_NAME);
     if(err < 0){
         printk(KERN_WARNING "[target] alloc_chrdev_region() failed\n");
@@ -147,10 +155,10 @@ myRand_init_module(void){
     
     /* this code uses the uevent function above to make our device user readable */
     myRand_class->dev_uevent = myRand_uevent;
-    int minor = 0;
-    dev_t devno = MKDEV(myRand_major, minor);
-    struct device *device = NULL;
-    
+    minor = 0;
+    devno = MKDEV(myRand_major, minor);
+    device = NULL;
+
     cdev_init(&cdev, &myRand_fops);
     cdev.owner = THIS_MODULE;
     
