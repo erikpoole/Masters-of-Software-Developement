@@ -1,5 +1,7 @@
 
 //Should be all that's needed
+#include <linux/fs.h>
+
 #include <linux/version.h>
 #include <linux/module.h>
 #include <linux/init.h>
@@ -24,6 +26,46 @@ static struct cdev cdev; //the device
  DEFINE ALL YOUR RC4 STUFF HERE
  
  */
+
+struct rc4Cipher {
+public:
+    std::vector<uint8_t> table;
+    int index1, index2;
+    
+    rc4Cipher(const std::string &key) {
+        int i;
+        for (i=0; i < 256; i++) {
+            table.push_back(i);
+        }
+        
+        int j = 0;
+        int i;
+        for (i = 0; i < table.size(); i++) {
+            j = (j + table[i] + key[i % key.size()]) % 256;
+            std::swap(table[i], table[j]);
+        }
+        
+        index1 = 0;
+        index2 = 0;
+    }
+    
+    std::string encode(const std::string &plaintext) {
+        std::string ciphertext = "";
+        int i;
+        for (i = 0; i < plaintext.size(); i++) {
+            index1 = (index1 + 1) % table.size();
+            index2 = (index2 + table[index1]) % table.size();
+            std::swap(table[index1], table[index2]);
+            uint8_t cypterByte = table[(table[index1] + table[index2]) % table.size()];
+            cypterByte ^= plaintext[i];
+            
+            ciphertext += cypterByte;
+        }
+        
+        return ciphertext;
+    }
+};
+
 
 
 /*
