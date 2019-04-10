@@ -41,10 +41,12 @@ void rc4Init(unsigned char* key, int length) {
         
         j = 0;
         for (i = 0; i < sizeof(table)/sizeof(uint8_t); i++) {
-            j = (j + table[i] + key[i % sizeof(key)/sizeof(char)]) % 256; 
-	    temp = table[i];
-	    table[i] = table[j];
-	    table[j] = temp;
+		
+            j = (j + table[i] + key[i % length]) % 256; 
+	    printk("%d\n", j);
+	    //temp = table[i];
+	    //table[i] = table[j];
+	    //table[j] = temp;
         }
         
         index1 = 0;
@@ -93,9 +95,15 @@ ssize_t myRand_write(struct file*filp, const char __user *buf, size_t count, lof
      USE THE USER's BUFFER TO RE-INITIALIZE YOUR RC4 GENERATOR
      BE SURE NOT TO DIRECTLY DEREFERENCE A USER POINTER!
      */
-    //void* userInput = kmalloc(count, GFP_KERNEL);
-    //long bytesErrored = copy_from_user(userInput, 
-    //kfree(userInput);
+   // void* rc4Buffer = kmalloc(count, GFP_KERNEL);
+    //long bytesErrored = copy_from_user(rc4Buffer, buf, count);
+  //  if (bytesErrored != 0) {
+//	    printk("copy_from_user error");
+//	    kfree(rc4Buffer);
+//	    return 0;
+    //}
+   // rc4Init(rc4Buffer, count);
+   // kfree(rc4Buffer);
     return 0;
 }
 
