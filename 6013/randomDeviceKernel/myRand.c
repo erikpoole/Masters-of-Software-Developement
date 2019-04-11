@@ -35,18 +35,16 @@ void rc4Init(unsigned char* key, int length) {
 	int j;
 	int temp;
 
-        for (i=0; i < sizeof(table)/sizeof(uint8_t); i++) {
+        for (i = 0; i < sizeof(table)/sizeof(uint8_t); i++) {
             table[i] = i;
         }
         
         j = 0;
         for (i = 0; i < sizeof(table)/sizeof(uint8_t); i++) {
-		
-            j = (j + table[i] + key[i % length]) % 256; 
-	    printk("%d\n", j);
-	    //temp = table[i];
-	    //table[i] = table[j];
-	    //table[j] = temp;
+            j = (j + table[i] + key[i % length]) % sizeof(table)/sizeof(uint8_t);
+	    temp = table[i];
+	    table[i] = table[j];
+	    table[j] = temp;
         }
         
         index1 = 0;
@@ -65,7 +63,10 @@ unsigned char rc4Next(void) {
 
 	randomChar = table[(table[index1] + table[index2]) % sizeof(table)/sizeof(uint8_t)];
 
-	return (char) randomChar;
+	//converts ASCII char to a char visible in the console
+	randomChar = (randomChar % 94) + 33;
+
+	return (unsigned char) randomChar;
 }
 
 /*
@@ -87,7 +88,21 @@ ssize_t myRand_read(struct file *filp, char __user *buf, size_t count, loff_t *f
      BE SURE NOT TO DIRECTLY DEREFERENCE A USER POINTER!
      
      */
-    return 0;
+    int i;
+    long bytesErrored;
+
+    char* outputBuffer = kmalloc(count, GFP_KERNEL);
+    for (i = 0; i < count; i++) {
+	    outputBuffer[i] = rc4Next();
+    }
+    bytesErrored = copy_to_user(buf, outputBuffer, count);
+    if (bytesErrored != 0) {
+	    printk("copy_to_user error in read");
+    	    kfree(outputBuffer);
+	    return 0;
+    }
+    kfree(outputBuffer);
+    return 1;
 }
 
 ssize_t myRand_write(struct file*filp, const char __user *buf, size_t count, loff_t *fpos){
@@ -95,16 +110,16 @@ ssize_t myRand_write(struct file*filp, const char __user *buf, size_t count, lof
      USE THE USER's BUFFER TO RE-INITIALIZE YOUR RC4 GENERATOR
      BE SURE NOT TO DIRECTLY DEREFERENCE A USER POINTER!
      */
-   // void* rc4Buffer = kmalloc(count, GFP_KERNEL);
-    //long bytesErrored = copy_from_user(rc4Buffer, buf, count);
-  //  if (bytesErrored != 0) {
-//	    printk("copy_from_user error");
-//	    kfree(rc4Buffer);
-//	    return 0;
-    //}
-   // rc4Init(rc4Buffer, count);
-   // kfree(rc4Buffer);
-    return 0;
+    void* rc4Buffer = kmalloc(count, GFP_KERNEL);
+    long bytesErrored = copy_from_user(rc4Buffer, buf, count);
+    if (bytesErrored != 0) {
+	    printk("copy_from_user error in write");
+	    kfree(rc4Buffer);
+	    return 0;
+    }
+    rc4Init(rc4Buffer, count);
+    kfree(rc4Buffer);
+    return 1;
 }
 
 /* respond to seek() syscalls... by ignoring them */
@@ -138,13 +153,15 @@ myRand_init_module(void){
     dev_t devno;
     dev_t dev;
     struct device *device;
+    unsigned char keyVal;
 
     printk("Loading my random module");
     
     /*
      INITIALIZE YOUR RC4 GENERATOR WITH A SINGLE 0 BYTE
      */
-    rc4Init(0, 1);
+    keyVal = 0;
+    rc4Init(&keyVal, 1);
     
     
     /*  This allocates necessary kernel data structures and plumbs everything together */
