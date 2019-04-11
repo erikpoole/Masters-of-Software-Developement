@@ -29,6 +29,8 @@ static struct cdev cdev; //the device
 
 static uint8_t table[256];
 static int index1, index2;
+static spinlock_t my_lock = __SPIN_LOCK_UNLOCKED();
+//my_lock = __SPIN_LOCK_UNLOCKED();
 
 void rc4Init(unsigned char* key, int length) {
 	int i;
@@ -88,13 +90,19 @@ ssize_t myRand_read(struct file *filp, char __user *buf, size_t count, loff_t *f
      BE SURE NOT TO DIRECTLY DEREFERENCE A USER POINTER!
      
      */
+
     int i;
     long bytesErrored;
+    char* outputBuffer;
 
-    char* outputBuffer = kmalloc(count, GFP_KERNEL);
+    outputBuffer = kmalloc(count, GFP_KERNEL);
+
+    spin_lock(&my_lock);
     for (i = 0; i < count; i++) {
 	    outputBuffer[i] = rc4Next();
     }
+    spin_unlock(&my_lock);
+    
     bytesErrored = copy_to_user(buf, outputBuffer, count);
     if (bytesErrored != 0) {
 	    printk("copy_to_user error in read");
@@ -102,6 +110,8 @@ ssize_t myRand_read(struct file *filp, char __user *buf, size_t count, loff_t *f
 	    return -1;
     }
     kfree(outputBuffer);
+
+
     return count;
 }
 
@@ -110,15 +120,23 @@ ssize_t myRand_write(struct file*filp, const char __user *buf, size_t count, lof
      USE THE USER's BUFFER TO RE-INITIALIZE YOUR RC4 GENERATOR
      BE SURE NOT TO DIRECTLY DEREFERENCE A USER POINTER!
      */
-    void* rc4Buffer = kmalloc(count, GFP_KERNEL);
-    long bytesErrored = copy_from_user(rc4Buffer, buf, count);
+
+    long bytesErrored;
+    void* rc4Buffer;
+   
+    rc4Buffer = kmalloc(count, GFP_KERNEL);
+    bytesErrored = copy_from_user(rc4Buffer, buf, count);
     if (bytesErrored != 0) {
 	    printk("copy_from_user error in write");
 	    kfree(rc4Buffer);
 	    return -1;
     }
+    spin_lock(&my_lock);
     rc4Init(rc4Buffer, count);
+    spin_unlock(&my_lock);
+   
     kfree(rc4Buffer);
+
     return count;
 }
 
