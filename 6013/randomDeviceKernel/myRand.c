@@ -40,7 +40,7 @@ void rc4Init(unsigned char* key, int length) {
         }
         
         j = 0;
-        for (i = 0; i < sizeof(table)/sizeof(uint8_t); i++) {
+        for (i = 0; i < 256; i++) {
             j = (j + table[i] + key[i % length]) % sizeof(table)/sizeof(uint8_t);
 	    temp = table[i];
 	    table[i] = table[j];
@@ -64,7 +64,7 @@ unsigned char rc4Next(void) {
 	randomChar = table[(table[index1] + table[index2]) % sizeof(table)/sizeof(uint8_t)];
 
 	//converts ASCII char to a char visible in the console
-	randomChar = (randomChar % 94) + 33;
+	//randomChar = (randomChar % 94) + 33;
 
 	return (unsigned char) randomChar;
 }
@@ -99,10 +99,10 @@ ssize_t myRand_read(struct file *filp, char __user *buf, size_t count, loff_t *f
     if (bytesErrored != 0) {
 	    printk("copy_to_user error in read");
     	    kfree(outputBuffer);
-	    return 0;
+	    return -1;
     }
     kfree(outputBuffer);
-    return 1;
+    return count;
 }
 
 ssize_t myRand_write(struct file*filp, const char __user *buf, size_t count, loff_t *fpos){
@@ -115,11 +115,11 @@ ssize_t myRand_write(struct file*filp, const char __user *buf, size_t count, lof
     if (bytesErrored != 0) {
 	    printk("copy_from_user error in write");
 	    kfree(rc4Buffer);
-	    return 0;
+	    return -1;
     }
     rc4Init(rc4Buffer, count);
     kfree(rc4Buffer);
-    return 1;
+    return count;
 }
 
 /* respond to seek() syscalls... by ignoring them */
