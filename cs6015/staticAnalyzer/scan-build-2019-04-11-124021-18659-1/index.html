@@ -1,0 +1,162 @@
+<html>
+<head>
+<title>bash-3.2 - scan-build results</title>
+<link type="text/css" rel="stylesheet" href="scanview.css"/>
+<script src="sorttable.js"></script>
+<script language='javascript' type="text/javascript">
+function SetDisplay(RowClass, DisplayVal)
+{
+  var Rows = document.getElementsByTagName("tr");
+  for ( var i = 0 ; i < Rows.length; ++i ) {
+    if (Rows[i].className == RowClass) {
+      Rows[i].style.display = DisplayVal;
+    }
+  }
+}
+
+function CopyCheckedStateToCheckButtons(SummaryCheckButton) {
+  var Inputs = document.getElementsByTagName("input");
+  for ( var i = 0 ; i < Inputs.length; ++i ) {
+    if (Inputs[i].type == "checkbox") {
+      if(Inputs[i] != SummaryCheckButton) {
+        Inputs[i].checked = SummaryCheckButton.checked;
+        Inputs[i].onclick();
+      }
+    }
+  }
+}
+
+function returnObjById( id ) {
+    if (document.getElementById)
+        var returnVar = document.getElementById(id);
+    else if (document.all)
+        var returnVar = document.all[id];
+    else if (document.layers)
+        var returnVar = document.layers[id];
+    return returnVar;
+}
+
+var NumUnchecked = 0;
+
+function ToggleDisplay(CheckButton, ClassName) {
+  if (CheckButton.checked) {
+    SetDisplay(ClassName, "");
+    if (--NumUnchecked == 0) {
+      returnObjById("AllBugsCheck").checked = true;
+    }
+  }
+  else {
+    SetDisplay(ClassName, "none");
+    NumUnchecked++;
+    returnObjById("AllBugsCheck").checked = false;
+  }
+}
+</script>
+<!-- SUMMARYENDHEAD -->
+</head>
+<body>
+<h1>bash-3.2 - scan-build results</h1>
+
+<table>
+<tr><th>User:</th><td>epoole@ferry.uconnect.utah.edu</td></tr>
+<tr><th>Working Directory:</th><td>/Users/epoole/Box Sync/erikpoole/cs6015/staticAnalyzer/bash-3.2</td></tr>
+<tr><th>Command Line:</th><td>make bashbug</td></tr>
+<tr><th>Clang Version:</th><td>clang version 7.0.1 (tags/RELEASE_701/final)
+</td></tr>
+<tr><th>Date:</th><td>Thu Apr 11 12:40:21 2019</td></tr>
+</table>
+<h2>Bug Summary</h2><table>
+<thead><tr><td>Bug Type</td><td>Quantity</td><td class="sorttable_nosort">Display?</td></tr></thead>
+<tr style="font-weight:bold"><td class="SUMM_DESC">All Bugs</td><td class="Q">21</td><td><center><input type="checkbox" id="AllBugsCheck" onClick="CopyCheckedStateToCheckButtons(this);" checked/></center></td></tr>
+<tr><th>Dead store</th><th colspan=2></th></tr>
+<tr><td class="SUMM_DESC">Dead assignment</td><td class="Q">1</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_dead_store_dead_assignment');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Dead increment</td><td class="Q">3</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_dead_store_dead_increment');" checked/></center></td></tr>
+<tr><th>Logic error</th><th colspan=2></th></tr>
+<tr><td class="SUMM_DESC">Assigned value is garbage or undefined</td><td class="Q">3</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_assigned_value_is_garbage_or_undefined');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Division by zero</td><td class="Q">2</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_division_by_zero');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Result of operation is garbage or undefined</td><td class="Q">1</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_result_of_operation_is_garbage_or_undefined');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Uninitialized argument value</td><td class="Q">8</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_uninitialized_argument_value');" checked/></center></td></tr>
+<tr><th>Memory error</th><th colspan=2></th></tr>
+<tr><td class="SUMM_DESC">Memory leak</td><td class="Q">3</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_memory_error_memory_leak');" checked/></center></td></tr>
+</table>
+<h2>Reports</h2>
+
+<table class="sortable" style="table-layout:automatic">
+<thead><tr>
+  <td>Bug Group</td>
+  <td class="sorttable_sorted">Bug Type<span id="sorttable_sortfwdind">&nbsp;&#x25BE;</span></td>
+  <td>File</td>
+  <td>Function/Method</td>
+  <td class="Q">Line</td>
+  <td class="Q">Path Length</td>
+  <td class="sorttable_nosort"></td>
+  <!-- REPORTBUGCOL -->
+</tr></thead>
+<tbody>
+<tr class="bt_logic_error_assigned_value_is_garbage_or_undefined"><td class="DESC">Logic error</td><td class="DESC">Assigned value is garbage or undefined</td><td>lib/intl/loadmsgcat.c</td><td class="DESC">_nl_load_domain</td><td class="Q">1232</td><td class="Q">32</td><td><a href="report-3f95a3.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-3f95a3.html" -->
+</tr>
+<tr class="bt_logic_error_assigned_value_is_garbage_or_undefined"><td class="DESC">Logic error</td><td class="DESC">Assigned value is garbage or undefined</td><td>lib/intl/plural.c</td><td class="DESC">libintl_gettextparse</td><td class="Q">1095</td><td class="Q">17</td><td><a href="report-feae2a.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-feae2a.html" -->
+</tr>
+<tr class="bt_logic_error_assigned_value_is_garbage_or_undefined"><td class="DESC">Logic error</td><td class="DESC">Assigned value is garbage or undefined</td><td>lib/intl/plural.c</td><td class="DESC">libintl_gettextparse</td><td class="Q">1101</td><td class="Q">16</td><td><a href="report-bc66b1.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-bc66b1.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>mksyntax.c</td><td class="DESC">main</td><td class="Q">359</td><td class="Q">1</td><td><a href="report-fd9ba3.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-fd9ba3.html" -->
+</tr>
+<tr class="bt_dead_store_dead_increment"><td class="DESC">Dead store</td><td class="DESC">Dead increment</td><td>support/bashversion.c</td><td class="DESC">main</td><td class="Q">108</td><td class="Q">1</td><td><a href="report-f01189.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-f01189.html" -->
+</tr>
+<tr class="bt_dead_store_dead_increment"><td class="DESC">Dead store</td><td class="DESC">Dead increment</td><td>mksyntax.c</td><td class="DESC">main</td><td class="Q">346</td><td class="Q">1</td><td><a href="report-2a1f75.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-2a1f75.html" -->
+</tr>
+<tr class="bt_dead_store_dead_increment"><td class="DESC">Dead store</td><td class="DESC">Dead increment</td><td>mksyntax.c</td><td class="DESC">main</td><td class="Q">345</td><td class="Q">1</td><td><a href="report-90e8d4.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-90e8d4.html" -->
+</tr>
+<tr class="bt_logic_error_division_by_zero"><td class="DESC">Logic error</td><td class="DESC">Division by zero</td><td>lib/intl/eval-plural.h</td><td class="DESC">plural_eval</td><td class="Q">75</td><td class="Q">39</td><td><a href="report-96fb60.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-96fb60.html" -->
+</tr>
+<tr class="bt_logic_error_division_by_zero"><td class="DESC">Logic error</td><td class="DESC">Division by zero</td><td>lib/intl/eval-plural.h</td><td class="DESC">plural_eval</td><td class="Q">81</td><td class="Q">39</td><td><a href="report-113359.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-113359.html" -->
+</tr>
+<tr class="bt_memory_error_memory_leak"><td class="DESC">Memory error</td><td class="DESC">Memory leak</td><td>lib/intl/localcharset.c</td><td class="DESC">get_charset_aliases</td><td class="Q">194</td><td class="Q">33</td><td><a href="report-1cffab.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-1cffab.html" -->
+</tr>
+<tr class="bt_memory_error_memory_leak"><td class="DESC">Memory error</td><td class="DESC">Memory leak</td><td>lib/intl/relocatable.c</td><td class="DESC">local_compute_curr_prefix</td><td class="Q">250</td><td class="Q">12</td><td><a href="report-ce537b.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ce537b.html" -->
+</tr>
+<tr class="bt_memory_error_memory_leak"><td class="DESC">Memory error</td><td class="DESC">Memory leak</td><td>lib/intl/l10nflist.c</td><td class="DESC">_nl_make_l10nflist</td><td class="Q">332</td><td class="Q">37</td><td><a href="report-6ad772.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-6ad772.html" -->
+</tr>
+<tr class="bt_logic_error_result_of_operation_is_garbage_or_undefined"><td class="DESC">Logic error</td><td class="DESC">Result of operation is garbage or undefined</td><td>lib/intl/plural.c</td><td class="DESC">libintl_gettextparse</td><td class="Q">1032</td><td class="Q">16</td><td><a href="report-d45439.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-d45439.html" -->
+</tr>
+<tr class="bt_logic_error_uninitialized_argument_value"><td class="DESC">Logic error</td><td class="DESC">Uninitialized argument value</td><td>lib/intl/plural.c</td><td class="DESC">libintl_gettextparse</td><td class="Q">1064</td><td class="Q">16</td><td><a href="report-8134e8.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-8134e8.html" -->
+</tr>
+<tr class="bt_logic_error_uninitialized_argument_value"><td class="DESC">Logic error</td><td class="DESC">Uninitialized argument value</td><td>lib/intl/plural.c</td><td class="DESC">libintl_gettextparse</td><td class="Q">1058</td><td class="Q">16</td><td><a href="report-ab0033.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ab0033.html" -->
+</tr>
+<tr class="bt_logic_error_uninitialized_argument_value"><td class="DESC">Logic error</td><td class="DESC">Uninitialized argument value</td><td>lib/intl/plural.c</td><td class="DESC">libintl_gettextparse</td><td class="Q">1082</td><td class="Q">16</td><td><a href="report-6fbd48.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-6fbd48.html" -->
+</tr>
+<tr class="bt_logic_error_uninitialized_argument_value"><td class="DESC">Logic error</td><td class="DESC">Uninitialized argument value</td><td>lib/intl/plural.c</td><td class="DESC">libintl_gettextparse</td><td class="Q">1040</td><td class="Q">16</td><td><a href="report-2893b1.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-2893b1.html" -->
+</tr>
+<tr class="bt_logic_error_uninitialized_argument_value"><td class="DESC">Logic error</td><td class="DESC">Uninitialized argument value</td><td>lib/intl/plural.c</td><td class="DESC">libintl_gettextparse</td><td class="Q">1052</td><td class="Q">16</td><td><a href="report-4b6bde.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-4b6bde.html" -->
+</tr>
+<tr class="bt_logic_error_uninitialized_argument_value"><td class="DESC">Logic error</td><td class="DESC">Uninitialized argument value</td><td>lib/intl/plural.c</td><td class="DESC">libintl_gettextparse</td><td class="Q">1046</td><td class="Q">16</td><td><a href="report-798b64.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-798b64.html" -->
+</tr>
+<tr class="bt_logic_error_uninitialized_argument_value"><td class="DESC">Logic error</td><td class="DESC">Uninitialized argument value</td><td>lib/intl/plural.c</td><td class="DESC">libintl_gettextparse</td><td class="Q">1076</td><td class="Q">16</td><td><a href="report-1e03bf.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-1e03bf.html" -->
+</tr>
+<tr class="bt_logic_error_uninitialized_argument_value"><td class="DESC">Logic error</td><td class="DESC">Uninitialized argument value</td><td>lib/intl/plural.c</td><td class="DESC">libintl_gettextparse</td><td class="Q">1070</td><td class="Q">16</td><td><a href="report-44f6c0.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-44f6c0.html" -->
+</tr>
+</tbody>
+</table>
+
+</body></html>
