@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <random>
 
 //shamelessly stolen from test_red_black_tree.c
 void IntDest(void *a) { free((int *)a); }
@@ -58,10 +59,42 @@ public:
         }
         return count;
     }
+    
+    long getSize() {
+        return vec.size();
+    }
 };
 
 
 int main(int argc, const char * argv[]) {
-    std::cout << "Hello, World!\n";
     rb_red_blk_tree *tree = RBTreeCreate(IntComp, IntDest, InfoDest, IntPrint, InfoPrint);
+    comparisonVector compVec;
+    
+    srand((unsigned int) time(NULL));
+    std::vector<int*> randVec;
+    
+    for (int i = 0; i < 100; i++) {
+        randVec.push_back(new int(rand()));
+    }
+    
+    for (int* randInt : randVec) {
+        compVec.add(*randInt, *randInt);
+        RBTreeInsert(tree, randInt, randInt);
+    }
+    
+//    std::cout << compVec.getSize() << "\n";
+//    RBTreePrint(tree);
+    
+    for (int* randInt : randVec) {
+        compVec.remove(*randInt);
+        rb_red_blk_node* foundNode = RBExactQuery(tree, randInt);
+        if (foundNode) {
+            RBDelete(tree, foundNode);
+        }
+
+    }
+    
+    std::cout << compVec.getSize() << "\n";
+    RBTreePrint(tree);
+    
 }
