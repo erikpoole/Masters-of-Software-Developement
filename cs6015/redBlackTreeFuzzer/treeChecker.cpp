@@ -28,6 +28,39 @@ void IntPrint(const void *a) { printf("%i", *(int *)a); }
 void InfoPrint(void *a) { ; }
 
 void InfoDest(void *a) { ; }
+//end of shameless stealing
+
+//adapted from InorderTreePrint int red_black_tree.c
+void verifyTreeRecursive(rb_red_blk_tree *tree, rb_red_blk_node *x) {
+    rb_red_blk_node *nil = tree->nil;
+    rb_red_blk_node *root = tree->root;
+    if (x != tree->nil) {
+        verifyTreeRecursive(tree, x->left);
+//        tree->PrintInfo(x->info);
+//        tree->PrintKey(x->key);
+        if (x->left == nil) {
+            
+        } else {
+//            tree->PrintKey(x->left->key);
+        }
+        if (x->right == nil) {
+            
+        } else {
+//            tree->PrintKey(x->right->key);
+        }
+        if (x->parent == root) {
+            
+        } else {
+//            tree->PrintKey(x->parent->key);
+        }
+        verifyTreeRecursive(tree, x->right);
+    }
+}
+
+//adapted from RBTreePrint in red_black_tree.c
+void verifyTree(rb_red_blk_tree *tree) {
+    verifyTreeRecursive(tree, tree->root->left);
+}
 
 
 class comparisonVector {
@@ -80,6 +113,7 @@ int main(int argc, const char * argv[]) {
     for (int* randInt : randVec) {
         compVec.add(*randInt, *randInt);
         RBTreeInsert(tree, randInt, randInt);
+        verifyTree(tree);
     }
     
 //    std::cout << compVec.getSize() << "\n";
@@ -91,6 +125,7 @@ int main(int argc, const char * argv[]) {
         if (foundNode) {
             RBDelete(tree, foundNode);
         }
+        verifyTree(tree);
 
     }
     

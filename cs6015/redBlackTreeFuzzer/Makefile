@@ -60,11 +60,11 @@ red_black_tree.o:	red_black_tree.h stack.h red_black_tree.c stack.c misc.h misc.
 stack.o:		stack.c stack.h misc.h misc.c
 
 clean:
-	rm -f *.o *~ $(PROGRAM) $(PROGRAM2) *.gcda *.gcno *.gcov unfreed.txt *fuzzer
+	rm -f -r *.o *~ $(PROGRAM) $(PROGRAM2) *.gcda *.gcno *.gcov unfreed.txt *fuzzer *treeChecker *.profdata *.profraw *.dSYM
 
-
-fuzz:
-	clang++ -g -fsanitize=address -c -O3 -std=c++11 treeChecker.cpp stack.c misc.c red_black_tree.c
-	clang++ -g -fsanitize=address -o fuzzer treeChecker.o stack.o misc.o red_black_tree.o
-
+cover:
+	clang++ -g -fsanitize=address -O3 -std=c++11 -fprofile-instr-generate -fcoverage-mapping treeChecker.cpp stack.c misc.c red_black_tree.c -o treeChecker
+	LLVM_PROFILE_FILE="treeChecker.profraw" ./treeChecker
+	llvm-profdata merge -sparse treeChecker.profraw -o treeChecker.profdata
+	llvm-cov show ./treeChecker -instr-profile=treeChecker.profdata
 
