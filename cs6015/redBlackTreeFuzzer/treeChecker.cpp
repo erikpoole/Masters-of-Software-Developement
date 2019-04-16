@@ -43,7 +43,7 @@ void verifyTreeRecursive(rb_red_blk_tree *tree, rb_red_blk_node *node) {
             if (node->left) {
                 assert(node->left != 0);
             }
-        } else
+        }
         
         verifyTreeRecursive(tree, node->right);
     }
@@ -80,8 +80,8 @@ public:
         vec.clear();
     }
     
-    int peek() {
-        return vec[0].second;
+    int getRandomValue() {
+        return vec[rand() % vec.size()].second;
     }
     
     long getSize() {
@@ -97,13 +97,17 @@ int main(int argc, const char * argv[]) {
     //arbitrary seed
     srand(100);
     
+    std::cout << argv[1] << " Cycles to be Run\n";
+    std::cout << "Fuzzing Tree...\n";
     for (int i = 0; i < std::stoi(argv[1]); i++) {
-        int randNum = rand() % 101;
+        int randNum = rand() % 151;
         int caseType = 0;
         if (randNum < 50) {
             caseType = 1;
         } else if (randNum < 100) {
             caseType = 2;
+        } else if (randNum < 150) {
+            caseType = 3;
         }
         
         switch (caseType) {
@@ -112,6 +116,7 @@ int main(int argc, const char * argv[]) {
                 RBTreeDestroy(tree);
                 tree = RBTreeCreate(IntComp, IntDest, InfoDest, IntPrint, InfoPrint);
                 compVec.reset();
+                break;
             }
             case 1: {
                 int* key = new int(rand() % 50);
@@ -122,7 +127,7 @@ int main(int argc, const char * argv[]) {
             }
             case 2: {
                 if (compVec.getSize() > 0) {
-                    int valueToRemove = compVec.peek();
+                    int valueToRemove = compVec.getRandomValue();
                     rb_red_blk_node* foundNode = RBExactQuery(tree, &valueToRemove);
                     
                     assert(foundNode);
@@ -132,13 +137,25 @@ int main(int argc, const char * argv[]) {
                     verifyTree(tree);
                 }
                 break;
-
+            }
+            case 3: {
+//                std::cout << "Enumerate Called\n";
+                if (compVec.getSize() > 0) {
+                    int value1 = compVec.getRandomValue();
+                    int value2 = compVec.getRandomValue();
+//                    if (value2 > value1) {
+                        RBEnumerate(tree, &value1, &value2);
+//                    }
+//                    else {
+//                        RBEnumerate(tree, &value2, &value1);
+//                    }
+                }
+                break;
             }
             default: {
                 assert(false);
             }
         }
-        
-//        std::cout << compVec.getSize() << "\n";
     }
+    std::cout << "Fuzzing Complete!\n";
 }
