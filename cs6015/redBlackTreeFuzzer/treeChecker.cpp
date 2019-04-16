@@ -32,8 +32,6 @@ void InfoDest(void *a) { ; }
 
 //adapted from InorderTreePrint int red_black_tree.c
 void verifyTreeRecursive(rb_red_blk_tree *tree, rb_red_blk_node *node) {
-//    rb_red_blk_node *nil = tree->nil;
-//    rb_red_blk_node *root = tree->root;
     if (node != tree->nil) {
         verifyTreeRecursive(tree, node->left);
         
@@ -45,7 +43,7 @@ void verifyTreeRecursive(rb_red_blk_tree *tree, rb_red_blk_node *node) {
             if (node->left) {
                 assert(node->left != 0);
             }
-        }
+        } else
         
         verifyTreeRecursive(tree, node->right);
     }
@@ -69,6 +67,7 @@ public:
         long originalSize = vec.size();
         for (int i = 0; i < vec.size(); i++) {
             if (vec[i].second == value) {
+                //no need to free pointers, should always be freed by red_black_tree
                 vec.erase(vec.begin() + i);
                 assert(originalSize - 1 == vec.size());
                 return true;
@@ -77,14 +76,8 @@ public:
         return false;
     }
     
-    int contains(int* key) {
-        int count = 0;
-        for (int i = 0; i < vec.size(); i++) {
-            if (vec[i].first == key) {
-                count++;
-            }
-        }
-        return count;
+    void reset() {
+        vec.clear();
     }
     
     int peek() {
@@ -103,34 +96,49 @@ int main(int argc, const char * argv[]) {
     
     //arbitrary seed
     srand(100);
-    std::vector<int*> keyVec;
     
-    for (int i = 0; i < 10000; i++) {
-        keyVec.push_back(new int(rand() % 50));
-    }
-    
-    for (int* key : keyVec) {
-        compVec.add(key);
-        RBTreeInsert(tree, key, key);
-        verifyTree(tree);
-    }
-    
-//    std::cout << compVec.getSize() << "\n";
-//    RBTreePrint(tree);
-    
-    while (compVec.getSize() != 0) {
-        int valueToRemove = compVec.peek();
-        rb_red_blk_node* foundNode = RBExactQuery(tree, &valueToRemove);
+    for (int i = 0; i < std::stoi(argv[1]); i++) {
+        int randNum = rand() % 101;
+        int caseType = 0;
+        if (randNum < 50) {
+            caseType = 1;
+        } else if (randNum < 100) {
+            caseType = 2;
+        }
         
-        assert(foundNode);
-        compVec.remove(valueToRemove);
-        RBDelete(tree, foundNode);
+        switch (caseType) {
+            case 0: {
+//                std::cout << "Tree Destroyed\n";
+                RBTreeDestroy(tree);
+                tree = RBTreeCreate(IntComp, IntDest, InfoDest, IntPrint, InfoPrint);
+                compVec.reset();
+            }
+            case 1: {
+                int* key = new int(rand() % 50);
+                compVec.add(key);
+                RBTreeInsert(tree, key, key);
+                verifyTree(tree);
+                break;
+            }
+            case 2: {
+                if (compVec.getSize() > 0) {
+                    int valueToRemove = compVec.peek();
+                    rb_red_blk_node* foundNode = RBExactQuery(tree, &valueToRemove);
+                    
+                    assert(foundNode);
+                    compVec.remove(valueToRemove);
+                    RBDelete(tree, foundNode);
+                    
+                    verifyTree(tree);
+                }
+                break;
+
+            }
+            default: {
+                assert(false);
+            }
+        }
         
-        verifyTree(tree);
-        
+//        std::cout << compVec.getSize() << "\n";
     }
-    
-    std::cout << compVec.getSize() << "\n";
-    RBTreePrint(tree);
-    
 }

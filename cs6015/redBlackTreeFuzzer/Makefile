@@ -64,7 +64,7 @@ clean:
 
 cover:
 	clang++ -g -fsanitize=address -O3 -std=c++11 -fprofile-instr-generate -fcoverage-mapping treeChecker.cpp stack.c misc.c red_black_tree.c -o treeChecker
-	LLVM_PROFILE_FILE="treeChecker.profraw" ./treeChecker
+	LLVM_PROFILE_FILE="treeChecker.profraw" ./treeChecker 10000
 	llvm-profdata merge -sparse treeChecker.profraw -o treeChecker.profdata
 	llvm-cov show ./treeChecker -instr-profile=treeChecker.profdata
 
