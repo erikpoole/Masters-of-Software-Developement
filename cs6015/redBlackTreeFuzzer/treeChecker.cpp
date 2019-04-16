@@ -31,29 +31,23 @@ void InfoDest(void *a) { ; }
 //end of shameless stealing
 
 //adapted from InorderTreePrint int red_black_tree.c
-void verifyTreeRecursive(rb_red_blk_tree *tree, rb_red_blk_node *x) {
-    rb_red_blk_node *nil = tree->nil;
-    rb_red_blk_node *root = tree->root;
-    if (x != tree->nil) {
-        verifyTreeRecursive(tree, x->left);
-//        tree->PrintInfo(x->info);
-//        tree->PrintKey(x->key);
-        if (x->left == nil) {
-            
-        } else {
-//            tree->PrintKey(x->left->key);
+void verifyTreeRecursive(rb_red_blk_tree *tree, rb_red_blk_node *node) {
+//    rb_red_blk_node *nil = tree->nil;
+//    rb_red_blk_node *root = tree->root;
+    if (node != tree->nil) {
+        verifyTreeRecursive(tree, node->left);
+        
+        //parent is red
+        if (node->red == 0) {
+            if (node->right) {
+                assert(node->right != 0);
+            }
+            if (node->left) {
+                assert(node->left != 0);
+            }
         }
-        if (x->right == nil) {
-            
-        } else {
-//            tree->PrintKey(x->right->key);
-        }
-        if (x->parent == root) {
-            
-        } else {
-//            tree->PrintKey(x->parent->key);
-        }
-        verifyTreeRecursive(tree, x->right);
+        
+        verifyTreeRecursive(tree, node->right);
     }
 }
 
@@ -65,16 +59,16 @@ void verifyTree(rb_red_blk_tree *tree) {
 
 class comparisonVector {
 public:
-    std::vector<std::pair<int, int>> vec;
+    std::vector<std::pair<int*, int>> vec;
     
-    void add(int key, int value) {
-        vec.push_back(std::pair<int, int>(key, value));
+    void add(int* key) {
+        vec.push_back(std::pair<int*, int>(key, *key));
     }
     
-    bool remove(int key) {
+    bool remove(int value) {
         long originalSize = vec.size();
         for (int i = 0; i < vec.size(); i++) {
-            if (vec[i].first == key) {
+            if (vec[i].second == value) {
                 vec.erase(vec.begin() + i);
                 assert(originalSize - 1 == vec.size());
                 return true;
@@ -83,7 +77,7 @@ public:
         return false;
     }
     
-    int contains(int key) {
+    int contains(int* key) {
         int count = 0;
         for (int i = 0; i < vec.size(); i++) {
             if (vec[i].first == key) {
@@ -91,6 +85,10 @@ public:
             }
         }
         return count;
+    }
+    
+    int peek() {
+        return vec[0].second;
     }
     
     long getSize() {
@@ -103,30 +101,33 @@ int main(int argc, const char * argv[]) {
     rb_red_blk_tree *tree = RBTreeCreate(IntComp, IntDest, InfoDest, IntPrint, InfoPrint);
     comparisonVector compVec;
     
-    srand((unsigned int) time(NULL));
-    std::vector<int*> randVec;
+    //arbitrary seed
+    srand(100);
+    std::vector<int*> keyVec;
     
-    for (int i = 0; i < 100; i++) {
-        randVec.push_back(new int(rand()));
+    for (int i = 0; i < 10000; i++) {
+        keyVec.push_back(new int(rand() % 50));
     }
     
-    for (int* randInt : randVec) {
-        compVec.add(*randInt, *randInt);
-        RBTreeInsert(tree, randInt, randInt);
+    for (int* key : keyVec) {
+        compVec.add(key);
+        RBTreeInsert(tree, key, key);
         verifyTree(tree);
     }
     
 //    std::cout << compVec.getSize() << "\n";
 //    RBTreePrint(tree);
     
-    for (int* randInt : randVec) {
-        compVec.remove(*randInt);
-        rb_red_blk_node* foundNode = RBExactQuery(tree, randInt);
-        if (foundNode) {
-            RBDelete(tree, foundNode);
-        }
+    while (compVec.getSize() != 0) {
+        int valueToRemove = compVec.peek();
+        rb_red_blk_node* foundNode = RBExactQuery(tree, &valueToRemove);
+        
+        assert(foundNode);
+        compVec.remove(valueToRemove);
+        RBDelete(tree, foundNode);
+        
         verifyTree(tree);
-
+        
     }
     
     std::cout << compVec.getSize() << "\n";
