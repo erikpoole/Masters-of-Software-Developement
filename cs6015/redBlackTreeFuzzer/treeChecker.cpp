@@ -31,27 +31,36 @@ void InfoDest(void *a) { ; }
 //end of shameless stealing
 
 //adapted from InorderTreePrint int red_black_tree.c
-void verifyTreeRecursive(rb_red_blk_tree *tree, rb_red_blk_node *node) {
+int verifyTreeRecursive(rb_red_blk_tree *tree, rb_red_blk_node *node, int count) {
     if (node != tree->nil) {
-        verifyTreeRecursive(tree, node->left);
         
-        //parent is red
+        int leftCount = verifyTreeRecursive(tree, node->left, count);
+        int rightCount = verifyTreeRecursive(tree, node->right, count);
+        assert(leftCount == rightCount);
+        count = leftCount;
+        
+        //root is black
         if (node->red == 0) {
+            count++;
+        //root is red
+        } else {
             if (node->right) {
-                assert(node->right != 0);
+                assert(node->right->red == 0);
             }
             if (node->left) {
-                assert(node->left != 0);
+                assert(node->left->red == 0);
             }
         }
-        
-        verifyTreeRecursive(tree, node->right);
+    } else {
+        //need leaf null nodes to be black
+        count++;
     }
+    return count;
 }
 
 //adapted from RBTreePrint in red_black_tree.c
 void verifyTree(rb_red_blk_tree *tree) {
-    verifyTreeRecursive(tree, tree->root->left);
+    verifyTreeRecursive(tree, tree->root->left, 0);
 }
 
 
@@ -95,7 +104,7 @@ int main(int argc, const char * argv[]) {
     comparisonVector compVec;
     
     //arbitrary seed
-    srand(100);
+    srand(10);
     
     std::cout << argv[1] << " Cycles to be Run\n";
     std::cout << "Fuzzing Tree...\n";
@@ -143,12 +152,12 @@ int main(int argc, const char * argv[]) {
                 if (compVec.getSize() > 0) {
                     int value1 = compVec.getRandomValue();
                     int value2 = compVec.getRandomValue();
-//                    if (value2 > value1) {
+                    if (value2 > value1) {
                         RBEnumerate(tree, &value1, &value2);
-//                    }
-//                    else {
-//                        RBEnumerate(tree, &value2, &value1);
-//                    }
+                    }
+                    else {
+                        RBEnumerate(tree, &value2, &value1);
+                    }
                 }
                 break;
             }
@@ -156,6 +165,8 @@ int main(int argc, const char * argv[]) {
                 assert(false);
             }
         }
+        
+//        std::cout << compVec.getSize() << "\n";
     }
     std::cout << "Fuzzing Complete!\n";
 }
