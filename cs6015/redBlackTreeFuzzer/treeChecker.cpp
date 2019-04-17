@@ -8,9 +8,11 @@
 
 #include "red_black_tree.h"
 #include <iostream>
-#include <vector>
-#include <utility>
 #include <random>
+#include <utility>
+#include <vector>
+
+
 
 //shamelessly stolen from test_red_black_tree.c
 void IntDest(void *a) { free((int *)a); }
@@ -30,7 +32,7 @@ void InfoPrint(void *a) { ; }
 void InfoDest(void *a) { ; }
 //end of shameless stealing
 
-//adapted from InorderTreePrint int red_black_tree.c
+
 int verifyTreeRecursive(rb_red_blk_tree *tree, rb_red_blk_node *node, int count) {
     if (node != tree->nil) {
         
@@ -58,7 +60,6 @@ int verifyTreeRecursive(rb_red_blk_tree *tree, rb_red_blk_node *node, int count)
     return count;
 }
 
-//adapted from RBTreePrint in red_black_tree.c
 void verifyTree(rb_red_blk_tree *tree) {
     verifyTreeRecursive(tree, tree->root->left, 0);
 }
@@ -104,12 +105,12 @@ int main(int argc, const char * argv[]) {
     comparisonVector compVec;
     
     //arbitrary seed
-    srand(10);
+    srand((unsigned int) time(NULL));
     
-    std::cout << argv[1] << " Cycles to be Run\n";
-    std::cout << "Fuzzing Tree...\n";
+    std::cerr << argv[1] << " Cycles to be Run\n";
+    std::cerr << "Fuzzing Tree...\n";
     for (int i = 0; i < std::stoi(argv[1]); i++) {
-        int randNum = rand() % 151;
+        int randNum = rand() % 201;
         int caseType = 0;
         if (randNum < 50) {
             caseType = 1;
@@ -117,11 +118,13 @@ int main(int argc, const char * argv[]) {
             caseType = 2;
         } else if (randNum < 150) {
             caseType = 3;
+        } else if (randNum < 200) {
+            caseType = 4;
         }
         
         switch (caseType) {
             case 0: {
-//                std::cout << "Tree Destroyed\n";
+//                std::cerr << "Tree Destroyed\n";
                 RBTreeDestroy(tree);
                 tree = RBTreeCreate(IntComp, IntDest, InfoDest, IntPrint, InfoPrint);
                 compVec.reset();
@@ -135,38 +138,45 @@ int main(int argc, const char * argv[]) {
                 break;
             }
             case 2: {
-                if (compVec.getSize() > 0) {
-                    int valueToRemove = compVec.getRandomValue();
-                    rb_red_blk_node* foundNode = RBExactQuery(tree, &valueToRemove);
-                    
-                    assert(foundNode);
+                int valueToRemove = rand() % 50;
+                rb_red_blk_node* foundNode = RBExactQuery(tree, &valueToRemove);
+                
+                if (foundNode) {
                     compVec.remove(valueToRemove);
                     RBDelete(tree, foundNode);
-                    
-                    verifyTree(tree);
                 }
+                    
+                verifyTree(tree);
                 break;
             }
+                //also fuzzes stack operations, not sure if necessary...
             case 3: {
-//                std::cout << "Enumerate Called\n";
+//                std::cerr << "Enumerate Called\n";
                 if (compVec.getSize() > 0) {
                     int value1 = compVec.getRandomValue();
                     int value2 = compVec.getRandomValue();
-                    if (value2 > value1) {
-                        RBEnumerate(tree, &value1, &value2);
-                    }
-                    else {
-                        RBEnumerate(tree, &value2, &value1);
-                    }
+                    stk_stack* stack1 = RBEnumerate(tree, &value1, &value2);
+                    stk_stack* stack2 = RBEnumerate(tree, &value2, &value1);
+                    int* poppedValue = (int*) StackPop(stack1);
+                    StackPush(stack1, poppedValue);
+                    stk_stack* combinedStack = StackJoin(stack1, stack2);
+                    delete combinedStack;
+                break;
                 }
+            }
+            case 4: {
+                RBTreePrint(tree);
                 break;
             }
+            //Should be impossible to reach...
             default: {
                 assert(false);
             }
         }
         
-//        std::cout << compVec.getSize() << "\n";
+//        std::cerr << compVec.getSize() << "\n";
     }
-    std::cout << "Fuzzing Complete!\n";
+    
+    RBTreeDestroy(tree);
+    std::cerr << "Fuzzing Complete!\n";
 }
