@@ -18,12 +18,12 @@
    17|       |/*         DEBUG_ASSERT is undefined. */
    18|       |/***********************************************************************/
    19|       |
-   20|   614k|void Assert(int assertion, char *error) {
-   21|   614k|  if (!assertion) {
+   20|   612k|void Assert(int assertion, char *error) {
+   21|   612k|  if (!assertion) {
    22|      0|    printf("Assertion Failed: %s\n", error);
    23|      0|    exit(-1);
    24|      0|  }
-   25|   614k|}
+   25|   612k|}
    26|       |
    27|       |/***********************************************************************/
    28|       |/*  FUNCTION:  SafeMalloc */
@@ -39,18 +39,18 @@
    38|       |/**/
    39|       |/***********************************************************************/
    40|       |
-   41|  3.98M|void *SafeMalloc(size_t size) {
-   42|  3.98M|  void *result;
-   43|  3.98M|
-   44|  3.98M|  if ((result = malloc(size))) { /* assignment intentional */
-   45|  3.98M|    return (result);
-   46|  3.98M|  } else {
+   41|  4.03M|void *SafeMalloc(size_t size) {
+   42|  4.03M|  void *result;
+   43|  4.03M|
+   44|  4.03M|  if ((result = malloc(size))) { /* assignment intentional */
+   45|  4.03M|    return (result);
+   46|  4.03M|  } else {
    47|      0|    printf("memory overflow: malloc failed in SafeMalloc.");
    48|      0|    printf("  Exiting Program.\n");
    49|      0|    exit(-1);
    50|      0|    return (0);
    51|      0|  }
-   52|  3.98M|}
+   52|  4.03M|}
    53|       |/*  NullFunction does nothing it is included so that it can be passed */
    54|       |/*  as a function to RBTreeCreate when no other suitable function has */
    55|       |/*  been defined */
@@ -85,29 +85,29 @@
    25|       |                              void (*DestFunc)(void *),
    26|       |                              void (*InfoDestFunc)(void *),
    27|       |                              void (*PrintFunc)(const void *),
-   28|  4.96k|                              void (*PrintInfo)(void *)) {
-   29|  4.96k|  rb_red_blk_tree *newTree;
-   30|  4.96k|  rb_red_blk_node *temp;
-   31|  4.96k|
-   32|  4.96k|  newTree = (rb_red_blk_tree *)SafeMalloc(sizeof(rb_red_blk_tree));
-   33|  4.96k|  newTree->Compare = CompFunc;
-   34|  4.96k|  newTree->DestroyKey = DestFunc;
-   35|  4.96k|  newTree->PrintKey = PrintFunc;
-   36|  4.96k|  newTree->PrintInfo = PrintInfo;
-   37|  4.96k|  newTree->DestroyInfo = InfoDestFunc;
-   38|  4.96k|
-   39|  4.96k|  /*  see the comment in the rb_red_blk_tree structure in red_black_tree.h */
-   40|  4.96k|  /*  for information on nil and root */
-   41|  4.96k|  temp = newTree->nil = (rb_red_blk_node *)SafeMalloc(sizeof(rb_red_blk_node));
-   42|  4.96k|  temp->parent = temp->left = temp->right = temp;
-   43|  4.96k|  temp->red = 0;
-   44|  4.96k|  temp->key = 0;
-   45|  4.96k|  temp = newTree->root = (rb_red_blk_node *)SafeMalloc(sizeof(rb_red_blk_node));
-   46|  4.96k|  temp->parent = temp->left = temp->right = newTree->nil;
-   47|  4.96k|  temp->key = 0;
-   48|  4.96k|  temp->red = 0;
-   49|  4.96k|  return (newTree);
-   50|  4.96k|}
+   28|  4.90k|                              void (*PrintInfo)(void *)) {
+   29|  4.90k|  rb_red_blk_tree *newTree;
+   30|  4.90k|  rb_red_blk_node *temp;
+   31|  4.90k|
+   32|  4.90k|  newTree = (rb_red_blk_tree *)SafeMalloc(sizeof(rb_red_blk_tree));
+   33|  4.90k|  newTree->Compare = CompFunc;
+   34|  4.90k|  newTree->DestroyKey = DestFunc;
+   35|  4.90k|  newTree->PrintKey = PrintFunc;
+   36|  4.90k|  newTree->PrintInfo = PrintInfo;
+   37|  4.90k|  newTree->DestroyInfo = InfoDestFunc;
+   38|  4.90k|
+   39|  4.90k|  /*  see the comment in the rb_red_blk_tree structure in red_black_tree.h */
+   40|  4.90k|  /*  for information on nil and root */
+   41|  4.90k|  temp = newTree->nil = (rb_red_blk_node *)SafeMalloc(sizeof(rb_red_blk_node));
+   42|  4.90k|  temp->parent = temp->left = temp->right = temp;
+   43|  4.90k|  temp->red = 0;
+   44|  4.90k|  temp->key = 0;
+   45|  4.90k|  temp = newTree->root = (rb_red_blk_node *)SafeMalloc(sizeof(rb_red_blk_node));
+   46|  4.90k|  temp->parent = temp->left = temp->right = newTree->nil;
+   47|  4.90k|  temp->key = 0;
+   48|  4.90k|  temp->red = 0;
+   49|  4.90k|  return (newTree);
+   50|  4.90k|}
    51|       |
    52|       |/***********************************************************************/
    53|       |/*  FUNCTION:  LeftRotate */
@@ -126,43 +126,43 @@
    66|       |/*            accordingly. */
    67|       |/***********************************************************************/
    68|       |
-   69|  90.9k|void LeftRotate(rb_red_blk_tree *tree, rb_red_blk_node *x) {
-   70|  90.9k|  rb_red_blk_node *y;
-   71|  90.9k|  rb_red_blk_node *nil = tree->nil;
-   72|  90.9k|
-   73|  90.9k|  /*  I originally wrote this function to use the sentinel for */
-   74|  90.9k|  /*  nil to avoid checking for nil.  However this introduces a */
-   75|  90.9k|  /*  very subtle bug because sometimes this function modifies */
-   76|  90.9k|  /*  the parent pointer of nil.  This can be a problem if a */
-   77|  90.9k|  /*  function which calls LeftRotate also uses the nil sentinel */
-   78|  90.9k|  /*  and expects the nil sentinel's parent pointer to be unchanged */
-   79|  90.9k|  /*  after calling this function.  For example, when RBDeleteFixUP */
-   80|  90.9k|  /*  calls LeftRotate it expects the parent pointer of nil to be */
-   81|  90.9k|  /*  unchanged. */
-   82|  90.9k|
-   83|  90.9k|  y = x->right;
-   84|  90.9k|  x->right = y->left;
-   85|  90.9k|
-   86|  90.9k|  if (y->left != nil)
-   87|  19.5k|    y->left->parent = x; /* used to use sentinel here */
-   88|  90.9k|  /* and do an unconditional assignment instead of testing for nil */
-   89|  90.9k|
-   90|  90.9k|  y->parent = x->parent;
-   91|  90.9k|
-   92|  90.9k|  /* instead of checking if x->parent is the root as in the book, we */
-   93|  90.9k|  /* count on the root sentinel to implicitly take care of this case */
-   94|  90.9k|  if (x == x->parent->left) {
-   95|  58.9k|    x->parent->left = y;
-   96|  58.9k|  } else {
-   97|  32.0k|    x->parent->right = y;
-   98|  32.0k|  }
-   99|  90.9k|  y->left = x;
-  100|  90.9k|  x->parent = y;
-  101|  90.9k|
-  102|  90.9k|#ifdef DEBUG_ASSERT
-  103|  90.9k|  Assert(!tree->nil->red, "nil not red in LeftRotate");
-  104|  90.9k|#endif
-  105|  90.9k|}
+   69|  90.6k|void LeftRotate(rb_red_blk_tree *tree, rb_red_blk_node *x) {
+   70|  90.6k|  rb_red_blk_node *y;
+   71|  90.6k|  rb_red_blk_node *nil = tree->nil;
+   72|  90.6k|
+   73|  90.6k|  /*  I originally wrote this function to use the sentinel for */
+   74|  90.6k|  /*  nil to avoid checking for nil.  However this introduces a */
+   75|  90.6k|  /*  very subtle bug because sometimes this function modifies */
+   76|  90.6k|  /*  the parent pointer of nil.  This can be a problem if a */
+   77|  90.6k|  /*  function which calls LeftRotate also uses the nil sentinel */
+   78|  90.6k|  /*  and expects the nil sentinel's parent pointer to be unchanged */
+   79|  90.6k|  /*  after calling this function.  For example, when RBDeleteFixUP */
+   80|  90.6k|  /*  calls LeftRotate it expects the parent pointer of nil to be */
+   81|  90.6k|  /*  unchanged. */
+   82|  90.6k|
+   83|  90.6k|  y = x->right;
+   84|  90.6k|  x->right = y->left;
+   85|  90.6k|
+   86|  90.6k|  if (y->left != nil)
+   87|  19.6k|    y->left->parent = x; /* used to use sentinel here */
+   88|  90.6k|  /* and do an unconditional assignment instead of testing for nil */
+   89|  90.6k|
+   90|  90.6k|  y->parent = x->parent;
+   91|  90.6k|
+   92|  90.6k|  /* instead of checking if x->parent is the root as in the book, we */
+   93|  90.6k|  /* count on the root sentinel to implicitly take care of this case */
+   94|  90.6k|  if (x == x->parent->left) {
+   95|  58.4k|    x->parent->left = y;
+   96|  58.4k|  } else {
+   97|  32.2k|    x->parent->right = y;
+   98|  32.2k|  }
+   99|  90.6k|  y->left = x;
+  100|  90.6k|  x->parent = y;
+  101|  90.6k|
+  102|  90.6k|#ifdef DEBUG_ASSERT
+  103|  90.6k|  Assert(!tree->nil->red, "nil not red in LeftRotate");
+  104|  90.6k|#endif
+  105|  90.6k|}
   106|       |
   107|       |/***********************************************************************/
   108|       |/*  FUNCTION:  RightRotate */
@@ -181,42 +181,42 @@
   121|       |/*            accordingly. */
   122|       |/***********************************************************************/
   123|       |
-  124|  69.5k|void RightRotate(rb_red_blk_tree *tree, rb_red_blk_node *y) {
-  125|  69.5k|  rb_red_blk_node *x;
-  126|  69.5k|  rb_red_blk_node *nil = tree->nil;
-  127|  69.5k|
-  128|  69.5k|  /*  I originally wrote this function to use the sentinel for */
-  129|  69.5k|  /*  nil to avoid checking for nil.  However this introduces a */
-  130|  69.5k|  /*  very subtle bug because sometimes this function modifies */
-  131|  69.5k|  /*  the parent pointer of nil.  This can be a problem if a */
-  132|  69.5k|  /*  function which calls LeftRotate also uses the nil sentinel */
-  133|  69.5k|  /*  and expects the nil sentinel's parent pointer to be unchanged */
-  134|  69.5k|  /*  after calling this function.  For example, when RBDeleteFixUP */
-  135|  69.5k|  /*  calls LeftRotate it expects the parent pointer of nil to be */
-  136|  69.5k|  /*  unchanged. */
-  137|  69.5k|
-  138|  69.5k|  x = y->left;
-  139|  69.5k|  y->left = x->right;
-  140|  69.5k|
-  141|  69.5k|  if (nil != x->right)
-  142|  16.5k|    x->right->parent = y; /*used to use sentinel here */
-  143|  69.5k|  /* and do an unconditional assignment instead of testing for nil */
-  144|  69.5k|
-  145|  69.5k|  /* instead of checking if x->parent is the root as in the book, we */
-  146|  69.5k|  /* count on the root sentinel to implicitly take care of this case */
-  147|  69.5k|  x->parent = y->parent;
-  148|  69.5k|  if (y == y->parent->left) {
-  149|  24.8k|    y->parent->left = x;
-  150|  44.7k|  } else {
-  151|  44.7k|    y->parent->right = x;
-  152|  44.7k|  }
-  153|  69.5k|  x->right = y;
-  154|  69.5k|  y->parent = x;
-  155|  69.5k|
-  156|  69.5k|#ifdef DEBUG_ASSERT
-  157|  69.5k|  Assert(!tree->nil->red, "nil not red in RightRotate");
-  158|  69.5k|#endif
-  159|  69.5k|}
+  124|  68.8k|void RightRotate(rb_red_blk_tree *tree, rb_red_blk_node *y) {
+  125|  68.8k|  rb_red_blk_node *x;
+  126|  68.8k|  rb_red_blk_node *nil = tree->nil;
+  127|  68.8k|
+  128|  68.8k|  /*  I originally wrote this function to use the sentinel for */
+  129|  68.8k|  /*  nil to avoid checking for nil.  However this introduces a */
+  130|  68.8k|  /*  very subtle bug because sometimes this function modifies */
+  131|  68.8k|  /*  the parent pointer of nil.  This can be a problem if a */
+  132|  68.8k|  /*  function which calls LeftRotate also uses the nil sentinel */
+  133|  68.8k|  /*  and expects the nil sentinel's parent pointer to be unchanged */
+  134|  68.8k|  /*  after calling this function.  For example, when RBDeleteFixUP */
+  135|  68.8k|  /*  calls LeftRotate it expects the parent pointer of nil to be */
+  136|  68.8k|  /*  unchanged. */
+  137|  68.8k|
+  138|  68.8k|  x = y->left;
+  139|  68.8k|  y->left = x->right;
+  140|  68.8k|
+  141|  68.8k|  if (nil != x->right)
+  142|  16.4k|    x->right->parent = y; /*used to use sentinel here */
+  143|  68.8k|  /* and do an unconditional assignment instead of testing for nil */
+  144|  68.8k|
+  145|  68.8k|  /* instead of checking if x->parent is the root as in the book, we */
+  146|  68.8k|  /* count on the root sentinel to implicitly take care of this case */
+  147|  68.8k|  x->parent = y->parent;
+  148|  68.8k|  if (y == y->parent->left) {
+  149|  24.3k|    y->parent->left = x;
+  150|  44.4k|  } else {
+  151|  44.4k|    y->parent->right = x;
+  152|  44.4k|  }
+  153|  68.8k|  x->right = y;
+  154|  68.8k|  y->parent = x;
+  155|  68.8k|
+  156|  68.8k|#ifdef DEBUG_ASSERT
+  157|  68.8k|  Assert(!tree->nil->red, "nil not red in RightRotate");
+  158|  68.8k|#endif
+  159|  68.8k|}
   160|       |
   161|       |/***********************************************************************/
   162|       |/*  FUNCTION:  TreeInsertHelp  */
@@ -233,35 +233,35 @@
   173|       |/*            by the RBTreeInsert function and not by the user */
   174|       |/***********************************************************************/
   175|       |
-  176|   249k|void TreeInsertHelp(rb_red_blk_tree *tree, rb_red_blk_node *z) {
-  177|   249k|  /*  This function should only be called by InsertRBTree (see above) */
-  178|   249k|  rb_red_blk_node *x;
-  179|   249k|  rb_red_blk_node *y;
-  180|   249k|  rb_red_blk_node *nil = tree->nil;
-  181|   249k|
-  182|   249k|  z->left = z->right = nil;
-  183|   249k|  y = tree->root;
-  184|   249k|  x = tree->root->left;
-  185|  1.40M|  while (x != nil) {
-  186|  1.15M|    y = x;
-  187|  1.15M|    if (1 == tree->Compare(x->key, z->key)) { /* x.key > z.key */
-  188|   525k|      x = x->left;
-  189|   626k|    } else { /* x,key <= z.key */
-  190|   626k|      x = x->right;
-  191|   626k|    }
-  192|  1.15M|  }
-  193|   249k|  z->parent = y;
-  194|   249k|  if ((y == tree->root) ||
-  195|   249k|      (1 == tree->Compare(y->key, z->key))) { /* y.key > z.key */
-  196|   103k|    y->left = z;
-  197|   145k|  } else {
-  198|   145k|    y->right = z;
-  199|   145k|  }
-  200|   249k|
-  201|   249k|#ifdef DEBUG_ASSERT
-  202|   249k|  Assert(!tree->nil->red, "nil not red in TreeInsertHelp");
-  203|   249k|#endif
-  204|   249k|}
+  176|   247k|void TreeInsertHelp(rb_red_blk_tree *tree, rb_red_blk_node *z) {
+  177|   247k|  /*  This function should only be called by InsertRBTree (see above) */
+  178|   247k|  rb_red_blk_node *x;
+  179|   247k|  rb_red_blk_node *y;
+  180|   247k|  rb_red_blk_node *nil = tree->nil;
+  181|   247k|
+  182|   247k|  z->left = z->right = nil;
+  183|   247k|  y = tree->root;
+  184|   247k|  x = tree->root->left;
+  185|  1.39M|  while (x != nil) {
+  186|  1.14M|    y = x;
+  187|  1.14M|    if (1 == tree->Compare(x->key, z->key)) { /* x.key > z.key */
+  188|   520k|      x = x->left;
+  189|   622k|    } else { /* x,key <= z.key */
+  190|   622k|      x = x->right;
+  191|   622k|    }
+  192|  1.14M|  }
+  193|   247k|  z->parent = y;
+  194|   247k|  if ((y == tree->root) ||
+  195|   247k|      (1 == tree->Compare(y->key, z->key))) { /* y.key > z.key */
+  196|   102k|    y->left = z;
+  197|   144k|  } else {
+  198|   144k|    y->right = z;
+  199|   144k|  }
+  200|   247k|
+  201|   247k|#ifdef DEBUG_ASSERT
+  202|   247k|  Assert(!tree->nil->red, "nil not red in TreeInsertHelp");
+  203|   247k|#endif
+  204|   247k|}
   205|       |
   206|       |/*  Before calling Insert RBTree the node x should have its key set */
   207|       |
@@ -283,58 +283,58 @@
   223|       |/*            info pointers and inserts it into the tree. */
   224|       |/***********************************************************************/
   225|       |
-  226|   249k|rb_red_blk_node *RBTreeInsert(rb_red_blk_tree *tree, void *key, void *info) {
-  227|   249k|  rb_red_blk_node *y;
-  228|   249k|  rb_red_blk_node *x;
-  229|   249k|  rb_red_blk_node *newNode;
-  230|   249k|
-  231|   249k|  x = (rb_red_blk_node *)SafeMalloc(sizeof(rb_red_blk_node));
-  232|   249k|  x->key = key;
-  233|   249k|  x->info = info;
-  234|   249k|
-  235|   249k|  TreeInsertHelp(tree, x);
-  236|   249k|  newNode = x;
-  237|   249k|  x->red = 1;
-  238|   420k|  while (x->parent->red) { /* use sentinel instead of checking for root */
-  239|   170k|    if (x->parent == x->parent->parent->left) {
-  240|  73.4k|      y = x->parent->parent->right;
-  241|  73.4k|      if (y->red) {
-  242|  36.4k|        x->parent->red = 0;
-  243|  36.4k|        y->red = 0;
-  244|  36.4k|        x->parent->parent->red = 1;
-  245|  36.4k|        x = x->parent->parent;
-  246|  37.0k|      } else {
-  247|  37.0k|        if (x == x->parent->right) {
-  248|  23.5k|          x = x->parent;
-  249|  23.5k|          LeftRotate(tree, x);
-  250|  23.5k|        }
-  251|  37.0k|        x->parent->red = 0;
-  252|  37.0k|        x->parent->parent->red = 1;
-  253|  37.0k|        RightRotate(tree, x->parent->parent);
-  254|  37.0k|      }
-  255|  97.4k|    } else { /* case for x->parent == x->parent->parent->right */
-  256|  97.4k|      y = x->parent->parent->left;
-  257|  97.4k|      if (y->red) {
-  258|  47.7k|        x->parent->red = 0;
-  259|  47.7k|        y->red = 0;
-  260|  47.7k|        x->parent->parent->red = 1;
-  261|  47.7k|        x = x->parent->parent;
-  262|  49.6k|      } else {
-  263|  49.6k|        if (x == x->parent->left) {
-  264|  17.2k|          x = x->parent;
-  265|  17.2k|          RightRotate(tree, x);
-  266|  17.2k|        }
-  267|  49.6k|        x->parent->red = 0;
-  268|  49.6k|        x->parent->parent->red = 1;
-  269|  49.6k|        LeftRotate(tree, x->parent->parent);
-  270|  49.6k|      }
-  271|  97.4k|    }
-  272|   170k|  }
-  273|   249k|  tree->root->left->red = 0;
-  274|   249k|  return (newNode);
-  275|   249k|
-  276|   249k|#ifdef DEBUG_ASSERT
-  277|   249k|  Assert(!tree->nil->red, "nil not red in RBTreeInsert");
+  226|   247k|rb_red_blk_node *RBTreeInsert(rb_red_blk_tree *tree, void *key, void *info) {
+  227|   247k|  rb_red_blk_node *y;
+  228|   247k|  rb_red_blk_node *x;
+  229|   247k|  rb_red_blk_node *newNode;
+  230|   247k|
+  231|   247k|  x = (rb_red_blk_node *)SafeMalloc(sizeof(rb_red_blk_node));
+  232|   247k|  x->key = key;
+  233|   247k|  x->info = info;
+  234|   247k|
+  235|   247k|  TreeInsertHelp(tree, x);
+  236|   247k|  newNode = x;
+  237|   247k|  x->red = 1;
+  238|   416k|  while (x->parent->red) { /* use sentinel instead of checking for root */
+  239|   169k|    if (x->parent == x->parent->parent->left) {
+  240|  72.2k|      y = x->parent->parent->right;
+  241|  72.2k|      if (y->red) {
+  242|  35.5k|        x->parent->red = 0;
+  243|  35.5k|        y->red = 0;
+  244|  35.5k|        x->parent->parent->red = 1;
+  245|  35.5k|        x = x->parent->parent;
+  246|  36.7k|      } else {
+  247|  36.7k|        if (x == x->parent->right) {
+  248|  23.4k|          x = x->parent;
+  249|  23.4k|          LeftRotate(tree, x);
+  250|  23.4k|        }
+  251|  36.7k|        x->parent->red = 0;
+  252|  36.7k|        x->parent->parent->red = 1;
+  253|  36.7k|        RightRotate(tree, x->parent->parent);
+  254|  36.7k|      }
+  255|  97.0k|    } else { /* case for x->parent == x->parent->parent->right */
+  256|  97.0k|      y = x->parent->parent->left;
+  257|  97.0k|      if (y->red) {
+  258|  47.6k|        x->parent->red = 0;
+  259|  47.6k|        y->red = 0;
+  260|  47.6k|        x->parent->parent->red = 1;
+  261|  47.6k|        x = x->parent->parent;
+  262|  49.4k|      } else {
+  263|  49.4k|        if (x == x->parent->left) {
+  264|  16.9k|          x = x->parent;
+  265|  16.9k|          RightRotate(tree, x);
+  266|  16.9k|        }
+  267|  49.4k|        x->parent->red = 0;
+  268|  49.4k|        x->parent->parent->red = 1;
+  269|  49.4k|        LeftRotate(tree, x->parent->parent);
+  270|  49.4k|      }
+  271|  97.0k|    }
+  272|   169k|  }
+  273|   247k|  tree->root->left->red = 0;
+  274|   247k|  return (newNode);
+  275|   247k|
+  276|   247k|#ifdef DEBUG_ASSERT
+  277|   247k|  Assert(!tree->nil->red, "nil not red in RBTreeInsert");
   278|      0|  Assert(!tree->root->red, "root not red in RBTreeInsert");
   279|      0|#endif
   280|      0|}
@@ -353,17 +353,17 @@
   293|       |/*    Note:  uses the algorithm in _Introduction_To_Algorithms_ */
   294|       |/***********************************************************************/
   295|       |
-  296|  55.0k|rb_red_blk_node *TreeSuccessor(rb_red_blk_tree *tree, rb_red_blk_node *x) {
-  297|  55.0k|  rb_red_blk_node *y;
-  298|  55.0k|  rb_red_blk_node *nil = tree->nil;
-  299|  55.0k|  rb_red_blk_node *root = tree->root;
-  300|  55.0k|
-  301|  55.0k|  if (nil != (y = x->right)) { /* assignment to y is intentional */
-  302|   107k|    while (y->left != nil) { /* returns the minium of the right subtree of x */
-  303|  52.6k|      y = y->left;
-  304|  52.6k|    }
-  305|  55.0k|    return (y);
-  306|  55.0k|  } else {
+  296|  55.7k|rb_red_blk_node *TreeSuccessor(rb_red_blk_tree *tree, rb_red_blk_node *x) {
+  297|  55.7k|  rb_red_blk_node *y;
+  298|  55.7k|  rb_red_blk_node *nil = tree->nil;
+  299|  55.7k|  rb_red_blk_node *root = tree->root;
+  300|  55.7k|
+  301|  55.7k|  if (nil != (y = x->right)) { /* assignment to y is intentional */
+  302|   109k|    while (y->left != nil) { /* returns the minium of the right subtree of x */
+  303|  53.5k|      y = y->left;
+  304|  53.5k|    }
+  305|  55.7k|    return (y);
+  306|  55.7k|  } else {
   307|      0|    y = x->parent;
   308|      0|    while (x == y->right) { /* sentinel used instead of checking for nil */
   309|      0|      x = y;
@@ -373,7 +373,7 @@
   313|      0|      return (nil);
   314|      0|    return (y);
   315|      0|  }
-  316|  55.0k|}
+  316|  55.7k|}
   317|       |
   318|       |/***********************************************************************/
   319|       |/*  FUNCTION:  Treepredecessor  */
@@ -389,27 +389,27 @@
   329|       |/*    Note:  uses the algorithm in _Introduction_To_Algorithms_ */
   330|       |/***********************************************************************/
   331|       |
-  332|  2.98M|rb_red_blk_node *TreePredecessor(rb_red_blk_tree *tree, rb_red_blk_node *x) {
-  333|  2.98M|  rb_red_blk_node *y;
-  334|  2.98M|  rb_red_blk_node *nil = tree->nil;
-  335|  2.98M|  rb_red_blk_node *root = tree->root;
-  336|  2.98M|
-  337|  2.98M|  if (nil != (y = x->left)) { /* assignment to y is intentional */
-  338|  2.68M|    while (y->right != nil) { /* returns the maximum of the left subtree of x */
-  339|  1.25M|      y = y->right;
-  340|  1.25M|    }
-  341|  1.42M|    return (y);
-  342|  1.56M|  } else {
-  343|  1.56M|    y = x->parent;
-  344|  2.84M|    while (x == y->left) {
-  345|  1.32M|      if (y == root)
-  346|  48.4k|        return (nil);
-  347|  1.28M|      x = y;
-  348|  1.28M|      y = y->parent;
-  349|  1.28M|    }
-  350|  1.56M|    return (y);
-  351|  1.56M|  }
-  352|  2.98M|}
+  332|  3.03M|rb_red_blk_node *TreePredecessor(rb_red_blk_tree *tree, rb_red_blk_node *x) {
+  333|  3.03M|  rb_red_blk_node *y;
+  334|  3.03M|  rb_red_blk_node *nil = tree->nil;
+  335|  3.03M|  rb_red_blk_node *root = tree->root;
+  336|  3.03M|
+  337|  3.03M|  if (nil != (y = x->left)) { /* assignment to y is intentional */
+  338|  2.73M|    while (y->right != nil) { /* returns the maximum of the left subtree of x */
+  339|  1.28M|      y = y->right;
+  340|  1.28M|    }
+  341|  1.45M|    return (y);
+  342|  1.58M|  } else {
+  343|  1.58M|    y = x->parent;
+  344|  2.88M|    while (x == y->left) {
+  345|  1.34M|      if (y == root)
+  346|  48.9k|        return (nil);
+  347|  1.29M|      x = y;
+  348|  1.29M|      y = y->parent;
+  349|  1.29M|    }
+  350|  1.58M|    return (y);
+  351|  1.58M|  }
+  352|  3.03M|}
   353|       |
   354|       |/***********************************************************************/
   355|       |/*  FUNCTION:  InorderTreePrint */
@@ -426,34 +426,34 @@
   366|       |/*    Note:    This function should only be called from RBTreePrint */
   367|       |/***********************************************************************/
   368|       |
-  369|  15.6M|void InorderTreePrint(rb_red_blk_tree *tree, rb_red_blk_node *x) {
-  370|  15.6M|  rb_red_blk_node *nil = tree->nil;
-  371|  15.6M|  rb_red_blk_node *root = tree->root;
-  372|  15.6M|  if (x != tree->nil) {
-  373|  7.68M|    InorderTreePrint(tree, x->left);
-  374|  7.68M|    printf("info=");
-  375|  7.68M|    tree->PrintInfo(x->info);
-  376|  7.68M|    printf("  key=");
-  377|  7.68M|    tree->PrintKey(x->key);
-  378|  7.68M|    printf("  l->key=");
-  379|  7.68M|    if (x->left == nil)
-  380|  4.07M|      printf("NULL");
-  381|  3.60M|    else
-  382|  3.60M|      tree->PrintKey(x->left->key);
-  383|  7.68M|    printf("  r->key=");
-  384|  7.68M|    if (x->right == nil)
-  385|  3.84M|      printf("NULL");
-  386|  3.83M|    else
-  387|  3.83M|      tree->PrintKey(x->right->key);
-  388|  7.68M|    printf("  p->key=");
-  389|  7.68M|    if (x->parent == root)
+  369|  15.7M|void InorderTreePrint(rb_red_blk_tree *tree, rb_red_blk_node *x) {
+  370|  15.7M|  rb_red_blk_node *nil = tree->nil;
+  371|  15.7M|  rb_red_blk_node *root = tree->root;
+  372|  15.7M|  if (x != tree->nil) {
+  373|  7.73M|    InorderTreePrint(tree, x->left);
+  374|  7.73M|    printf("info=");
+  375|  7.73M|    tree->PrintInfo(x->info);
+  376|  7.73M|    printf("  key=");
+  377|  7.73M|    tree->PrintKey(x->key);
+  378|  7.73M|    printf("  l->key=");
+  379|  7.73M|    if (x->left == nil)
+  380|  4.11M|      printf("NULL");
+  381|  3.62M|    else
+  382|  3.62M|      tree->PrintKey(x->left->key);
+  383|  7.73M|    printf("  r->key=");
+  384|  7.73M|    if (x->right == nil)
+  385|  3.87M|      printf("NULL");
+  386|  3.86M|    else
+  387|  3.86M|      tree->PrintKey(x->right->key);
+  388|  7.73M|    printf("  p->key=");
+  389|  7.73M|    if (x->parent == root)
   390|   244k|      printf("NULL");
-  391|  7.43M|    else
-  392|  7.43M|      tree->PrintKey(x->parent->key);
-  393|  7.68M|    printf("  red=%i\n", x->red);
-  394|  7.68M|    InorderTreePrint(tree, x->right);
-  395|  7.68M|  }
-  396|  15.6M|}
+  391|  7.49M|    else
+  392|  7.49M|      tree->PrintKey(x->parent->key);
+  393|  7.73M|    printf("  red=%i\n", x->red);
+  394|  7.73M|    InorderTreePrint(tree, x->right);
+  395|  7.73M|  }
+  396|  15.7M|}
   397|       |
   398|       |/***********************************************************************/
   399|       |/*  FUNCTION:  TreeDestHelper */
@@ -470,16 +470,16 @@
   410|       |/*    Note:    This function should only be called by RBTreeDestroy */
   411|       |/***********************************************************************/
   412|       |
-  413|   313k|void TreeDestHelper(rb_red_blk_tree *tree, rb_red_blk_node *x) {
-  414|   313k|  rb_red_blk_node *nil = tree->nil;
-  415|   313k|  if (x != nil) {
-  416|   154k|    TreeDestHelper(tree, x->left);
-  417|   154k|    TreeDestHelper(tree, x->right);
-  418|   154k|    tree->DestroyKey(x->key);
-  419|   154k|    tree->DestroyInfo(x->info);
-  420|   154k|    free(x);
-  421|   154k|  }
-  422|   313k|}
+  413|   308k|void TreeDestHelper(rb_red_blk_tree *tree, rb_red_blk_node *x) {
+  414|   308k|  rb_red_blk_node *nil = tree->nil;
+  415|   308k|  if (x != nil) {
+  416|   151k|    TreeDestHelper(tree, x->left);
+  417|   151k|    TreeDestHelper(tree, x->right);
+  418|   151k|    tree->DestroyKey(x->key);
+  419|   151k|    tree->DestroyInfo(x->info);
+  420|   151k|    free(x);
+  421|   151k|  }
+  422|   308k|}
   423|       |
   424|       |/***********************************************************************/
   425|       |/*  FUNCTION:  RBTreeDestroy */
@@ -494,12 +494,12 @@
   434|       |/**/
   435|       |/***********************************************************************/
   436|       |
-  437|  4.96k|void RBTreeDestroy(rb_red_blk_tree *tree) {
-  438|  4.96k|  TreeDestHelper(tree, tree->root->left);
-  439|  4.96k|  free(tree->root);
-  440|  4.96k|  free(tree->nil);
-  441|  4.96k|  free(tree);
-  442|  4.96k|}
+  437|  4.90k|void RBTreeDestroy(rb_red_blk_tree *tree) {
+  438|  4.90k|  TreeDestHelper(tree, tree->root->left);
+  439|  4.90k|  free(tree->root);
+  440|  4.90k|  free(tree->nil);
+  441|  4.90k|  free(tree);
+  442|  4.90k|}
   443|       |
   444|       |/***********************************************************************/
   445|       |/*  FUNCTION:  RBTreePrint */
@@ -515,9 +515,9 @@
   455|       |/**/
   456|       |/***********************************************************************/
   457|       |
-  458|   253k|void RBTreePrint(rb_red_blk_tree *tree) {
-  459|   253k|  InorderTreePrint(tree, tree->root->left);
-  460|   253k|}
+  458|   254k|void RBTreePrint(rb_red_blk_tree *tree) {
+  459|   254k|  InorderTreePrint(tree, tree->root->left);
+  460|   254k|}
   461|       |
   462|       |/***********************************************************************/
   463|       |/*  FUNCTION:  RBExactQuery */
@@ -538,18 +538,18 @@
   478|   249k|  rb_red_blk_node *nil = tree->nil;
   479|   249k|  int compVal;
   480|   249k|  if (x == nil)
-  481|  5.04k|    return (0);
+  481|  4.94k|    return (0);
   482|   244k|  compVal = tree->Compare(x->key, (int *)q);
   483|  1.02M|  while (0 != compVal) { /*assignemnt*/
-  484|   934k|    if (1 == compVal) {  /* x->key > q */
-  485|   441k|      x = x->left;
-  486|   493k|    } else {
-  487|   493k|      x = x->right;
-  488|   493k|    }
-  489|   934k|    if (x == nil)
-  490|   149k|      return (0);
-  491|   785k|    compVal = tree->Compare(x->key, (int *)q);
-  492|   785k|  }
+  484|   931k|    if (1 == compVal) {  /* x->key > q */
+  485|   440k|      x = x->left;
+  486|   491k|    } else {
+  487|   491k|      x = x->right;
+  488|   491k|    }
+  489|   931k|    if (x == nil)
+  490|   148k|      return (0);
+  491|   783k|    compVal = tree->Compare(x->key, (int *)q);
+  492|   783k|  }
   493|   244k|  return (x);
   494|   244k|}
   495|       |
@@ -569,67 +569,67 @@
   509|       |/*    The algorithm from this function is from _Introduction_To_Algorithms_ */
   510|       |/***********************************************************************/
   511|       |
-  512|  54.4k|void RBDeleteFixUp(rb_red_blk_tree *tree, rb_red_blk_node *x) {
-  513|  54.4k|  rb_red_blk_node *root = tree->root->left;
-  514|  54.4k|  rb_red_blk_node *w;
-  515|  54.4k|
-  516|  87.5k|  while ((!x->red) && (root != x)) {
-  517|  33.0k|    if (x == x->parent->left) {
-  518|  17.3k|      w = x->parent->right;
-  519|  17.3k|      if (w->red) {
-  520|  2.27k|        w->red = 0;
-  521|  2.27k|        x->parent->red = 1;
-  522|  2.27k|        LeftRotate(tree, x->parent);
-  523|  2.27k|        w = x->parent->right;
-  524|  2.27k|      }
-  525|  17.3k|      if ((!w->right->red) && (!w->left->red)) {
-  526|  6.19k|        w->red = 1;
-  527|  6.19k|        x = x->parent;
+  512|  54.5k|void RBDeleteFixUp(rb_red_blk_tree *tree, rb_red_blk_node *x) {
+  513|  54.5k|  rb_red_blk_node *root = tree->root->left;
+  514|  54.5k|  rb_red_blk_node *w;
+  515|  54.5k|
+  516|  87.7k|  while ((!x->red) && (root != x)) {
+  517|  33.2k|    if (x == x->parent->left) {
+  518|  17.5k|      w = x->parent->right;
+  519|  17.5k|      if (w->red) {
+  520|  2.35k|        w->red = 0;
+  521|  2.35k|        x->parent->red = 1;
+  522|  2.35k|        LeftRotate(tree, x->parent);
+  523|  2.35k|        w = x->parent->right;
+  524|  2.35k|      }
+  525|  17.5k|      if ((!w->right->red) && (!w->left->red)) {
+  526|  6.40k|        w->red = 1;
+  527|  6.40k|        x = x->parent;
   528|  11.1k|      } else {
   529|  11.1k|        if (!w->right->red) {
-  530|  3.29k|          w->left->red = 0;
-  531|  3.29k|          w->red = 1;
-  532|  3.29k|          RightRotate(tree, w);
-  533|  3.29k|          w = x->parent->right;
-  534|  3.29k|        }
+  530|  3.30k|          w->left->red = 0;
+  531|  3.30k|          w->red = 1;
+  532|  3.30k|          RightRotate(tree, w);
+  533|  3.30k|          w = x->parent->right;
+  534|  3.30k|        }
   535|  11.1k|        w->red = x->parent->red;
   536|  11.1k|        x->parent->red = 0;
   537|  11.1k|        w->right->red = 0;
   538|  11.1k|        LeftRotate(tree, x->parent);
   539|  11.1k|        x = root; /* this is to exit while loop */
   540|  11.1k|      }
-  541|  17.3k|    } else { /* the code below is has left and right switched from above */
-  542|  15.7k|      w = x->parent->left;
-  543|  15.7k|      if (w->red) {
-  544|  1.94k|        w->red = 0;
-  545|  1.94k|        x->parent->red = 1;
-  546|  1.94k|        RightRotate(tree, x->parent);
-  547|  1.94k|        w = x->parent->left;
-  548|  1.94k|      }
-  549|  15.7k|      if ((!w->right->red) && (!w->left->red)) {
-  550|  5.75k|        w->red = 1;
-  551|  5.75k|        x = x->parent;
-  552|  10.0k|      } else {
-  553|  10.0k|        if (!w->left->red) {
-  554|  4.34k|          w->right->red = 0;
-  555|  4.34k|          w->red = 1;
-  556|  4.34k|          LeftRotate(tree, w);
-  557|  4.34k|          w = x->parent->left;
-  558|  4.34k|        }
-  559|  10.0k|        w->red = x->parent->red;
-  560|  10.0k|        x->parent->red = 0;
-  561|  10.0k|        w->left->red = 0;
-  562|  10.0k|        RightRotate(tree, x->parent);
-  563|  10.0k|        x = root; /* this is to exit while loop */
-  564|  10.0k|      }
-  565|  15.7k|    }
-  566|  33.0k|  }
-  567|  54.4k|  x->red = 0;
-  568|  54.4k|
-  569|  54.4k|#ifdef DEBUG_ASSERT
-  570|  54.4k|  Assert(!tree->nil->red, "nil not black in RBDeleteFixUp");
-  571|  54.4k|#endif
-  572|  54.4k|}
+  541|  17.5k|    } else { /* the code below is has left and right switched from above */
+  542|  15.6k|      w = x->parent->left;
+  543|  15.6k|      if (w->red) {
+  544|  1.86k|        w->red = 0;
+  545|  1.86k|        x->parent->red = 1;
+  546|  1.86k|        RightRotate(tree, x->parent);
+  547|  1.86k|        w = x->parent->left;
+  548|  1.86k|      }
+  549|  15.6k|      if ((!w->right->red) && (!w->left->red)) {
+  550|  5.80k|        w->red = 1;
+  551|  5.80k|        x = x->parent;
+  552|  9.88k|      } else {
+  553|  9.88k|        if (!w->left->red) {
+  554|  4.31k|          w->right->red = 0;
+  555|  4.31k|          w->red = 1;
+  556|  4.31k|          LeftRotate(tree, w);
+  557|  4.31k|          w = x->parent->left;
+  558|  4.31k|        }
+  559|  9.88k|        w->red = x->parent->red;
+  560|  9.88k|        x->parent->red = 0;
+  561|  9.88k|        w->left->red = 0;
+  562|  9.88k|        RightRotate(tree, x->parent);
+  563|  9.88k|        x = root; /* this is to exit while loop */
+  564|  9.88k|      }
+  565|  15.6k|    }
+  566|  33.2k|  }
+  567|  54.5k|  x->red = 0;
+  568|  54.5k|
+  569|  54.5k|#ifdef DEBUG_ASSERT
+  570|  54.5k|  Assert(!tree->nil->red, "nil not black in RBDeleteFixUp");
+  571|  54.5k|#endif
+  572|  54.5k|}
   573|       |
   574|       |/***********************************************************************/
   575|       |/*  FUNCTION:  RBDelete */
@@ -647,59 +647,59 @@
   587|       |/*    The algorithm from this function is from _Introduction_To_Algorithms_ */
   588|       |/***********************************************************************/
   589|       |
-  590|  94.9k|void RBDelete(rb_red_blk_tree *tree, rb_red_blk_node *z) {
-  591|  94.9k|  rb_red_blk_node *y;
-  592|  94.9k|  rb_red_blk_node *x;
-  593|  94.9k|  rb_red_blk_node *nil = tree->nil;
-  594|  94.9k|  rb_red_blk_node *root = tree->root;
-  595|  94.9k|
-  596|  94.9k|  y = ((z->left == nil) || (z->right == nil)) ? z : TreeSuccessor(tree, z);
-  597|  94.9k|  x = (y->left == nil) ? y->right : y->left;
-  598|  94.9k|  if (root ==
-  599|  94.9k|      (x->parent = y->parent)) { /* assignment of y->p to x->p is intentional */
-  600|    195|    root->left = x;
-  601|  94.7k|  } else {
-  602|  94.7k|    if (y == y->parent->left) {
-  603|  49.0k|      y->parent->left = x;
-  604|  49.0k|    } else {
-  605|  45.7k|      y->parent->right = x;
-  606|  45.7k|    }
-  607|  94.7k|  }
-  608|  94.9k|  if (y != z) { /* y should not be nil in this case */
-  609|  55.0k|
-  610|  55.0k|#ifdef DEBUG_ASSERT
-  611|  55.0k|    Assert((y != tree->nil), "y is nil in RBDelete\n");
-  612|  55.0k|#endif
-  613|  55.0k|    /* y is the node to splice out and x is its child */
-  614|  55.0k|
-  615|  55.0k|    if (!(y->red))
-  616|  32.3k|      RBDeleteFixUp(tree, x);
-  617|  55.0k|
-  618|  55.0k|    tree->DestroyKey(z->key);
-  619|  55.0k|    tree->DestroyInfo(z->info);
-  620|  55.0k|    y->left = z->left;
-  621|  55.0k|    y->right = z->right;
-  622|  55.0k|    y->parent = z->parent;
-  623|  55.0k|    y->red = z->red;
-  624|  55.0k|    z->left->parent = z->right->parent = y;
-  625|  55.0k|    if (z == z->parent->left) {
-  626|  25.0k|      z->parent->left = y;
-  627|  29.9k|    } else {
-  628|  29.9k|      z->parent->right = y;
-  629|  29.9k|    }
-  630|  55.0k|    free(z);
-  631|  55.0k|  } else {
+  590|  95.6k|void RBDelete(rb_red_blk_tree *tree, rb_red_blk_node *z) {
+  591|  95.6k|  rb_red_blk_node *y;
+  592|  95.6k|  rb_red_blk_node *x;
+  593|  95.6k|  rb_red_blk_node *nil = tree->nil;
+  594|  95.6k|  rb_red_blk_node *root = tree->root;
+  595|  95.6k|
+  596|  95.6k|  y = ((z->left == nil) || (z->right == nil)) ? z : TreeSuccessor(tree, z);
+  597|  95.6k|  x = (y->left == nil) ? y->right : y->left;
+  598|  95.6k|  if (root ==
+  599|  95.6k|      (x->parent = y->parent)) { /* assignment of y->p to x->p is intentional */
+  600|    216|    root->left = x;
+  601|  95.4k|  } else {
+  602|  95.4k|    if (y == y->parent->left) {
+  603|  49.5k|      y->parent->left = x;
+  604|  49.5k|    } else {
+  605|  45.9k|      y->parent->right = x;
+  606|  45.9k|    }
+  607|  95.4k|  }
+  608|  95.6k|  if (y != z) { /* y should not be nil in this case */
+  609|  55.7k|
+  610|  55.7k|#ifdef DEBUG_ASSERT
+  611|  55.7k|    Assert((y != tree->nil), "y is nil in RBDelete\n");
+  612|  55.7k|#endif
+  613|  55.7k|    /* y is the node to splice out and x is its child */
+  614|  55.7k|
+  615|  55.7k|    if (!(y->red))
+  616|  32.7k|      RBDeleteFixUp(tree, x);
+  617|  55.7k|
+  618|  55.7k|    tree->DestroyKey(z->key);
+  619|  55.7k|    tree->DestroyInfo(z->info);
+  620|  55.7k|    y->left = z->left;
+  621|  55.7k|    y->right = z->right;
+  622|  55.7k|    y->parent = z->parent;
+  623|  55.7k|    y->red = z->red;
+  624|  55.7k|    z->left->parent = z->right->parent = y;
+  625|  55.7k|    if (z == z->parent->left) {
+  626|  25.6k|      z->parent->left = y;
+  627|  30.0k|    } else {
+  628|  30.0k|      z->parent->right = y;
+  629|  30.0k|    }
+  630|  55.7k|    free(z);
+  631|  55.7k|  } else {
   632|  39.9k|    tree->DestroyKey(y->key);
   633|  39.9k|    tree->DestroyInfo(y->info);
   634|  39.9k|    if (!(y->red))
-  635|  22.1k|      RBDeleteFixUp(tree, x);
+  635|  21.8k|      RBDeleteFixUp(tree, x);
   636|  39.9k|    free(y);
   637|  39.9k|  }
-  638|  94.9k|
-  639|  94.9k|#ifdef DEBUG_ASSERT
-  640|  94.9k|  Assert(!tree->nil->red, "nil not black in RBDelete");
-  641|  94.9k|#endif
-  642|  94.9k|}
+  638|  95.6k|
+  639|  95.6k|#ifdef DEBUG_ASSERT
+  640|  95.6k|  Assert(!tree->nil->red, "nil not black in RBDelete");
+  641|  95.6k|#endif
+  642|  95.6k|}
   643|       |
   644|       |/***********************************************************************/
   645|       |/*  FUNCTION:  RBEnumerate */
@@ -712,84 +712,84 @@
   652|       |/*    Modifies Input: none */
   653|       |/***********************************************************************/
   654|       |
-  655|   485k|stk_stack *RBEnumerate(rb_red_blk_tree *tree, void *low, void *high) {
-  656|   485k|  stk_stack *enumResultStack;
-  657|   485k|  rb_red_blk_node *nil = tree->nil;
-  658|   485k|  rb_red_blk_node *x = tree->root->left;
-  659|   485k|  rb_red_blk_node *lastBest = nil;
-  660|   485k|
-  661|   485k|  enumResultStack = StackCreate();
-  662|  2.81M|  while (nil != x) {
-  663|  2.32M|    if (1 == (tree->Compare(x->key, high))) { /* x->key > high */
-  664|   996k|      x = x->left;
-  665|  1.33M|    } else {
-  666|  1.33M|      lastBest = x;
-  667|  1.33M|      x = x->right;
-  668|  1.33M|    }
-  669|  2.32M|  }
-  670|  3.47M|  while ((lastBest != nil) && (1 != tree->Compare(low, lastBest->key))) {
-  671|  2.98M|    StackPush(enumResultStack, lastBest);
-  672|  2.98M|    lastBest = TreePredecessor(tree, lastBest);
-  673|  2.98M|  }
-  674|   485k|  return (enumResultStack);
-  675|   485k|}
+  655|   489k|stk_stack *RBEnumerate(rb_red_blk_tree *tree, void *low, void *high) {
+  656|   489k|  stk_stack *enumResultStack;
+  657|   489k|  rb_red_blk_node *nil = tree->nil;
+  658|   489k|  rb_red_blk_node *x = tree->root->left;
+  659|   489k|  rb_red_blk_node *lastBest = nil;
+  660|   489k|
+  661|   489k|  enumResultStack = StackCreate();
+  662|  2.83M|  while (nil != x) {
+  663|  2.34M|    if (1 == (tree->Compare(x->key, high))) { /* x->key > high */
+  664|  1.00M|      x = x->left;
+  665|  1.34M|    } else {
+  666|  1.34M|      lastBest = x;
+  667|  1.34M|      x = x->right;
+  668|  1.34M|    }
+  669|  2.34M|  }
+  670|  3.52M|  while ((lastBest != nil) && (1 != tree->Compare(low, lastBest->key))) {
+  671|  3.03M|    StackPush(enumResultStack, lastBest);
+  672|  3.03M|    lastBest = TreePredecessor(tree, lastBest);
+  673|  3.03M|  }
+  674|   489k|  return (enumResultStack);
+  675|   489k|}
 
 /Users/epoole/Box Sync/erikpoole/cs6015/redBlackTreeFuzzer/stack.c:
     1|       |#include "stack.h"
     2|       |
-    3|   242k|stk_stack *StackJoin(stk_stack *stack1, stk_stack *stack2) {
-    4|   242k|  if (!stack1->tail) {
+    3|   244k|stk_stack *StackJoin(stk_stack *stack1, stk_stack *stack2) {
+    4|   244k|  if (!stack1->tail) {
     5|      0|    free(stack1);
     6|      0|    return (stack2);
-    7|   242k|  } else {
-    8|   242k|    stack1->tail->next = stack2->top;
-    9|   242k|    stack1->tail = stack2->tail;
-   10|   242k|    free(stack2);
-   11|   242k|    return (stack1);
-   12|   242k|  }
-   13|   242k|}
+    7|   244k|  } else {
+    8|   244k|    stack1->tail->next = stack2->top;
+    9|   244k|    stack1->tail = stack2->tail;
+   10|   244k|    free(stack2);
+   11|   244k|    return (stack1);
+   12|   244k|  }
+   13|   244k|}
    14|       |
-   15|   485k|stk_stack *StackCreate() {
-   16|   485k|  stk_stack *newStack;
-   17|   485k|
-   18|   485k|  newStack = (stk_stack *)SafeMalloc(sizeof(stk_stack));
-   19|   485k|  newStack->top = newStack->tail = NULL;
-   20|   485k|  return (newStack);
-   21|   485k|}
+   15|   489k|stk_stack *StackCreate() {
+   16|   489k|  stk_stack *newStack;
+   17|   489k|
+   18|   489k|  newStack = (stk_stack *)SafeMalloc(sizeof(stk_stack));
+   19|   489k|  newStack->top = newStack->tail = NULL;
+   20|   489k|  return (newStack);
+   21|   489k|}
    22|       |
-   23|  3.23M|void StackPush(stk_stack *theStack, DATA_TYPE newInfoPointer) {
-   24|  3.23M|  stk_stack_node *newNode;
-   25|  3.23M|
-   26|  3.23M|  if (!theStack->top) {
-   27|   395k|    newNode = (stk_stack_node *)SafeMalloc(sizeof(stk_stack_node));
-   28|   395k|    newNode->info = newInfoPointer;
-   29|   395k|    newNode->next = theStack->top;
-   30|   395k|    theStack->top = newNode;
-   31|   395k|    theStack->tail = newNode;
-   32|  2.83M|  } else {
-   33|  2.83M|    newNode = (stk_stack_node *)SafeMalloc(sizeof(stk_stack_node));
-   34|  2.83M|    newNode->info = newInfoPointer;
-   35|  2.83M|    newNode->next = theStack->top;
-   36|  2.83M|    theStack->top = newNode;
-   37|  2.83M|  }
-   38|  3.23M|}
+   23|  3.28M|void StackPush(stk_stack *theStack, DATA_TYPE newInfoPointer) {
+   24|  3.28M|  stk_stack_node *newNode;
+   25|  3.28M|
+   26|  3.28M|  if (!theStack->top) {
+   27|   397k|    newNode = (stk_stack_node *)SafeMalloc(sizeof(stk_stack_node));
+   28|   397k|    newNode->info = newInfoPointer;
+   29|   397k|    newNode->next = theStack->top;
+   30|   397k|    theStack->top = newNode;
+   31|   397k|    theStack->tail = newNode;
+   32|  2.88M|  } else {
+   33|  2.88M|    newNode = (stk_stack_node *)SafeMalloc(sizeof(stk_stack_node));
+   34|  2.88M|    newNode->info = newInfoPointer;
+   35|  2.88M|    newNode->next = theStack->top;
+   36|  2.88M|    theStack->top = newNode;
+   37|  2.88M|  }
+   38|  3.28M|}
    39|       |
-   40|   242k|DATA_TYPE StackPop(stk_stack *theStack) {
-   41|   242k|  DATA_TYPE popInfo;
-   42|   242k|  stk_stack_node *oldNode;
-   43|   242k|
-   44|   242k|  if (theStack->top) {
-   45|   134k|    popInfo = theStack->top->info;
-   46|   134k|    oldNode = theStack->top;
-   47|   134k|    theStack->top = theStack->top->next;
-   48|   134k|    free(oldNode);
-   49|   134k|    if (!theStack->top)
-   50|  17.6k|      theStack->tail = NULL;
-   51|   134k|  } else {
+   40|   244k|DATA_TYPE StackPop(stk_stack *theStack) {
+   41|   244k|  DATA_TYPE popInfo;
+   42|   244k|  stk_stack_node *oldNode;
+   43|   244k|
+   44|   244k|  if (theStack->top) {
+   45|   135k|    popInfo = theStack->top->info;
+   46|   135k|    oldNode = theStack->top;
+   47|   135k|    theStack->top = theStack->top->next;
+   48|   135k|    free(oldNode);
+   49|   135k|    if (!theStack->top)
+   50|  17.7k|      theStack->tail = NULL;
+   51|   135k|  } else {
    52|   108k|    popInfo = NULL;
    53|   108k|  }
-   54|   242k|  return (popInfo);
-   55|   242k|}
+   54|   244k|  return (popInfo);
+   55|   244k|}
    56|       |
    57|      0|void StackDestroy(stk_stack *theStack, void DestFunc(void *a)) {
    58|      0|  stk_stack_node *x = theStack->top;
@@ -829,7 +829,7 @@
    20|       |/*  appropriate data_type */
    21|       |
    22|       |#ifndef DATA_TYPE
-   23|   242k|#define DATA_TYPE void *
+   23|   244k|#define DATA_TYPE void *
    24|       |#endif
    25|       |
    26|       |typedef struct stk_stack_node {
@@ -867,26 +867,26 @@
    15|       |
    16|       |
    17|       |//shamelessly stolen from test_red_black_tree.c
-   18|   249k|void IntDest(void *a) { free((int *)a); }
+   18|   247k|void IntDest(void *a) { free((int *)a); }
    19|       |
-   20|  8.18M|int IntComp(const void *a, const void *b) {
-   21|  8.18M|    if (*(int *)a > *(int *)b)
-   22|  2.49M|        return (1);
-   23|  5.68M|    if (*(int *)a < *(int *)b)
-   24|  4.19M|        return (-1);
-   25|  1.48M|    return (0);
-   26|  1.48M|}
+   20|  8.24M|int IntComp(const void *a, const void *b) {
+   21|  8.24M|    if (*(int *)a > *(int *)b)
+   22|  2.50M|        return (1);
+   23|  5.73M|    if (*(int *)a < *(int *)b)
+   24|  4.23M|        return (-1);
+   25|  1.50M|    return (0);
+   26|  1.50M|}
    27|       |
-   28|  22.5M|void IntPrint(const void *a) { printf("%i", *(int *)a); }
+   28|  22.7M|void IntPrint(const void *a) { printf("%i", *(int *)a); }
    29|       |
-   30|  7.68M|void InfoPrint(void *a) { ; }
+   30|  7.73M|void InfoPrint(void *a) { ; }
    31|       |
-   32|   249k|void InfoDest(void *a) { ; }
+   32|   247k|void InfoDest(void *a) { ; }
    33|       |//end of shameless stealing
    34|       |
    35|       |
-   36|  31.5M|int verifyTreeRecursive(rb_red_blk_tree *tree, rb_red_blk_node *node, int count) {
-   37|  31.5M|    if (node != tree->nil) {
+   36|  31.6M|int verifyTreeRecursive(rb_red_blk_tree *tree, rb_red_blk_node *node, int count) {
+   37|  31.6M|    if (node != tree->nil) {
    38|  15.5M|        
    39|  15.5M|        int leftCount = verifyTreeRecursive(tree, node->left, count);
    40|  15.5M|        int rightCount = verifyTreeRecursive(tree, node->right, count);
@@ -895,60 +895,60 @@
    43|  15.5M|        
    44|  15.5M|        //root is black
    45|  15.5M|        if (node->red == 0) {
-   46|  8.79M|            count++;
-   47|  8.79M|        //root is red
-   48|  8.79M|        } else {
-   49|  6.74M|            if (node->right) {
-   50|  6.74M|                assert(node->right->red == 0);
-   51|  6.74M|            }
-   52|  6.74M|            if (node->left) {
-   53|  6.74M|                assert(node->left->red == 0);
-   54|  6.74M|            }
-   55|  6.74M|        }
+   46|  8.81M|            count++;
+   47|  8.81M|        //root is red
+   48|  8.81M|        } else {
+   49|  6.75M|            if (node->right) {
+   50|  6.75M|                assert(node->right->red == 0);
+   51|  6.75M|            }
+   52|  6.75M|            if (node->left) {
+   53|  6.75M|                assert(node->left->red == 0);
+   54|  6.75M|            }
+   55|  6.75M|        }
    56|  16.0M|    } else {
    57|  16.0M|        //need leaf null nodes to be black
    58|  16.0M|        count++;
    59|  16.0M|    }
-   60|  31.5M|    return count;
-   61|  31.5M|}
+   60|  31.6M|    return count;
+   61|  31.6M|}
    62|       |
-   63|   498k|void verifyTree(rb_red_blk_tree *tree) {
-   64|   498k|    verifyTreeRecursive(tree, tree->root->left, 0);
-   65|   498k|}
+   63|   496k|void verifyTree(rb_red_blk_tree *tree) {
+   64|   496k|    verifyTreeRecursive(tree, tree->root->left, 0);
+   65|   496k|}
    66|       |
    67|       |
    68|       |class comparisonVector {
    69|       |public:
    70|       |    std::vector<std::pair<int*, int>> vec;
    71|       |    
-   72|   249k|    void add(int* key) {
-   73|   249k|        vec.push_back(std::pair<int*, int>(key, *key));
-   74|   249k|    }
+   72|   247k|    void add(int* key) {
+   73|   247k|        vec.push_back(std::pair<int*, int>(key, *key));
+   74|   247k|    }
    75|       |    
-   76|  94.9k|    bool remove(int value) {
-   77|  94.9k|        long originalSize = vec.size();
-   78|  1.82M|        for (int i = 0; i < vec.size(); i++) {
-   79|  1.82M|            if (vec[i].second == value) {
-   80|  94.9k|                //no need to free pointers, should always be freed by red_black_tree
-   81|  94.9k|                vec.erase(vec.begin() + i);
-   82|  94.9k|                assert(originalSize - 1 == vec.size());
-   83|  94.9k|                return true;
-   84|  94.9k|            }
-   85|  1.82M|        }
-   86|  94.9k|        return false;
-   87|  94.9k|    }
+   76|  95.6k|    bool remove(int value) {
+   77|  95.6k|        long originalSize = vec.size();
+   78|  1.83M|        for (int i = 0; i < vec.size(); i++) {
+   79|  1.83M|            if (vec[i].second == value) {
+   80|  95.6k|                //no need to free pointers, should always be freed by red_black_tree
+   81|  95.6k|                vec.erase(vec.begin() + i);
+   82|  95.6k|                assert(originalSize - 1 == vec.size());
+   83|  95.6k|                return true;
+   84|  95.6k|            }
+   85|  1.83M|        }
+   86|  95.6k|        return false;
+   87|  95.6k|    }
    88|       |    
-   89|  4.95k|    void reset() {
-   90|  4.95k|        vec.clear();
-   91|  4.95k|    }
+   89|  4.90k|    void reset() {
+   90|  4.90k|        vec.clear();
+   91|  4.90k|    }
    92|       |    
-   93|   485k|    int getRandomValue() {
-   94|   485k|        return vec[rand() % vec.size()].second;
-   95|   485k|    }
+   93|   489k|    int getRandomValue() {
+   94|   489k|        return vec[rand() % vec.size()].second;
+   95|   489k|    }
    96|       |    
-   97|   247k|    long getSize() {
-   98|   247k|        return vec.size();
-   99|   247k|    }
+   97|   249k|    long getSize() {
+   98|   249k|        return vec.size();
+   99|   249k|    }
   100|       |};
   101|       |
   102|       |
@@ -965,63 +965,63 @@
   113|  1.00M|        int randNum = rand() % 201;
   114|  1.00M|        int caseType = 0;
   115|  1.00M|        if (randNum < 50) {
-  116|   249k|            caseType = 1;
-  117|   750k|        } else if (randNum < 100) {
+  116|   247k|            caseType = 1;
+  117|   752k|        } else if (randNum < 100) {
   118|   249k|            caseType = 2;
-  119|   501k|        } else if (randNum < 150) {
-  120|   247k|            caseType = 3;
+  119|   503k|        } else if (randNum < 150) {
+  120|   249k|            caseType = 3;
   121|   253k|        } else if (randNum < 200) {
-  122|   248k|            caseType = 4;
-  123|   248k|        }
+  122|   249k|            caseType = 4;
+  123|   249k|        }
   124|  1.00M|        
   125|  1.00M|        switch (caseType) {
   126|  1.00M|            case 0: {
-  127|  4.95k|//                std::cerr << "Tree Destroyed\n";
-  128|  4.95k|                RBTreeDestroy(tree);
-  129|  4.95k|                tree = RBTreeCreate(IntComp, IntDest, InfoDest, IntPrint, InfoPrint);
-  130|  4.95k|                compVec.reset();
-  131|  4.95k|                break;
+  127|  4.90k|//                std::cerr << "Tree Destroyed\n";
+  128|  4.90k|                RBTreeDestroy(tree);
+  129|  4.90k|                tree = RBTreeCreate(IntComp, IntDest, InfoDest, IntPrint, InfoPrint);
+  130|  4.90k|                compVec.reset();
+  131|  4.90k|                break;
   132|  1.00M|            }
   133|  1.00M|            case 1: {
-  134|   249k|                int* key = new int(rand() % 50);
-  135|   249k|                compVec.add(key);
-  136|   249k|                RBTreeInsert(tree, key, key);
-  137|   249k|                verifyTree(tree);
-  138|   249k|                break;
+  134|   247k|                int* key = new int(rand() % 50);
+  135|   247k|                compVec.add(key);
+  136|   247k|                RBTreeInsert(tree, key, key);
+  137|   247k|                verifyTree(tree);
+  138|   247k|                break;
   139|  1.00M|            }
   140|  1.00M|            case 2: {
   141|   249k|                int valueToRemove = rand() % 50;
   142|   249k|                rb_red_blk_node* foundNode = RBExactQuery(tree, &valueToRemove);
   143|   249k|                
   144|   249k|                if (foundNode) {
-  145|  94.9k|                    compVec.remove(valueToRemove);
-  146|  94.9k|                    RBDelete(tree, foundNode);
-  147|  94.9k|                }
+  145|  95.6k|                    compVec.remove(valueToRemove);
+  146|  95.6k|                    RBDelete(tree, foundNode);
+  147|  95.6k|                }
   148|   249k|                    
   149|   249k|                verifyTree(tree);
   150|   249k|                break;
   151|  1.00M|            }
   152|  1.00M|                //also fuzzes stack operations, not sure if necessary...
   153|  1.00M|            case 3: {
-  154|   247k|//                std::cerr << "Enumerate Called\n";
-  155|   247k|                if (compVec.getSize() > 0) {
-  156|   242k|                    int value1 = compVec.getRandomValue();
-  157|   242k|                    int value2 = compVec.getRandomValue();
-  158|   242k|                    stk_stack* stack1 = RBEnumerate(tree, &value1, &value2);
-  159|   242k|                    stk_stack* stack2 = RBEnumerate(tree, &value2, &value1);
-  160|   242k|                    int* poppedValue = (int*) StackPop(stack1);
-  161|   242k|                    StackPush(stack1, poppedValue);
-  162|   242k|                    stk_stack* combinedStack = StackJoin(stack1, stack2);
-  163|   242k|                    delete combinedStack;
-  164|   242k|                break;
-  165|   242k|                }
-  166|  4.89k|            }
-  167|   253k|            case 4: {
-  168|   253k|                RBTreePrint(tree);
-  169|   253k|                break;
-  170|  4.89k|            }
-  171|  4.89k|            //Should be impossible to reach...
-  172|  4.89k|            default: {
+  154|   249k|//                std::cerr << "Enumerate Called\n";
+  155|   249k|                if (compVec.getSize() > 0) {
+  156|   244k|                    int value1 = compVec.getRandomValue();
+  157|   244k|                    int value2 = compVec.getRandomValue();
+  158|   244k|                    stk_stack* stack1 = RBEnumerate(tree, &value1, &value2);
+  159|   244k|                    stk_stack* stack2 = RBEnumerate(tree, &value2, &value1);
+  160|   244k|                    int* poppedValue = (int*) StackPop(stack1);
+  161|   244k|                    StackPush(stack1, poppedValue);
+  162|   244k|                    stk_stack* combinedStack = StackJoin(stack1, stack2);
+  163|   244k|                    delete combinedStack;
+  164|   244k|                break;
+  165|   244k|                }
+  166|  4.97k|            }
+  167|   254k|            case 4: {
+  168|   254k|                RBTreePrint(tree);
+  169|   254k|                break;
+  170|  4.97k|            }
+  171|  4.97k|            //Should be impossible to reach...
+  172|  4.97k|            default: {
   173|      0|                assert(false);
   174|      0|            }
   175|  1.00M|        }
