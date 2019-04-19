@@ -318,7 +318,7 @@ class EncFS(Operations):
         key = base64.urlsafe_b64encode(kdf.derive(self.user_password))
         decrypter = Fernet(key)
         decrypted_message = decrypter.decrypt(encrypted_message)
-        self.file_dictionary[path] = decrypted_message;
+        self.file_dictionary[path] = decrypted_message
 
         # for i in range(1000):
         #     print(decrypted_message)
@@ -330,8 +330,14 @@ class EncFS(Operations):
 
     @logged
     def create(self, path, mode, fi=None):
+
+        file = os.open(self._full_path(path), os.O_CREAT | os.O_RDWR, mode)
+        os.close(file)
+        self.file_dictionary[path] = ""
+
         #todo
-        return "FILL ME IN!"
+        self.fd_counter += 1
+        return self.fd_counter
 
     @logged
     def read(self, path, length, offset, fh):
