@@ -65,8 +65,9 @@ class EncFS(Operations):
 
         # TODO, FINISH ME!!
 
-        self.file_dictionary = {};
-        self.user_password = getpass.getpass();
+        self.file_dictionary = {}
+        self.user_password = str.encode(getpass.getpass())
+        self.fd_counter = 0
 
     def destroy(self, path):
         """Clean up any resources used by the filesystem.
@@ -306,10 +307,30 @@ class EncFS(Operations):
 
         """
 
-        return "FILL ME IN"
+        file = open(self._full_path(path), "rb+")
+        salt = file.read(16)
+        encrypted_message = file.read()
+
+        for i in range(1000):
+            print(salt)
+
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=100000, backend=default_backend())
+        key = base64.urlsafe_b64encode(kdf.derive(self.user_password))
+        decrypter = Fernet(key)
+        decrypted_message = decrypter.decrypt(encrypted_message)
+        self.file_dictionary[path] = decrypted_message;
+
+        # for i in range(1000):
+        #     print(decrypted_message)
+
+        file.close()
+
+        self.fd_counter += 1
+        return self.fd_counter
 
     @logged
     def create(self, path, mode, fi=None):
+        #todo
         return "FILL ME IN!"
 
     @logged
@@ -322,13 +343,17 @@ class EncFS(Operations):
         the file. Required for any sensible filesystem.
 
         """
-        return "FILL ME IN!!!"
+        bytes = self.file_dictionary[path]
+        byteSection = bytes[offset:length]
+
+        return byteSection
 
     @logged
     def write(self, path, buf, offset, fh):
         """Write to a file.
 
         """
+        #todo
         return 'FILL ME IN'
 
     @logged
@@ -340,6 +365,7 @@ class EncFS(Operations):
         filesystems, because recreating a file will first truncate it.
 
         """
+        #todo
         return 'FILL ME IN!!!'
 
     # skip
@@ -370,11 +396,10 @@ class EncFS(Operations):
 
         """
 
+        #todo
         return 'FILL ME IN'
 
     # skip
-
-
 '''    @logged
     def fsync(self, path, fdatasync, fh):
         """Flush any dirty information to disk.
