@@ -21,9 +21,9 @@ from __future__ import with_statement
 import getpass
 from functools import wraps
 import os
-import sys
 import errno
 import logging
+
 
 from fuse import FUSE, FuseOSError, Operations
 import inspect
@@ -149,9 +149,36 @@ class EncFS(Operations):
         """
         full_path = self._full_path(path)
         st = os.lstat(full_path)
-        return dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
-                                                        'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
-                                                        'st_uid'))
+
+        ret_dict = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
+                                                 'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
+                                                 'st_uid'))
+
+        if(path in self.file_dictionary):
+            # for i in range(100):
+            #     print("hit")
+
+            ret_dict['st_size'] = len(self.file_dictionary[path].decode())
+
+        elif not (os.path.isdir(full_path)):
+            # for i in range(100):
+            #     print("missed")
+
+            file = open(self._full_path(path), "rb+")
+            salt = file.read(16)
+            encrypted_message = file.read()
+
+            kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=100000,
+                             backend=default_backend())
+            key = base64.urlsafe_b64encode(kdf.derive(self.user_password))
+            decrypter = Fernet(key)
+            decrypted_message = decrypter.decrypt(encrypted_message)
+
+            file.close()
+
+            ret_dict['st_size'] = len(decrypted_message.decode())
+
+        return ret_dict
 
     @logged
     def readdir(self, path, fh):
@@ -311,17 +338,11 @@ class EncFS(Operations):
         salt = file.read(16)
         encrypted_message = file.read()
 
-        for i in range(1000):
-            print(salt)
-
         kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=100000, backend=default_backend())
         key = base64.urlsafe_b64encode(kdf.derive(self.user_password))
         decrypter = Fernet(key)
         decrypted_message = decrypter.decrypt(encrypted_message)
         self.file_dictionary[path] = decrypted_message
-
-        # for i in range(1000):
-        #     print(decrypted_message)
 
         file.close()
 
@@ -334,6 +355,9 @@ class EncFS(Operations):
         file = os.open(self._full_path(path), os.O_CREAT | os.O_RDWR, mode)
         os.close(file)
         self.file_dictionary[path] = ""
+
+        # for i in range(100):
+        #     print("create: " + path)
 
         #todo
         self.fd_counter += 1
@@ -359,8 +383,26 @@ class EncFS(Operations):
         """Write to a file.
 
         """
+
+        working_string = bytearray(self.file_dictionary[path]).decode()
+
+        for i in range(100):
+            print("offset: " + str(offset))
+            print("first: " + working_string[:offset])
+            print("buf: " + str(buf))
+            print("last: " + working_string[offset:])
+
+
+        working_string = working_string[:offset] + str(buf) + working_string[offset:]
+
+
+        for i in range(100):
+            print("final: " + working_string)
+
+        self.file_dictionary[path] = bytes(working_string.encode())
+
         #todo
-        return 'FILL ME IN'
+        return len(buf)
 
     @logged
     def truncate(self, path, length, fh=None):
@@ -402,8 +444,25 @@ class EncFS(Operations):
 
         """
 
+        salt = os.urandom(16);
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=100000, backend=default_backend())
+        key = base64.urlsafe_b64encode(kdf.derive(self.user_password))
+        encrypter = Fernet(key)
+        encrypted_message = encrypter.encrypt(self.file_dictionary[path])
+
+        file = open(self._full_path(path), "rb+")
+        file.write(salt)
+        file.write(encrypted_message)
+
+        del self.file_dictionary[path]
+
+        # for i in range(100):
+        #     print(salt)
+        #     print(self.file_dictionary[path])
+        #     print(encrypted_message)
+
         #todo
-        return 'FILL ME IN'
+        return 0
 
     # skip
 '''    @logged
@@ -434,5 +493,3 @@ if __name__ == '__main__':
     # create our virtual filesystem using argv[1] as the physical filesystem
     # and argv[2] as the virtual filesystem
     fuse = FUSE(EncFS(argv[1]), argv[2], foreground=True)
-
-# /Users/epoole/Box Sync/erikpoole/6013/encryptedFileSystem/physicalFS
