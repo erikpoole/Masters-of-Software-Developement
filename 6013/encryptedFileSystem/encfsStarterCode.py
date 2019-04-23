@@ -374,7 +374,7 @@ class EncFS(Operations):
         """
 
         file_bytes = self.file_dictionary[path]
-        self.file_dictionary[path] = file_bytes[:offset] + buf + file_bytes[offset:]
+        self.file_dictionary[path] = file_bytes[:offset] + buf + file_bytes[offset+len(buf):]
 
         return len(buf)
 
