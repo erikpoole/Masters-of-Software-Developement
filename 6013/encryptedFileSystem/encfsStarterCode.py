@@ -24,9 +24,7 @@ import os
 import errno
 import logging
 
-
 from fuse import FUSE, FuseOSError, Operations
-import inspect
 
 import base64
 from cryptography.fernet import Fernet
@@ -68,6 +66,13 @@ class EncFS(Operations):
         self.file_dictionary = {}
         self.user_password = str.encode(getpass.getpass())
         self.fd_counter = 0
+
+    def make_encrypter(self, salt):
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=100000,
+                         backend=default_backend())
+        key = base64.urlsafe_b64encode(kdf.derive(self.user_password))
+        decrypter = Fernet(key)
+        return decrypter
 
     def destroy(self, path):
         """Clean up any resources used by the filesystem.
@@ -151,34 +156,25 @@ class EncFS(Operations):
         st = os.lstat(full_path)
 
         ret_dict = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
-                                                 'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
-                                                 'st_uid'))
+                                                            'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
+                                                            'st_uid'))
 
-        if(path in self.file_dictionary):
-            # for i in range(100):
-            #     print("hit")
-
-            ret_dict['st_size'] = len(self.file_dictionary[path].decode())
+        if path in self.file_dictionary:
+            ret_dict['st_size'] = len(self.file_dictionary[path])
 
         elif not (os.path.isdir(full_path)):
-            # for i in range(100):
-            #     print("missed")
-
             file = open(self._full_path(path), "rb+")
             salt = file.read(16)
             encrypted_message = file.read()
-
-            kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=100000,
-                             backend=default_backend())
-            key = base64.urlsafe_b64encode(kdf.derive(self.user_password))
-            decrypter = Fernet(key)
-            decrypted_message = decrypter.decrypt(encrypted_message)
-
             file.close()
+
+            encrypter = self.make_encrypter(salt)
+            decrypted_message = encrypter.decrypt(encrypted_message)
 
             ret_dict['st_size'] = len(decrypted_message.decode())
 
         return ret_dict
+
 
     @logged
     def readdir(self, path, fh):
@@ -337,14 +333,11 @@ class EncFS(Operations):
         file = open(self._full_path(path), "rb+")
         salt = file.read(16)
         encrypted_message = file.read()
+        file.close()
 
-        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=100000, backend=default_backend())
-        key = base64.urlsafe_b64encode(kdf.derive(self.user_password))
-        decrypter = Fernet(key)
+        decrypter = self.make_encrypter(salt)
         decrypted_message = decrypter.decrypt(encrypted_message)
         self.file_dictionary[path] = decrypted_message
-
-        file.close()
 
         self.fd_counter += 1
         return self.fd_counter
@@ -354,12 +347,8 @@ class EncFS(Operations):
 
         file = os.open(self._full_path(path), os.O_CREAT | os.O_RDWR, mode)
         os.close(file)
-        self.file_dictionary[path] = ""
+        self.file_dictionary[path] = bytes()
 
-        # for i in range(100):
-        #     print("create: " + path)
-
-        #todo
         self.fd_counter += 1
         return self.fd_counter
 
@@ -373,10 +362,10 @@ class EncFS(Operations):
         the file. Required for any sensible filesystem.
 
         """
-        bytes = self.file_dictionary[path]
-        byteSection = bytes[offset:length]
+        file_bytes = self.file_dictionary[path]
+        byte_section = file_bytes[offset:length]
 
-        return byteSection
+        return byte_section
 
     @logged
     def write(self, path, buf, offset, fh):
@@ -384,24 +373,9 @@ class EncFS(Operations):
 
         """
 
-        working_string = bytearray(self.file_dictionary[path]).decode()
+        file_bytes = self.file_dictionary[path]
+        self.file_dictionary[path] = file_bytes[:offset] + buf + file_bytes[offset:]
 
-        for i in range(100):
-            print("offset: " + str(offset))
-            print("first: " + working_string[:offset])
-            print("buf: " + str(buf))
-            print("last: " + working_string[offset:])
-
-
-        working_string = working_string[:offset] + str(buf) + working_string[offset:]
-
-
-        for i in range(100):
-            print("final: " + working_string)
-
-        self.file_dictionary[path] = bytes(working_string.encode())
-
-        #todo
         return len(buf)
 
     @logged
@@ -413,8 +387,11 @@ class EncFS(Operations):
         filesystems, because recreating a file will first truncate it.
 
         """
-        #todo
-        return 'FILL ME IN!!!'
+
+        file_bytes = self.file_dictionary[path]
+        self.file_dictionary[path] = file_bytes[:length]
+
+        return 0
 
     # skip
     '''
@@ -445,9 +422,7 @@ class EncFS(Operations):
         """
 
         salt = os.urandom(16);
-        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=100000, backend=default_backend())
-        key = base64.urlsafe_b64encode(kdf.derive(self.user_password))
-        encrypter = Fernet(key)
+        encrypter = self.make_encrypter(salt)
         encrypted_message = encrypter.encrypt(self.file_dictionary[path])
 
         file = open(self._full_path(path), "rb+")
@@ -456,15 +431,11 @@ class EncFS(Operations):
 
         del self.file_dictionary[path]
 
-        # for i in range(100):
-        #     print(salt)
-        #     print(self.file_dictionary[path])
-        #     print(encrypted_message)
-
-        #todo
         return 0
 
     # skip
+
+
 '''    @logged
     def fsync(self, path, fdatasync, fh):
         """Flush any dirty information to disk.
