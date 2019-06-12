@@ -107,3 +107,43 @@ Start by building dumb data structure, loop through all points
     Start with ten points
     
 Range Query first then KNN then trees
+
+
+
+
+
+
+Translation of 3D object to 1D array of buckets -
+Cut into strips along axes
+
+Think of entries in array as being skipped for each dimension
+Powers of numbers of divisions (x, y, z) - x^0 + y^1 + z^2
+
+where x, y, z are lengths
+
+'stride' how far you must skip to go from one entry to the next
+
+
+pointtobucketcoords - use clamp, cares about length of buckets
+bucketcoordstoindex 
+
+
+Range query - use bounding box (add and subtract radius from each dimension)
+
+BucketCoords - nextBucket(current, min, max)
+
+ret = current
+ret.y ++
+if (ret.y > max.y) {
+ret.y = min.y
+ret.x ++
+}
+
+while dimension value doesn't surpass max increment next dimension and continue
+
+return ret
+
+
+Test that looping through all buckets this way hits every element of the array
+
+USE bounding box method given /divided by divisions

@@ -47,7 +47,7 @@ std::vector<Point<Dimension>> DumbSolver<Dimension>::KNN(const Point<Dimension>&
     int count = 0;
     DistanceComparator<Dimension> comparator(p);
     std::make_heap(begin(ret), end(ret), comparator);
-        
+    
     for (Point<Dimension> workingPoint : points) {
         if (count < k) {
             count++;
@@ -60,11 +60,6 @@ std::vector<Point<Dimension>> DumbSolver<Dimension>::KNN(const Point<Dimension>&
             ret.push_back(workingPoint);
             std::push_heap(begin(ret), end(ret), comparator);
         }
-        
-//        for (int i = 0; i < ret.size(); i++) {
-//            std::cout << ret[i] << "\n";
-//        }
-//        std::cout << "\n";
     }
     return ret;
 }
