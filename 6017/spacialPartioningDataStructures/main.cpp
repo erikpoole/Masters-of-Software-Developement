@@ -47,8 +47,16 @@ int main(int argc, const char * argv[]) {
     
     std::vector<Point<3>> points = bucketModel.rangeQuery(searchPoint, 3);
     
-    std::cout << "\nPoints:\n";
+    std::cout << "\nRangeQuery Points:\n";
     for (Point<3> point : points) {
         std::cout << point << "\n";
     }
+    
+    points = bucketModel.KNN(searchPoint, 3);
+    
+    std::cout << "\nKNN Points:\n";
+    for (Point<3> point : points) {
+        std::cout << point << "\n";
+    }
+    
 }

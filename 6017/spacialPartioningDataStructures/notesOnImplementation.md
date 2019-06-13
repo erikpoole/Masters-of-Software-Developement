@@ -147,3 +147,23 @@ return ret
 Test that looping through all buckets this way hits every element of the array
 
 USE bounding box method given /divided by divisions
+
+
+KNN - use range query in loop until size is appropriate, narrow down based on distance to point
+Picking starting value - 
+
+
+
+
+
+For Trees -
+
+std::nth_element for splits
+
+Use CompareBy<DIM> structs
+    x = 0,
+    etc.
+
+
+Private KNNRecurse
+Private RangeQueryRecurse

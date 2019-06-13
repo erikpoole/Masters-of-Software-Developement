@@ -9,33 +9,10 @@ template<int Dimension> //The dimension of the points.  This can be used like an
 class BucketKNN{
     using Bucket = std::vector<Point<Dimension>>;
     
-    /*
-     
-     BucketCoords - nextBucket(current, min, max)
-     
-        ret = current
-        ret.y ++
-        if (ret.y > max.y) {
-        ret.y = min.y
-        ret.x ++
-     }
-     
-     while dimension value doesn't surpass max increment next dimension and continue
-     
-     return ret
-     
-     
-     Test that looping through all buckets this way hits every element of the array
-     
-     USE bounding box method given /divided by divisions
-     */
-    
-    
-    
-    
 public:
     
     BucketKNN(const std::vector<Point<Dimension>>& inputPoints, int numDivisions) {
+        numPoints = inputPoints.size();
         boundingBox = getBounds(inputPoints);
         divisions = numDivisions;
 
@@ -116,64 +93,49 @@ public:
         }
         
         
-        
         return retPoints;
     }
-
-        
-        
-        
-//
-//        //We want to do this
-//        for each bucket from minCoords to maxCoords:
-//            process(bucket)
-//
-//
-//            //We can do it with something like this
-//            for( coords = minBucket; //start at the beginning
-//                coords != nextBucket(maxCoords, minCoords, maxCoords); //stop once we go past the end
-//                coords = nextBucket(coords, minCoords, maxCoords)
-//                //advance to the next set of coordinates
-//                ){
-//                process(bucket(coords))
-//            }
-//
-//        //pseudocode for next bucket
-
-//                }
-//            }
-//        }
     
-
+    std::vector<Point<Dimension>> KNN(const Point<Dimension>& inputPoint, int k) {
+//        KNN - use range query in loop until size is appropriate, narrow down based on distance to point
+//        Picking starting value -
         
-    
-    //        int[] nextBucket(int[] current, int[] minCoords, int[] maxCoords){
-    //            current[lastDimension] ++; //increment the last dimension
-    //            for( i = lastDimension; i > 0; —i){
-    //                //if we need to "carry"
-    //                if(current[i] > maxCoords[i]){
-    //                    //reset this dimension
-    //                    current[i] = minCoords[i];
-    //                    //and add to the next "digit"
-    //                    current[i -1]++;
-    //                } else {
-    //                    //no more carries... we're done here
-    //                    break;
-    
-    
-    std::vector<Point<Dimension> > KNN(const Point<Dimension>& p, int k) const{
-//        assert(numPoints >= k);
-        return {};
+        assert(numPoints >= k);
         
+        double smallestLength = bucketLengths[0];
+        for (double length : bucketLengths) {
+            if (length < smallestLength) {
+                smallestLength = length;
+            }
+        }
+        
+        std::vector<Point<Dimension>> workingPoints;
+        double scaler = .9;
+        while (workingPoints.size() < k) {
+            workingPoints = rangeQuery(inputPoint, smallestLength*scaler);
+            
+            scaler *= 2;
+        }
+        
+        DistanceComparator<Dimension> comparator(inputPoint);
+        std::sort(begin(workingPoints), end(workingPoints), comparator);
+        
+        std::vector<Point<Dimension>> retPoints;
+        for (int i = 0; i < k; i++) {
+            retPoints.push_back(workingPoints[i]);
+        }
+        
+        return retPoints;
     }
     
     
     
     
 private:
+    int numPoints;
     AABB<Dimension> boundingBox;
     int divisions;
-    std::array<float, Dimension> bucketLengths;
+    std::array<double, Dimension> bucketLengths;
     std::vector<Bucket> buckets;
     
     std::array<int, Dimension> PointToBucketCoordinates(const Point<Dimension>& inputPoint) {
@@ -214,7 +176,5 @@ private:
 //        std::cout << "Index: " << index << "\n";
         return buckets[index];
     }
-    
-
 };
 
