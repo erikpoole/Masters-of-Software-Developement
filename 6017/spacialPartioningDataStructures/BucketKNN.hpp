@@ -63,21 +63,23 @@ public:
     
     std::vector<Point<Dimension>> rangeQuery(const Point<Dimension>& inputPoint, float radius) {
         
-        std::array<int, Dimension> minCoords;
-        std::array<int, Dimension> maxCoords;
-        std::array<int, Dimension> current;
+        Point<Dimension> minPoint;
+        Point<Dimension> maxPoint;
+        
+        for (int i = 0; i < Dimension; i++) {
+            minPoint.point[i] = inputPoint.point[i] - radius;
+            maxPoint.point[i] = inputPoint.point[i] + radius;
+        }
         
         //current = minCoords?
-        for (int i; i < Dimension; i++) {
-            minCoords[i] = inputPoint[i] - radius;
-            current[i] = inputPoint[i] - radius;
-            maxCoords[i] = inputPoint[i] + radius;
-        }
+        std::array<int, Dimension> minCoords = PointToBucketCoordinates(minPoint);
+        std::array<int, Dimension> maxCoords = PointToBucketCoordinates(maxPoint);
+        std::array<int, Dimension> current = PointToBucketCoordinates(minPoint);
         
         std::vector<Point<Dimension>> retPoints;
         
         int maxIndex = BucketCoordinatesToIndex(maxCoords);
-        while (BucketCoordinatesToIndex(current) <= maxIndex) {
+        while (BucketCoordinatesToIndex(current) < maxIndex) {
             int workingBucketIndex = BucketCoordinatesToIndex(current);
             Bucket workingBucket = buckets[workingBucketIndex];
             
@@ -95,6 +97,25 @@ public:
             }
             workingBucket = nextBucket(current, minCoords, maxCoords);
         }
+        
+        //this is lazy and needs to be fixed
+        int workingBucketIndex = BucketCoordinatesToIndex(current);
+        Bucket workingBucket = buckets[workingBucketIndex];
+        
+        for (Point<Dimension> point : workingBucket) {
+            bool inside = true;
+            for (int i = 0; i < Dimension; i++) {
+                if (std::abs(inputPoint[i] - point[i]) > radius) {
+                    inside = false;
+                    break;
+                }
+            }
+            if (inside) {
+                retPoints.push_back(point);
+            }
+        }
+        
+        
         
         return retPoints;
     }
@@ -168,11 +189,12 @@ private:
     
     
     int BucketCoordinatesToIndex(const std::array<int, Dimension>& inputCoords) {
-//        std::cout << inputCoords[0] <<", " << inputCoords[1] << "\n";
         int index = 0;
         for (int i = 0; i < Dimension; i++) {
-//            index += std::pow(inputCoords[i], i);
-            index += inputCoords[i] * std::pow(bucketLengths[i], i);
+//            std::cout << inputCoords[i] * std::pow(divisions, i) << "\n";
+            index += inputCoords[i] * std::pow(divisions, i);
+//            index += bucketLengths[i] * std::pow(inputCoords[i], i);
+
         }
         
         return index;
@@ -180,7 +202,7 @@ private:
     
     Bucket nextBucket(std::array<int, Dimension>& current, std::array<int, Dimension> minCoords, std::array<int, Dimension> maxCoords) {
         current[0]++;
-        for (int i = 0; i < Dimension; i++) {
+        for (int i = 0; i < Dimension-1; i++) {
             if (current[i] > maxCoords[i]) {
                 current[i] = minCoords[i];
                 current[i+1]++;
@@ -189,6 +211,7 @@ private:
             }
         }
         int index = BucketCoordinatesToIndex(current);
+//        std::cout << "Index: " << index << "\n";
         return buckets[index];
     }
     

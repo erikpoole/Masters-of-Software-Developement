@@ -15,9 +15,9 @@
 
 int main(int argc, const char * argv[]) {
     
-    UniformGenerator<2> uniGen(0, 10);
+    UniformGenerator<3> uniGen(0, 10);
     
-    TrialData<2> data = getTrialData<2>(10, 10, uniGen);
+    TrialData<3> data = getTrialData<3>(10, 10, uniGen);
     
 //    DumbSolver<1> dumbSolver(data.testing);
     
@@ -38,5 +38,17 @@ int main(int argc, const char * argv[]) {
 //    }
     
     
-    BucketKNN<2> bucketModel(data.testing, 3);
+    BucketKNN<3> bucketModel(data.testing, 3);
+    
+    
+    std::array<float, 3> pointValue{ {5, 5, 5} };
+    Point<3> searchPoint;
+    searchPoint.point = pointValue;
+    
+    std::vector<Point<3>> points = bucketModel.rangeQuery(searchPoint, 3);
+    
+    std::cout << "\nPoints:\n";
+    for (Point<3> point : points) {
+        std::cout << point << "\n";
+    }
 }
