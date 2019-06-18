@@ -12,6 +12,7 @@
 #include "Generators.hpp"
 #include "DumbSolver.hpp"
 #include "BucketKNN.hpp"
+#include "KDTree.hpp"
 
 int main(int argc, const char * argv[]) {
     
@@ -20,7 +21,7 @@ int main(int argc, const char * argv[]) {
     TrialData<3> data = getTrialData<3>(10, 10, uniGen);
     
 //    DumbSolver<1> dumbSolver(data.testing);
-    
+//
 //    for (int i = 0; i < data.testing.size(); i++) {
 //        std::cout << data.testing[i] << "\n";
 //    }
@@ -39,24 +40,48 @@ int main(int argc, const char * argv[]) {
     
     
     BucketKNN<3> bucketModel(data.testing, 3);
-    
-    
+
+
     std::array<float, 3> pointValue{ {5, 5, 5} };
     Point<3> searchPoint;
     searchPoint.point = pointValue;
+
+    std::vector<Point<3>> bucketPoints = bucketModel.rangeQuery(searchPoint, 3);
+
+    std::cout << "\nBucket RangeQuery Points:\n";
+    for (Point<3> point : bucketPoints) {
+        std::cout << point << "\n";
+    }
+//
+//    points = bucketModel.KNN(searchPoint, 3);
+//
+//    std::cout << "\nBucket KNN Points:\n";
+//    for (Point<3> point : points) {
+//        std::cout << point << "\n";
+//    }
     
-    std::vector<Point<3>> points = bucketModel.rangeQuery(searchPoint, 3);
+    KDTree<3> kdTree(data.testing);
     
-    std::cout << "\nRangeQuery Points:\n";
-    for (Point<3> point : points) {
+//    std::array<float, 3> pointValue{ {5, 5, 5} };
+//    Point<3> searchPoint;
+//    searchPoint.point = pointValue;
+    
+    std::vector<Point<3>> kdPoints = kdTree.rangeQuery(searchPoint, 3);
+    
+    std::cout << "\nKD RangeQuery Points:\n";
+    for (Point<3> point : kdPoints) {
         std::cout << point << "\n";
     }
     
-    points = bucketModel.KNN(searchPoint, 3);
+//        points = kdTree.KNN(searchPoint, 3);
+//    
+//        std::cout << "\nKD KNN Points:\n";
+//        for (Point<3> point : points) {
+//            std::cout << point << "\n";
+//        }
     
-    std::cout << "\nKNN Points:\n";
-    for (Point<3> point : points) {
-        std::cout << point << "\n";
-    }
+    
+    
+    
     
 }

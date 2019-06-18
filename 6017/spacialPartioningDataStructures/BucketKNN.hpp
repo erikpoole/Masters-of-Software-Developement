@@ -29,12 +29,12 @@ public:
             buckets[BucketCoordinatesToIndex(PointToBucketCoordinates(point))].push_back(point);
         }
         
-        for (int i = 0; i < buckets.size(); i++) {
-            std::cout << i << "\n";
-            for (Point<Dimension> point : buckets[i]) {
-                std::cout << point << "\n";
-            }
-        }
+//        for (int i = 0; i < buckets.size(); i++) {
+//            std::cout << i << "\n";
+//            for (Point<Dimension> point : buckets[i]) {
+//                std::cout << point << "\n";
+//            }
+//        }
     }
     
     
@@ -60,15 +60,10 @@ public:
             int workingBucketIndex = BucketCoordinatesToIndex(current);
             Bucket workingBucket = buckets[workingBucketIndex];
             
+
+            
             for (Point<Dimension> point : workingBucket) {
-                bool inside = true;
-                for (int i = 0; i < Dimension; i++) {
-                    if (std::abs(inputPoint[i] - point[i]) > radius) {
-                        inside = false;
-                        break;
-                    }
-                }
-                if (inside) {
+                if (distance(point, inputPoint) <= radius) {
                     retPoints.push_back(point);
                 }
             }
@@ -80,14 +75,7 @@ public:
         Bucket workingBucket = buckets[workingBucketIndex];
         
         for (Point<Dimension> point : workingBucket) {
-            bool inside = true;
-            for (int i = 0; i < Dimension; i++) {
-                if (std::abs(inputPoint[i] - point[i]) > radius) {
-                    inside = false;
-                    break;
-                }
-            }
-            if (inside) {
+            if (distance(point, inputPoint) <= radius) {
                 retPoints.push_back(point);
             }
         }
@@ -132,7 +120,7 @@ public:
     
     
 private:
-    int numPoints;
+    long numPoints;
     AABB<Dimension> boundingBox;
     int divisions;
     std::array<double, Dimension> bucketLengths;
