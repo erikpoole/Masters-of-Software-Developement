@@ -14,24 +14,8 @@ public:
         root = std::make_unique<Node<0>> (Node<0>(begin(points), end(points)));
     }
     
-    //    For Trees -
-    //
-    //    std::nth_element for splits
-    //
-    //        Use CompareBy<DIM> structs
-    //        x = 0, y = 1
-    //        etc.
-    //
-    //
-    //        Private KNNRecurse
-    //        Private RangeQueryRecurse
-    
     std::vector<Point<Dimension>> rangeQuery(const Point<Dimension>& inputPoint, float radius) {
         AABB<Dimension> boundingBox;
-        for (int i = 0; i < Dimension; i++) {
-            boundingBox.maxs[i] = INT_MAX;
-            boundingBox.mins[i] = INT_MIN;
-        }
         std::vector<Point<Dimension>> retPoints;
         root->RangeQueryRecurse(boundingBox, retPoints, inputPoint, radius);
         
@@ -39,6 +23,15 @@ public:
     }
     
     std::vector<Point<Dimension>> KNN(const Point<Dimension>& inputPoint, int k) {
+        std::vector<Point<Dimension>> points;
+        DistanceComparator<Dimension> comparator(inputPoint);
+        std::make_heap(begin(points), end(points), comparator);
+        
+        AABB<Dimension> boundingBox;
+        
+        root->KNNRecurse(boundingBox, points, inputPoint, k);
+        
+        return points;
     }
     
 private:
@@ -92,24 +85,60 @@ private:
             }
             
             return;
-            
-            
-            //check point
-            //add point if in range
-            //find left AABB
-            //if distance(targetPoint, closestinbox(node.point)) <= r)
-            // if children: recurse(left)
-            //find right AABB
-            //if distance(targetPoint, closestinbox(node.point)) <= r)
-            //if children: recurse right
         }
         
         
-        //fix signature
-        void KNNRecurse(Node<Dimension> workingNode, AABB<Dimension>, Point<Dimension> targetPoint, float radius) {
+        void KNNRecurse(const AABB<Dimension>& boundingBox, std::vector<Point<Dimension>>& points, const Point<Dimension>& targetPoint, const int numNeighbors) {
+            
+            DistanceComparator<Dimension> comparator(targetPoint);
+            if (points.size() < numNeighbors) {
+                points.push_back(splittingPoint);
+                std::push_heap(begin(points), end(points), comparator);
+            } else if (distance(splittingPoint, targetPoint) < distance(points[0], targetPoint)) {
+                std::pop_heap(begin(points), end(points), comparator);
+                points.pop_back();
+                points.push_back(splittingPoint);
+                std::push_heap(begin(points), end(points), comparator);
+            }
+            
+            AABB<Dimension> leftBoundingBox = boundingBox;
+            leftBoundingBox.maxs[SplitDimension] = splittingPoint[SplitDimension];
+            if (left != nullptr && distance(targetPoint, leftBoundingBox.closestInBox(targetPoint)) <= distance (targetPoint, points[0])) {
+                left->KNNRecurse(leftBoundingBox, points, targetPoint, numNeighbors);
+            }
+            
+            AABB<Dimension> rightBoundingBox = boundingBox;
+            rightBoundingBox.mins[SplitDimension] = splittingPoint[SplitDimension];
+            if (right != nullptr && distance(targetPoint, rightBoundingBox.closestInBox(targetPoint)) <= distance (targetPoint, points[0])) {
+                right->KNNRecurse(rightBoundingBox, points, targetPoint, numNeighbors);
+            }
+            
+            return;
+            
+            
             //start at root, add node to list of nearest neighbors
             //keep adding to list until full
             //recurse to children and either add to list or discount all children of that node based on current worst neighbor in list
+            
+//            std::vector<Point<Dimension>> ret;
+//            int count = 0;
+//            DistanceComparator<Dimension> comparator(p);
+//            std::make_heap(begin(ret), end(ret), comparator);
+//
+//            for (Point<Dimension> workingPoint : points) {
+//                if (count < k) {
+//                    count++;
+//                    ret.push_back(workingPoint);
+//                    std::push_heap(begin(ret), end(ret), comparator);
+//
+//                } else if (distance(workingPoint, p) < (distance(ret[0], p))) {
+//                    std::pop_heap(begin(ret), end(ret), comparator);
+//                    ret.pop_back();
+//                    ret.push_back(workingPoint);
+//                    std::push_heap(begin(ret), end(ret), comparator);
+//                }
+//            }
+            
         }
         
     };
