@@ -3,7 +3,8 @@
 #include "Point.hpp"
 #include <memory>
 #include <queue>
-#include <iostream>
+#include <vector>
+
 
 
 template<int Dimension>
@@ -83,8 +84,6 @@ private:
             if (right != nullptr && distance(targetPoint, rightBoundingBox.closestInBox(targetPoint)) <= radius) {
                 right->RangeQueryRecurse(rightBoundingBox, points, targetPoint, radius);
             }
-            
-            return;
         }
         
         
@@ -112,33 +111,6 @@ private:
             if (right != nullptr && distance(targetPoint, rightBoundingBox.closestInBox(targetPoint)) <= distance (targetPoint, points[0])) {
                 right->KNNRecurse(rightBoundingBox, points, targetPoint, numNeighbors);
             }
-            
-            return;
-            
-            
-            //start at root, add node to list of nearest neighbors
-            //keep adding to list until full
-            //recurse to children and either add to list or discount all children of that node based on current worst neighbor in list
-            
-//            std::vector<Point<Dimension>> ret;
-//            int count = 0;
-//            DistanceComparator<Dimension> comparator(p);
-//            std::make_heap(begin(ret), end(ret), comparator);
-//
-//            for (Point<Dimension> workingPoint : points) {
-//                if (count < k) {
-//                    count++;
-//                    ret.push_back(workingPoint);
-//                    std::push_heap(begin(ret), end(ret), comparator);
-//
-//                } else if (distance(workingPoint, p) < (distance(ret[0], p))) {
-//                    std::pop_heap(begin(ret), end(ret), comparator);
-//                    ret.pop_back();
-//                    ret.push_back(workingPoint);
-//                    std::push_heap(begin(ret), end(ret), comparator);
-//                }
-//            }
-            
         }
         
     };

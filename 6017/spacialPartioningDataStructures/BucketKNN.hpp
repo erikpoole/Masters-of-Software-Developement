@@ -3,7 +3,6 @@
 #include "Point.hpp"
 #include <vector>
 #include <math.h>
-#include <iostream>
 
 template<int Dimension> //The dimension of the points.  This can be used like any other constant within.
 class BucketKNN{
@@ -22,19 +21,9 @@ public:
 
         buckets.resize(std::pow(divisions, Dimension));
         
-//        std::cout << bucketLengths[0] << ", " << bucketLengths[1] << "\n";
-        
         for (Point<Dimension> point : inputPoints) {
-//            std::cout << BucketCoordinatesToIndex(PointToBucketCoordinates(point)) << "\n\n";
             buckets[BucketCoordinatesToIndex(PointToBucketCoordinates(point))].push_back(point);
         }
-        
-//        for (int i = 0; i < buckets.size(); i++) {
-//            std::cout << i << "\n";
-//            for (Point<Dimension> point : buckets[i]) {
-//                std::cout << point << "\n";
-//            }
-//        }
     }
     
     
@@ -127,7 +116,6 @@ private:
     std::vector<Bucket> buckets;
     
     std::array<int, Dimension> PointToBucketCoordinates(const Point<Dimension>& inputPoint) {
-//        std::cout << inputPoint << "\n";
         std::array<int, Dimension> coords;
         
         for (int i = 0; i < Dimension; i++) {
@@ -141,10 +129,7 @@ private:
     int BucketCoordinatesToIndex(const std::array<int, Dimension>& inputCoords) {
         int index = 0;
         for (int i = 0; i < Dimension; i++) {
-//            std::cout << inputCoords[i] * std::pow(divisions, i) << "\n";
             index += inputCoords[i] * std::pow(divisions, i);
-//            index += bucketLengths[i] * std::pow(inputCoords[i], i);
-
         }
         
         return index;
@@ -161,7 +146,6 @@ private:
             }
         }
         int index = BucketCoordinatesToIndex(current);
-//        std::cout << "Index: " << index << "\n";
         return buckets[index];
     }
 };

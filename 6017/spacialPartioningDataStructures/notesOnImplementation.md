@@ -167,3 +167,13 @@ Use CompareBy<DIM> structs
 
 Private KNNRecurse
 Private RangeQueryRecurse
+
+
+//output data -
+
+//scaling for data structure (n number of points)
+//different values of k relative to dimension
+
+//Do 2-3 dimensions for an "n" and "k" works
+
+buckets vs dimension
