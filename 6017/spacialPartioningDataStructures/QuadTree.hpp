@@ -19,7 +19,7 @@ class QuadTree{
 public:
     
     QuadTree(std::vector<Point<2>>& points){
-        int threshold = 2;
+        int threshold = 10;
         AABB<2> boundingbox = getBounds(points);
         
         root = std::make_unique<Node>(points, boundingbox, threshold);
